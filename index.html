@@ -378,7 +378,8 @@ function renderTape(data) {
   const spans = items.map(s => {
     const cls = (data.buy || []).includes(s) ? 'up' : 'down';
     const arrow = cls === 'up' ? '&#9650;' : '&#9660;';
-    return `<span><b>${s.ticker.replace('.KL','')}</b>RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
+    const shortName = s.name ? (s.name.length > 14 ? s.name.slice(0, 14) + '\u2026' : s.name) : '';
+    return `<span><b>${s.ticker.replace('.KL','')}</b>${shortName ? shortName + ' ' : ''}RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
   });
   el.innerHTML = spans.join('') + spans.join('');
 }
