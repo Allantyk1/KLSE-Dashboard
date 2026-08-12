@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T09:50:22",
+  "generatedAt": "2026-08-12T12:46:18",
   "universeCount": 196,
   "buy": [
     {
@@ -12,6 +12,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Strengthening (Bullish)",
       "ema20": 0.314,
+      "entryEma20": 0.314,
+      "entryBbZone": 0.298,
+      "targetPrice": 0.42,
+      "pctUpsideToTarget": 25.4,
       "pctOffHigh": -8.0
     },
     {
@@ -24,6 +28,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Weakening (Bullish)",
       "ema20": 0.312,
+      "entryEma20": 0.312,
+      "entryBbZone": 0.305,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
       "pctOffHigh": -3.0
     },
     {
@@ -36,6 +44,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Strengthening (Bullish)",
       "ema20": 0.301,
+      "entryEma20": 0.301,
+      "entryBbZone": 0.295,
+      "targetPrice": 0.38,
+      "pctUpsideToTarget": 15.2,
       "pctOffHigh": -3.0
     },
     {
@@ -48,6 +60,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Strengthening (Bullish)",
       "ema20": 10.71,
+      "entryEma20": 10.71,
+      "entryBbZone": 10.55,
+      "targetPrice": 11.5,
+      "pctUpsideToTarget": 5.9,
       "pctOffHigh": -2.0
     }
   ],
@@ -62,6 +78,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Weakening (Bullish)",
       "ema20": 0.52,
+      "entryEma20": 0.52,
+      "entryBbZone": 0.505,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
       "pctOffHigh": -5.0
     },
     {
@@ -74,6 +94,10 @@
       "macdSignal": "Bullish",
       "histogramTrend": "Weakening (Bullish)",
       "ema20": 0.33,
+      "entryEma20": 0.33,
+      "entryBbZone": 0.32,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
       "pctOffHigh": -6.0
     }
   ],
@@ -88,6 +112,10 @@
       "macdSignal": "Bearish",
       "histogramTrend": "Strengthening (Bearish)",
       "ema20": 0.41,
+      "entryEma20": 0.41,
+      "entryBbZone": 0.395,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
       "pctOffHigh": -52.0
     },
     {
@@ -100,7 +128,141 @@
       "macdSignal": "Bearish",
       "histogramTrend": "Turned Negative",
       "ema20": 0.165,
+      "entryEma20": 0.165,
+      "entryBbZone": 0.158,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
       "pctOffHigh": -39.0
+    }
+  ],
+  "all": [
+    {
+      "ticker": "0104.KL",
+      "name": "GENETEC",
+      "price": 0.335,
+      "score": 84.2,
+      "rsi": 59.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 0.314,
+      "entryEma20": 0.314,
+      "entryBbZone": 0.298,
+      "targetPrice": 0.42,
+      "pctUpsideToTarget": 25.4,
+      "pctOffHigh": -8.0
+    },
+    {
+      "ticker": "0201.KL",
+      "name": "NOVA",
+      "price": 0.34,
+      "score": 68.0,
+      "rsi": 51.0,
+      "emaTrend": "Turning Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.33,
+      "entryEma20": 0.33,
+      "entryBbZone": 0.32,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -6.0
+    },
+    {
+      "ticker": "0251.KL",
+      "name": "SFPTECH",
+      "price": 0.33,
+      "score": 79.8,
+      "rsi": 63.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 0.301,
+      "entryEma20": 0.301,
+      "entryBbZone": 0.295,
+      "targetPrice": 0.38,
+      "pctUpsideToTarget": 15.2,
+      "pctOffHigh": -3.0
+    },
+    {
+      "ticker": "0256.KL",
+      "name": "UMC",
+      "price": 0.34,
+      "score": 82.1,
+      "rsi": 65.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.312,
+      "entryEma20": 0.312,
+      "entryBbZone": 0.305,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -3.0
+    },
+    {
+      "ticker": "0307.KL",
+      "name": "KENERGY",
+      "price": 0.375,
+      "score": 12.0,
+      "rsi": 21.0,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Strengthening (Bearish)",
+      "ema20": 0.41,
+      "entryEma20": 0.41,
+      "entryBbZone": 0.395,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -52.0
+    },
+    {
+      "ticker": "0310.KL",
+      "name": "UUE",
+      "price": 0.54,
+      "score": 69.0,
+      "rsi": 76.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.52,
+      "entryEma20": 0.52,
+      "entryBbZone": 0.505,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -5.0
+    },
+    {
+      "ticker": "0313.KL",
+      "name": "BWYS",
+      "price": 0.15,
+      "score": 16.0,
+      "rsi": 33.0,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Turned Negative",
+      "ema20": 0.165,
+      "entryEma20": 0.165,
+      "entryBbZone": 0.158,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -39.0
+    },
+    {
+      "ticker": "1155.KL",
+      "name": "MAYBANK",
+      "price": 10.86,
+      "score": 76.4,
+      "rsi": 58.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 10.71,
+      "entryEma20": 10.71,
+      "entryBbZone": 10.55,
+      "targetPrice": 11.5,
+      "pctUpsideToTarget": 5.9,
+      "pctOffHigh": -2.0
     }
   ],
   "portfolio": [

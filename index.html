@@ -110,6 +110,28 @@
     margin:0 auto;
     overflow-x:auto;
   }
+
+  .search-wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 1rem 0.75rem;
+  }
+  .search-box{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:0.85rem;
+    padding:0.6rem 0.9rem;
+    border-radius:999px;
+    outline:none;
+    transition:border-color 0.15s;
+  }
+  .search-box::placeholder{ color:var(--text-muted); }
+  .search-box:focus{ border-color:var(--gold); }
+  .search-box:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
   .tab{
     font-family:'Space Grotesk', sans-serif;
     font-weight:600;
@@ -195,6 +217,38 @@
     color:var(--text-muted);
   }
   .card-details b{ color:var(--text); font-weight:500; }
+
+  .price-row{
+    display:flex;
+    gap:0.5rem;
+    margin-top:0.55rem;
+  }
+  .price-stat{
+    flex:1;
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:0.4rem 0.55rem;
+  }
+  .price-stat .label{
+    font-size:0.65rem;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .price-stat .val{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    font-weight:600;
+    margin-top:0.1rem;
+  }
+  .price-stat.target .val{ color:var(--gold); }
+  .price-stat .upside{
+    font-size:0.68rem;
+    margin-left:0.3em;
+    font-weight:500;
+  }
+
   .tag{
     padding:0.1rem 0.5rem;
     border-radius:999px;
@@ -256,6 +310,10 @@
 
 <nav class="tabs" id="tabs" role="tablist" aria-label="Categories"></nav>
 
+<div class="search-wrap">
+  <input type="text" id="searchBox" class="search-box" placeholder="Search by ticker or name&hellip;" autocomplete="off">
+</div>
+
 <main id="main">
   <div class="empty" id="loadingState">
     <h2>Loading dashboard&hellip;</h2>
@@ -269,6 +327,7 @@ const CATEGORIES = [
   { key: 'buy', label: 'Buy' },
   { key: 'watch', label: 'Watch' },
   { key: 'sell', label: 'Sell' },
+  { key: 'all', label: 'All Stocks' },
   { key: 'portfolio', label: 'Portfolio' },
 ];
 
@@ -302,8 +361,19 @@ function cardHTML(s, cat) {
     : s.histogramTrend
     ? `<span class="tag neg">${s.histogramTrend}</span>`
     : '';
+
+  const entries = [];
+  if (s.entryEma20) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 EMA20</div><div class="val">RM ${s.entryEma20.toFixed(3)}</div></div>`);
+  if (s.entryBbZone) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 BB Zone</div><div class="val">RM ${s.entryBbZone.toFixed(3)}</div></div>`);
+  if (s.targetPrice) {
+    const upsideColor = (s.pctUpsideToTarget || 0) >= 0 ? 'var(--buy)' : 'var(--sell)';
+    const upsideSign = (s.pctUpsideToTarget || 0) >= 0 ? '+' : '';
+    entries.push(`<div class="price-stat target"><div class="label">Target Price</div><div class="val">RM ${s.targetPrice.toFixed(3)}<span class="upside" style="color:${upsideColor}">${upsideSign}${s.pctUpsideToTarget}%</span></div></div>`);
+  }
+  const priceRow = entries.length ? `<div class="price-row">${entries.join('')}</div>` : '';
+
   return `
-    <div class="card ${cat}">
+    <div class="card ${cat}" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}">
       <div class="card-top">
         <div>
           <span class="ticker">${s.ticker.replace('.KL','')}</span>
@@ -317,9 +387,9 @@ function cardHTML(s, cat) {
       <div class="card-details">
         <span>RSI <b>${s.rsi}</b></span>
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
-        ${s.ema20 ? `<span>EMA20 <b>RM ${s.ema20.toFixed(3)}</b></span>` : ''}
         ${trendTag}
       </div>
+      ${priceRow}
     </div>`;
 }
 
@@ -337,7 +407,7 @@ function portfolioHTML(rows) {
   const cards = rows.map(r => {
     const pnlPositive = (r.pnlPct || 0) >= 0;
     return `
-      <div class="card" style="border-left-color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}">
+      <div class="card" data-ticker="${r.ticker.toLowerCase()}" data-name="${(r.name || '').toLowerCase()}" style="border-left-color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}">
         <div class="card-top">
           <div>
             <span class="ticker">${r.ticker.replace('.KL','')}</span>
@@ -397,7 +467,36 @@ function render(data) {
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${key}`));
+  applySearchFilter();
 }
+
+function applySearchFilter() {
+  const query = (document.getElementById('searchBox').value || '').trim().toLowerCase();
+  const activePanel = document.querySelector('.panel.active');
+  if (!activePanel) return;
+
+  const cards = activePanel.querySelectorAll('.card[data-ticker]');
+  let visibleCount = 0;
+  cards.forEach(card => {
+    const matches = !query || card.dataset.ticker.includes(query) || card.dataset.name.includes(query);
+    card.style.display = matches ? '' : 'none';
+    if (matches) visibleCount++;
+  });
+
+  let noResults = activePanel.querySelector('.no-search-results');
+  if (query && cards.length && visibleCount === 0) {
+    if (!noResults) {
+      noResults = document.createElement('div');
+      noResults.className = 'empty no-search-results';
+      noResults.innerHTML = `<h2>No match</h2><p>Nothing here matches "${query}" -- try a different ticker or name.</p>`;
+      activePanel.appendChild(noResults);
+    }
+  } else if (noResults) {
+    noResults.remove();
+  }
+}
+
+document.getElementById('searchBox').addEventListener('input', applySearchFilter);
 
 function showSampleBanner() {
   const banner = document.createElement('div');
