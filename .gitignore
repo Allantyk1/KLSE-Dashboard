@@ -1,0 +1,12 @@
+# Local screener outputs -- these stay on your machine, not in the repo.
+# Only dashboard-data.json (generated FROM these) gets committed.
+klse_screener_results.csv
+dividend_yields.csv
+recommendations_log.csv
+KLSE_Screener_Report.xlsx
+KLSE_Screener_Summary.pptx
+KLSE_Recommendation_Tracker.xlsx
+KLSE_Portfolio_Tracker.xlsx
+run_log.txt
+__pycache__/
+*.pyc

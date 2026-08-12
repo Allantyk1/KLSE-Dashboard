@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KLSE Screener</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0B0F14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14;
+    --surface:#131A22;
+    --surface-raised:#1A222C;
+    --border:#232C36;
+    --text:#E8EDF2;
+    --text-muted:#8A98A8;
+    --gold:#C9A961;
+    --buy:#2FBF71;
+    --buy-dim:#1B4A32;
+    --watch:#E8A93B;
+    --watch-dim:#4A3A1B;
+    --sell:#E5484D;
+    --sell-dim:#4A1F21;
+    --radius:10px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:2rem;
+    min-height:100vh;
+  }
+
+  h1,h2,.display{
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:-0.01em;
+  }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:var(--gold); }
+
+  .tape-wrap{
+    background:var(--surface-raised);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;
+    white-space:nowrap;
+    padding:0.5rem 0;
+  }
+  .tape{
+    display:inline-flex;
+    animation:scroll-tape 40s linear infinite;
+  }
+  .tape span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    padding:0 1.25rem;
+    color:var(--text-muted);
+    border-right:1px solid var(--border);
+  }
+  .tape span b{ color:var(--text); font-weight:600; margin-right:0.4em; }
+  .tape .up{ color:var(--buy); }
+  .tape .down{ color:var(--sell); }
+  @keyframes scroll-tape{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .tape{ animation:none; overflow-x:auto; }
+  }
+
+  header{
+    padding:1.25rem 1rem 0.75rem;
+    max-width:640px;
+    margin:0 auto;
+  }
+  header h1{
+    font-size:1.5rem;
+    font-weight:700;
+  }
+  header h1 .accent{ color:var(--gold); }
+  .meta{
+    color:var(--text-muted);
+    font-size:0.82rem;
+    margin-top:0.25rem;
+    display:flex;
+    gap:0.5rem;
+    align-items:center;
+  }
+  .meta .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--buy);
+    display:inline-block;
+  }
+
+  .tabs{
+    display:flex;
+    gap:0.4rem;
+    padding:0.75rem 1rem;
+    max-width:640px;
+    margin:0 auto;
+    overflow-x:auto;
+  }
+  .tab{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    padding:0.5rem 0.9rem;
+    border-radius:999px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .tab .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    opacity:0.75;
+    margin-left:0.35em;
+  }
+  .tab:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .tab[data-cat="buy"].active{ background:var(--buy-dim); border-color:var(--buy); color:var(--buy); }
+  .tab[data-cat="watch"].active{ background:var(--watch-dim); border-color:var(--watch); color:var(--watch); }
+  .tab[data-cat="sell"].active{ background:var(--sell-dim); border-color:var(--sell); color:var(--sell); }
+  .tab[data-cat="portfolio"].active{ background:var(--surface-raised); border-color:var(--gold); color:var(--gold); }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 1rem;
+  }
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-left:3px solid var(--border);
+    border-radius:var(--radius);
+    padding:0.85rem 1rem;
+    margin-bottom:0.6rem;
+  }
+  .card.buy{ border-left-color:var(--buy); }
+  .card.watch{ border-left-color:var(--watch); }
+  .card.sell{ border-left-color:var(--sell); }
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .ticker{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:1rem;
+  }
+  .name{
+    color:var(--text-muted);
+    font-size:0.78rem;
+    display:block;
+    margin-top:0.1rem;
+  }
+  .price{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:1rem;
+    text-align:right;
+  }
+  .score{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--text-muted);
+    text-align:right;
+    display:block;
+  }
+  .card-details{
+    margin-top:0.55rem;
+    padding-top:0.55rem;
+    border-top:1px solid var(--border);
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.4rem 0.9rem;
+    font-size:0.76rem;
+    color:var(--text-muted);
+  }
+  .card-details b{ color:var(--text); font-weight:500; }
+  .tag{
+    padding:0.1rem 0.5rem;
+    border-radius:999px;
+    font-size:0.72rem;
+    font-weight:500;
+  }
+  .tag.pos{ background:var(--buy-dim); color:var(--buy); }
+  .tag.neg{ background:var(--sell-dim); color:var(--sell); }
+  .tag.neu{ background:var(--watch-dim); color:var(--watch); }
+
+  .pf-summary{
+    display:flex;
+    gap:0.75rem;
+    margin-bottom:0.9rem;
+  }
+  .pf-stat{
+    flex:1;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:0.7rem 0.8rem;
+  }
+  .pf-stat .label{ font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;}
+  .pf-stat .value{ font-family:'IBM Plex Mono', monospace; font-size:1.1rem; font-weight:600; margin-top:0.15rem; }
+
+  .empty{
+    text-align:center;
+    padding:3rem 1.5rem;
+    color:var(--text-muted);
+  }
+  .empty h2{ color:var(--text); font-size:1.1rem; margin-bottom:0.5rem; }
+  .empty p{ font-size:0.85rem; line-height:1.5; }
+  .empty code{
+    font-family:'IBM Plex Mono', monospace;
+    background:var(--surface);
+    padding:0.15rem 0.4rem;
+    border-radius:4px;
+    font-size:0.8rem;
+  }
+
+  footer{
+    max-width:640px;
+    margin:1.5rem auto 0;
+    padding:0 1rem;
+    color:var(--text-muted);
+    font-size:0.72rem;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<div class="tape-wrap"><div class="tape mono" id="tape"></div></div>
+
+<header>
+  <h1>KLSE <span class="accent">Screener</span></h1>
+  <div class="meta"><span class="dot"></span><span id="metaText">Loading&hellip;</span></div>
+</header>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Categories"></nav>
+
+<main id="main">
+  <div class="empty" id="loadingState">
+    <h2>Loading dashboard&hellip;</h2>
+  </div>
+</main>
+
+<footer>Generated by your KLSE screener &middot; data refreshes when you push a new <code class="mono">dashboard-data.json</code></footer>
+
+<script>
+const CATEGORIES = [
+  { key: 'buy', label: 'Buy' },
+  { key: 'watch', label: 'Watch' },
+  { key: 'sell', label: 'Sell' },
+  { key: 'portfolio', label: 'Portfolio' },
+];
+
+function fmtTimeAgo(iso) {
+  const then = new Date(iso);
+  const diffMin = Math.round((Date.now() - then.getTime()) / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  return `${Math.round(diffHr / 24)}d ago`;
+}
+
+function renderTape(data) {
+  const el = document.getElementById('tape');
+  const items = [...(data.buy || []).slice(0, 6), ...(data.sell || []).slice(0, 4)];
+  if (!items.length) { el.parentElement.style.display = 'none'; return; }
+  const spans = items.map(s => {
+    const cls = (data.buy || []).includes(s) ? 'up' : 'down';
+    const arrow = cls === 'up' ? '&#9650;' : '&#9660;';
+    return `<span><b>${s.ticker.replace('.KL','')}</b>RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
+  });
+  el.innerHTML = spans.join('') + spans.join('');
+}
+
+function cardHTML(s, cat) {
+  const trendTag = s.histogramTrend && s.histogramTrend.includes('Weakening')
+    ? `<span class="tag neu">${s.histogramTrend}</span>`
+    : s.histogramTrend && s.histogramTrend.includes('Strengthening (Bullish)')
+    ? `<span class="tag pos">${s.histogramTrend}</span>`
+    : s.histogramTrend
+    ? `<span class="tag neg">${s.histogramTrend}</span>`
+    : '';
+  return `
+    <div class="card ${cat}">
+      <div class="card-top">
+        <div>
+          <span class="ticker">${s.ticker.replace('.KL','')}</span>
+          <span class="name">${s.name || ''}</span>
+        </div>
+        <div>
+          <span class="price">RM ${s.price.toFixed(3)}</span>
+          <span class="score">Score ${s.score}</span>
+        </div>
+      </div>
+      <div class="card-details">
+        <span>RSI <b>${s.rsi}</b></span>
+        <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
+        ${s.ema20 ? `<span>EMA20 <b>RM ${s.ema20.toFixed(3)}</b></span>` : ''}
+        ${trendTag}
+      </div>
+    </div>`;
+}
+
+function portfolioHTML(rows) {
+  if (!rows || !rows.length) {
+    return `<div class="empty"><h2>No holdings yet</h2><p>Type your Ticker / Shares / Avg Cost into <code>My Portfolio</code> in <code>KLSE_Portfolio_Tracker.xlsx</code>, then re-export the dashboard data.</p></div>`;
+  }
+  const totalValue = rows.reduce((s, r) => s + (r.marketValue || 0), 0);
+  const totalPnl = rows.reduce((s, r) => s + (r.pnl || 0), 0);
+  const summary = `
+    <div class="pf-summary">
+      <div class="pf-stat"><div class="label">Market Value</div><div class="value">RM ${totalValue.toFixed(2)}</div></div>
+      <div class="pf-stat"><div class="label">Unrealized P&amp;L</div><div class="value" style="color:${totalPnl>=0?'var(--buy)':'var(--sell)'}">RM ${totalPnl.toFixed(2)}</div></div>
+    </div>`;
+  const cards = rows.map(r => {
+    const pnlPositive = (r.pnlPct || 0) >= 0;
+    return `
+      <div class="card" style="border-left-color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}">
+        <div class="card-top">
+          <div>
+            <span class="ticker">${r.ticker.replace('.KL','')}</span>
+            <span class="name">${r.name || ''}</span>
+          </div>
+          <div>
+            <span class="price">RM ${(r.currentPrice||0).toFixed(3)}</span>
+            <span class="score" style="color:${pnlPositive?'var(--buy)':'var(--sell)'}">${pnlPositive?'+':''}${(r.pnlPct||0).toFixed(1)}%</span>
+          </div>
+        </div>
+        <div class="card-details">
+          <span>${r.shares} shares</span>
+          <span>Avg RM <b>${r.avgCost}</b></span>
+          <span>P&amp;L RM <b style="color:${pnlPositive?'var(--buy)':'var(--sell)'}">${(r.pnl||0).toFixed(2)}</b></span>
+        </div>
+      </div>`;
+  }).join('');
+  return summary + cards;
+}
+
+function render(data) {
+  document.getElementById('metaText').textContent =
+    `${data.universeCount} stocks screened \u00b7 updated ${fmtTimeAgo(data.generatedAt)}`;
+
+  renderTape(data);
+
+  const tabsEl = document.getElementById('tabs');
+  const mainEl = document.getElementById('main');
+  mainEl.innerHTML = '';
+  tabsEl.innerHTML = '';
+
+  CATEGORIES.forEach((cat, i) => {
+    const count = cat.key === 'portfolio' ? (data.portfolio || []).length : (data[cat.key] || []).length;
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (i === 0 ? ' active' : '');
+    btn.dataset.cat = cat.key;
+    btn.setAttribute('role', 'tab');
+    btn.innerHTML = `${cat.label}<span class="count">${count}</span>`;
+    btn.addEventListener('click', () => switchTab(cat.key));
+    tabsEl.appendChild(btn);
+
+    const panel = document.createElement('div');
+    panel.className = 'panel' + (i === 0 ? ' active' : '');
+    panel.id = `panel-${cat.key}`;
+    if (cat.key === 'portfolio') {
+      panel.innerHTML = portfolioHTML(data.portfolio);
+    } else {
+      const rows = data[cat.key] || [];
+      panel.innerHTML = rows.length
+        ? rows.map(s => cardHTML(s, cat.key)).join('')
+        : `<div class="empty"><h2>Nothing here</h2><p>No stocks currently qualify as ${cat.label} this run.</p></div>`;
+    }
+    mainEl.appendChild(panel);
+  });
+}
+
+function switchTab(key) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${key}`));
+}
+
+function showSampleBanner() {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:var(--watch-dim);color:var(--watch);text-align:center;font-size:0.78rem;padding:0.5rem;border-bottom:1px solid var(--border);';
+  banner.textContent = 'Showing sample data \u2014 push a real dashboard-data.json to replace this';
+  document.body.insertBefore(banner, document.body.firstChild);
+}
+
+fetch('dashboard-data.json?t=' + Date.now())
+  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+  .then(render)
+  .catch(() => {
+    // Real data isn't there yet -- fall back to the bundled sample so the
+    // dashboard is previewable immediately, rather than a blank/empty page.
+    fetch('sample-dashboard-data.json?t=' + Date.now())
+      .then(r => { if (!r.ok) throw new Error('no sample either'); return r.json(); })
+      .then(data => { render(data); showSampleBanner(); })
+      .catch(() => {
+        document.getElementById('main').innerHTML = `
+          <div class="empty">
+            <h2>No data yet</h2>
+            <p>Run <code>generate_dashboard_data.py</code> locally, then commit and push
+            <code>dashboard-data.json</code> to this repo to populate the dashboard.</p>
+          </div>`;
+        document.getElementById('metaText').textContent = 'Waiting for data';
+      });
+  });
+</script>
+</body>
+</html>

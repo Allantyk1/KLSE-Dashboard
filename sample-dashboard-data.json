@@ -1,0 +1,146 @@
+{
+  "generatedAt": "2026-08-12T09:50:22",
+  "universeCount": 196,
+  "buy": [
+    {
+      "ticker": "0104.KL",
+      "name": "GENETEC",
+      "price": 0.335,
+      "score": 84.2,
+      "rsi": 59.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 0.314,
+      "pctOffHigh": -8.0
+    },
+    {
+      "ticker": "0256.KL",
+      "name": "UMC",
+      "price": 0.34,
+      "score": 82.1,
+      "rsi": 65.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.312,
+      "pctOffHigh": -3.0
+    },
+    {
+      "ticker": "0251.KL",
+      "name": "SFPTECH",
+      "price": 0.33,
+      "score": 79.8,
+      "rsi": 63.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 0.301,
+      "pctOffHigh": -3.0
+    },
+    {
+      "ticker": "1155.KL",
+      "name": "MAYBANK",
+      "price": 10.86,
+      "score": 76.4,
+      "rsi": 58.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 10.71,
+      "pctOffHigh": -2.0
+    }
+  ],
+  "watch": [
+    {
+      "ticker": "0310.KL",
+      "name": "UUE",
+      "price": 0.54,
+      "score": 69.0,
+      "rsi": 76.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.52,
+      "pctOffHigh": -5.0
+    },
+    {
+      "ticker": "0201.KL",
+      "name": "NOVA",
+      "price": 0.34,
+      "score": 68.0,
+      "rsi": 51.0,
+      "emaTrend": "Turning Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 0.33,
+      "pctOffHigh": -6.0
+    }
+  ],
+  "sell": [
+    {
+      "ticker": "0307.KL",
+      "name": "KENERGY",
+      "price": 0.375,
+      "score": 12.0,
+      "rsi": 21.0,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Strengthening (Bearish)",
+      "ema20": 0.41,
+      "pctOffHigh": -52.0
+    },
+    {
+      "ticker": "0313.KL",
+      "name": "BWYS",
+      "price": 0.15,
+      "score": 16.0,
+      "rsi": 33.0,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Turned Negative",
+      "ema20": 0.165,
+      "pctOffHigh": -39.0
+    }
+  ],
+  "portfolio": [
+    {
+      "ticker": "1023.KL",
+      "name": "CIMB",
+      "shares": 2000,
+      "avgCost": 6.8,
+      "currentPrice": 7.15,
+      "marketValue": 14300,
+      "pnl": 700,
+      "pnlPct": 5.15
+    },
+    {
+      "ticker": "5227.KL",
+      "name": "IGBREIT",
+      "shares": 5000,
+      "avgCost": 1.95,
+      "currentPrice": 1.88,
+      "marketValue": 9400,
+      "pnl": -350,
+      "pnlPct": -3.59
+    },
+    {
+      "ticker": "5176.KL",
+      "name": "SUNREIT",
+      "shares": 3000,
+      "avgCost": 1.72,
+      "currentPrice": 1.81,
+      "marketValue": 5430,
+      "pnl": 270,
+      "pnlPct": 5.23
+    }
+  ],
+  "trackerSummary": {
+    "totalLogged": 42,
+    "buyCount": 24,
+    "sellCount": 18,
+    "buyTargetHit": 9,
+    "sellTargetHit": 6,
+    "targetPct": 8.0
+  }
+}
