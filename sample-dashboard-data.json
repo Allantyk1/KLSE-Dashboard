@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-12T12:46:18",
+  "generatedAt": "2026-08-12T13:14:56",
   "universeCount": 196,
   "buy": [
     {
@@ -16,7 +16,22 @@
       "entryBbZone": 0.298,
       "targetPrice": 0.42,
       "pctUpsideToTarget": 25.4,
-      "pctOffHigh": -8.0
+      "pctOffHigh": -8.0,
+      "detail": {
+        "ema40": 0.302,
+        "bbLower": 0.298,
+        "bbMid": 0.318,
+        "bbUpper": 0.338,
+        "high52wk": 0.365,
+        "macdLine": 0.0045,
+        "macdSignalLine": 0.0032,
+        "macdHistogram": 0.0013,
+        "volumeRatio": 1.8,
+        "dividendYield": 3.2,
+        "analystCount": 4,
+        "pctVsSma50": 2.1,
+        "pctVsSma200": 5.4
+      }
     },
     {
       "ticker": "0256.KL",
@@ -32,7 +47,22 @@
       "entryBbZone": 0.305,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -3.0
+      "pctOffHigh": -3.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0251.KL",
@@ -48,7 +78,22 @@
       "entryBbZone": 0.295,
       "targetPrice": 0.38,
       "pctUpsideToTarget": 15.2,
-      "pctOffHigh": -3.0
+      "pctOffHigh": -3.0,
+      "detail": {
+        "ema40": 0.302,
+        "bbLower": 0.298,
+        "bbMid": 0.318,
+        "bbUpper": 0.338,
+        "high52wk": 0.365,
+        "macdLine": 0.0045,
+        "macdSignalLine": 0.0032,
+        "macdHistogram": 0.0013,
+        "volumeRatio": 1.8,
+        "dividendYield": 3.2,
+        "analystCount": 4,
+        "pctVsSma50": 2.1,
+        "pctVsSma200": 5.4
+      }
     },
     {
       "ticker": "1155.KL",
@@ -64,7 +109,22 @@
       "entryBbZone": 10.55,
       "targetPrice": 11.5,
       "pctUpsideToTarget": 5.9,
-      "pctOffHigh": -2.0
+      "pctOffHigh": -2.0,
+      "detail": {
+        "ema40": 10.55,
+        "bbLower": 10.3,
+        "bbMid": 10.62,
+        "bbUpper": 10.94,
+        "high52wk": 11.08,
+        "macdLine": 0.021,
+        "macdSignalLine": 0.018,
+        "macdHistogram": 0.003,
+        "volumeRatio": 1.2,
+        "dividendYield": 5.9,
+        "analystCount": 12,
+        "pctVsSma50": 1.5,
+        "pctVsSma200": 3.2
+      }
     }
   ],
   "watch": [
@@ -82,7 +142,22 @@
       "entryBbZone": 0.505,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -5.0
+      "pctOffHigh": -5.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0201.KL",
@@ -98,7 +173,22 @@
       "entryBbZone": 0.32,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -6.0
+      "pctOffHigh": -6.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     }
   ],
   "sell": [
@@ -116,7 +206,22 @@
       "entryBbZone": 0.395,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -52.0
+      "pctOffHigh": -52.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0313.KL",
@@ -132,7 +237,22 @@
       "entryBbZone": 0.158,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -39.0
+      "pctOffHigh": -39.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     }
   ],
   "all": [
@@ -150,7 +270,22 @@
       "entryBbZone": 0.298,
       "targetPrice": 0.42,
       "pctUpsideToTarget": 25.4,
-      "pctOffHigh": -8.0
+      "pctOffHigh": -8.0,
+      "detail": {
+        "ema40": 0.302,
+        "bbLower": 0.298,
+        "bbMid": 0.318,
+        "bbUpper": 0.338,
+        "high52wk": 0.365,
+        "macdLine": 0.0045,
+        "macdSignalLine": 0.0032,
+        "macdHistogram": 0.0013,
+        "volumeRatio": 1.8,
+        "dividendYield": 3.2,
+        "analystCount": 4,
+        "pctVsSma50": 2.1,
+        "pctVsSma200": 5.4
+      }
     },
     {
       "ticker": "0201.KL",
@@ -166,7 +301,22 @@
       "entryBbZone": 0.32,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -6.0
+      "pctOffHigh": -6.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0251.KL",
@@ -182,7 +332,22 @@
       "entryBbZone": 0.295,
       "targetPrice": 0.38,
       "pctUpsideToTarget": 15.2,
-      "pctOffHigh": -3.0
+      "pctOffHigh": -3.0,
+      "detail": {
+        "ema40": 0.302,
+        "bbLower": 0.298,
+        "bbMid": 0.318,
+        "bbUpper": 0.338,
+        "high52wk": 0.365,
+        "macdLine": 0.0045,
+        "macdSignalLine": 0.0032,
+        "macdHistogram": 0.0013,
+        "volumeRatio": 1.8,
+        "dividendYield": 3.2,
+        "analystCount": 4,
+        "pctVsSma50": 2.1,
+        "pctVsSma200": 5.4
+      }
     },
     {
       "ticker": "0256.KL",
@@ -198,7 +363,22 @@
       "entryBbZone": 0.305,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -3.0
+      "pctOffHigh": -3.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0307.KL",
@@ -214,7 +394,22 @@
       "entryBbZone": 0.395,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -52.0
+      "pctOffHigh": -52.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0310.KL",
@@ -230,7 +425,22 @@
       "entryBbZone": 0.505,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -5.0
+      "pctOffHigh": -5.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "0313.KL",
@@ -246,7 +456,22 @@
       "entryBbZone": 0.158,
       "targetPrice": null,
       "pctUpsideToTarget": null,
-      "pctOffHigh": -39.0
+      "pctOffHigh": -39.0,
+      "detail": {
+        "ema40": null,
+        "bbLower": null,
+        "bbMid": null,
+        "bbUpper": null,
+        "high52wk": null,
+        "macdLine": null,
+        "macdSignalLine": null,
+        "macdHistogram": null,
+        "volumeRatio": null,
+        "dividendYield": null,
+        "analystCount": null,
+        "pctVsSma50": null,
+        "pctVsSma200": null
+      }
     },
     {
       "ticker": "1155.KL",
@@ -262,7 +487,22 @@
       "entryBbZone": 10.55,
       "targetPrice": 11.5,
       "pctUpsideToTarget": 5.9,
-      "pctOffHigh": -2.0
+      "pctOffHigh": -2.0,
+      "detail": {
+        "ema40": 10.55,
+        "bbLower": 10.3,
+        "bbMid": 10.62,
+        "bbUpper": 10.94,
+        "high52wk": 11.08,
+        "macdLine": 0.021,
+        "macdSignalLine": 0.018,
+        "macdHistogram": 0.003,
+        "volumeRatio": 1.2,
+        "dividendYield": 5.9,
+        "analystCount": 12,
+        "pctVsSma50": 1.5,
+        "pctVsSma200": 3.2
+      }
     }
   ],
   "portfolio": [
@@ -275,26 +515,6 @@
       "marketValue": 14300,
       "pnl": 700,
       "pnlPct": 5.15
-    },
-    {
-      "ticker": "5227.KL",
-      "name": "IGBREIT",
-      "shares": 5000,
-      "avgCost": 1.95,
-      "currentPrice": 1.88,
-      "marketValue": 9400,
-      "pnl": -350,
-      "pnlPct": -3.59
-    },
-    {
-      "ticker": "5176.KL",
-      "name": "SUNREIT",
-      "shares": 3000,
-      "avgCost": 1.72,
-      "currentPrice": 1.81,
-      "marketValue": 5430,
-      "pnl": 270,
-      "pnlPct": 5.23
     }
   ],
   "trackerSummary": {

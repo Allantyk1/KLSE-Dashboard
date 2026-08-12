@@ -249,6 +249,36 @@
     font-weight:500;
   }
 
+  .card.expandable{ cursor:pointer; }
+  .card.expandable:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .expand-hint{
+    margin-left:auto;
+    color:var(--gold);
+    font-size:0.68rem;
+    opacity:0.8;
+  }
+  .detail-panel{
+    display:none;
+    margin-top:0.6rem;
+    padding-top:0.6rem;
+    border-top:1px dashed var(--border);
+  }
+  .card.open .detail-panel{ display:block; }
+  .card.open .expand-hint{ display:none; }
+  .detail-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.76rem;
+    color:var(--text-muted);
+    padding:0.22rem 0;
+  }
+  .detail-row b{
+    color:var(--text);
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+    font-size:0.74rem;
+  }
+
   .tag{
     padding:0.1rem 0.5rem;
     border-radius:999px;
@@ -353,6 +383,28 @@ function renderTape(data) {
   el.innerHTML = spans.join('') + spans.join('');
 }
 
+function detailRow(label, value) {
+  if (value === null || value === undefined || value === '') return '';
+  return `<div class="detail-row"><span>${label}</span><b>${value}</b></div>`;
+}
+
+function detailPanelHTML(s) {
+  const d = s.detail || {};
+  const rows = [
+    detailRow('EMA20 / EMA40', d.ema40 != null ? `RM ${s.ema20?.toFixed(3) ?? '\u2014'} / RM ${d.ema40.toFixed(3)}` : null),
+    detailRow('Support / Resistance', (d.bbLower != null && d.bbUpper != null) ? `RM ${d.bbLower.toFixed(3)} / RM ${d.bbUpper.toFixed(3)}` : null),
+    detailRow('Middle BB', d.bbMid != null ? `RM ${d.bbMid.toFixed(3)}` : null),
+    detailRow('52W High', d.high52wk != null ? `RM ${d.high52wk.toFixed(3)}` : null),
+    detailRow('MACD Line / Signal', (d.macdLine != null && d.macdSignalLine != null) ? `${d.macdLine.toFixed(4)} / ${d.macdSignalLine.toFixed(4)}` : null),
+    detailRow('MACD Histogram', d.macdHistogram != null ? d.macdHistogram.toFixed(4) : null),
+    detailRow('Volume vs 20d Avg', d.volumeRatio != null ? `${d.volumeRatio}\u00d7` : null),
+    detailRow('Dividend Yield (T4Q)', d.dividendYield != null ? `${d.dividendYield}%` : null),
+    detailRow('Analyst Count', d.analystCount != null ? d.analystCount : null),
+    detailRow('vs SMA50 / SMA200', (d.pctVsSma50 != null && d.pctVsSma200 != null) ? `${d.pctVsSma50 >= 0 ? '+' : ''}${d.pctVsSma50}% / ${d.pctVsSma200 >= 0 ? '+' : ''}${d.pctVsSma200}%` : null),
+  ].filter(Boolean).join('');
+  return `<div class="detail-panel">${rows || '<div class="detail-row"><span>No further detail available</span></div>'}</div>`;
+}
+
 function cardHTML(s, cat) {
   const trendTag = s.histogramTrend && s.histogramTrend.includes('Weakening')
     ? `<span class="tag neu">${s.histogramTrend}</span>`
@@ -373,7 +425,7 @@ function cardHTML(s, cat) {
   const priceRow = entries.length ? `<div class="price-row">${entries.join('')}</div>` : '';
 
   return `
-    <div class="card ${cat}" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}">
+    <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" tabindex="0" role="button" aria-expanded="false">
       <div class="card-top">
         <div>
           <span class="ticker">${s.ticker.replace('.KL','')}</span>
@@ -388,8 +440,10 @@ function cardHTML(s, cat) {
         <span>RSI <b>${s.rsi}</b></span>
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
         ${trendTag}
+        <span class="expand-hint">Tap for more \u25be</span>
       </div>
       ${priceRow}
+      ${detailPanelHTML(s)}
     </div>`;
 }
 
@@ -461,6 +515,21 @@ function render(data) {
         : `<div class="empty"><h2>Nothing here</h2><p>No stocks currently qualify as ${cat.label} this run.</p></div>`;
     }
     mainEl.appendChild(panel);
+  });
+
+  wireCardExpansion();
+}
+
+function wireCardExpansion() {
+  document.querySelectorAll('.card.expandable').forEach(card => {
+    const toggle = () => {
+      const nowOpen = card.classList.toggle('open');
+      card.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+    };
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
   });
 }
 
