@@ -378,8 +378,7 @@ function renderTape(data) {
   const spans = items.map(s => {
     const cls = (data.buy || []).includes(s) ? 'up' : 'down';
     const arrow = cls === 'up' ? '&#9650;' : '&#9660;';
-    const shortName = s.name ? (s.name.length > 14 ? s.name.slice(0, 14) + '\u2026' : s.name) : '';
-    return `<span><b>${s.ticker.replace('.KL','')}</b>${shortName ? shortName + ' ' : ''}RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
+    return `<span><b>${s.ticker.replace('.KL','')}</b>RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
   });
   el.innerHTML = spans.join('') + spans.join('');
 }
@@ -406,14 +405,20 @@ function detailPanelHTML(s) {
   return `<div class="detail-panel">${rows || '<div class="detail-row"><span>No further detail available</span></div>'}</div>`;
 }
 
+function histogramTrendClass(trend) {
+  // Matches the Excel report's color logic exactly:
+  //   green  = momentum building bullish, or just flipped bullish
+  //   amber  = losing steam either direction (the "still X but fading" cases)
+  //   red    = momentum building bearish, or just flipped bearish
+  if (trend === 'Strengthening (Bullish)' || trend === 'Turned Positive') return 'pos';
+  if (trend === 'Weakening (Bullish)' || trend === 'Weakening (Bearish)') return 'neu';
+  if (trend === 'Strengthening (Bearish)' || trend === 'Turned Negative') return 'neg';
+  return null;
+}
+
 function cardHTML(s, cat) {
-  const trendTag = s.histogramTrend && s.histogramTrend.includes('Weakening')
-    ? `<span class="tag neu">${s.histogramTrend}</span>`
-    : s.histogramTrend && s.histogramTrend.includes('Strengthening (Bullish)')
-    ? `<span class="tag pos">${s.histogramTrend}</span>`
-    : s.histogramTrend
-    ? `<span class="tag neg">${s.histogramTrend}</span>`
-    : '';
+  const trendClass = histogramTrendClass(s.histogramTrend);
+  const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
 
   const entries = [];
   if (s.entryEma20) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 EMA20</div><div class="val">RM ${s.entryEma20.toFixed(3)}</div></div>`);
