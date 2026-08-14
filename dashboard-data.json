@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-14T18:33:54",
-  "universeCount": 241,
+  "generatedAt": "2026-08-14T21:43:05",
+  "universeCount": 240,
   "buy": [
     {
       "ticker": "0192.KL",
@@ -3946,37 +3946,6 @@
       }
     },
     {
-      "ticker": "0277.KL",
-      "name": "CLOUDPT",
-      "price": 0.505,
-      "score": 57.6,
-      "rsi": 68.6,
-      "emaTrend": "Bullish",
-      "macdSignal": "Bullish",
-      "histogramTrend": "Weakening (Bullish)",
-      "ema20": 0.469,
-      "entryEma20": 0.469,
-      "entryBbZone": 0.429,
-      "targetPrice": 0.49,
-      "pctUpsideToTarget": -3.0,
-      "pctOffHigh": -41.6,
-      "detail": {
-        "ema40": 0.46,
-        "bbLower": 0.4,
-        "bbMid": 0.459,
-        "bbUpper": 0.517,
-        "high52wk": 0.865,
-        "macdLine": 0.01711,
-        "macdSignalLine": 0.00994,
-        "macdHistogram": 0.00717,
-        "volumeRatio": 0.76,
-        "dividendYield": 3.96,
-        "analystCount": 2,
-        "pctVsSma50": 13.76,
-        "pctVsSma200": -7.28
-      }
-    },
-    {
       "ticker": "0278.KL",
       "name": "EDELTEQ",
       "price": 0.38,
@@ -4019,8 +3988,8 @@
       "ema20": 0.183,
       "entryEma20": 0.183,
       "entryBbZone": 0.176,
-      "targetPrice": null,
-      "pctUpsideToTarget": null,
+      "targetPrice": 0.19,
+      "pctUpsideToTarget": 0.0,
       "pctOffHigh": -60.8,
       "detail": {
         "ema40": 0.186,
@@ -4033,7 +4002,7 @@
         "macdHistogram": 0.00065,
         "volumeRatio": 1.19,
         "dividendYield": 0.0,
-        "analystCount": null,
+        "analystCount": 1,
         "pctVsSma50": 3.32,
         "pctVsSma200": -23.94
       }
@@ -4691,7 +4660,7 @@
     },
     {
       "ticker": "0311.KL",
-      "name": "GOHUB",
+      "name": null,
       "price": 1.19,
       "score": 43.4,
       "rsi": 54.7,
@@ -5683,7 +5652,7 @@
     },
     {
       "ticker": "0375.KL",
-      "name": NaN,
+      "name": "THMY",
       "price": 1.98,
       "score": 46.0,
       "rsi": 61.1,
@@ -5707,7 +5676,7 @@
         "macdHistogram": 0.00531,
         "volumeRatio": 1.42,
         "dividendYield": 0.0,
-        "analystCount": null,
+        "analystCount": 1,
         "pctVsSma50": 10.66,
         "pctVsSma200": 59.43
       }

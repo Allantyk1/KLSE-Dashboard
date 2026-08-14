@@ -439,7 +439,7 @@ function cardHTML(s, cat) {
         </div>
         <div>
           <span class="price">RM ${s.price.toFixed(3)}</span>
-          <span class="score">Score ${s.score}</span>
+          <span class="score">Score ${s.score != null ? s.score : '\u2014'}</span>
         </div>
       </div>
       <div class="card-details">
@@ -580,9 +580,30 @@ function showSampleBanner() {
   document.body.insertBefore(banner, document.body.firstChild);
 }
 
+function showRenderErrorBanner(err) {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:var(--sell-dim);color:var(--sell);text-align:center;font-size:0.76rem;padding:0.6rem;border-bottom:1px solid var(--border);';
+  banner.innerHTML = `Your real data loaded, but the page hit an error displaying it.<br>` +
+    `<span class="mono" style="font-size:0.7rem;opacity:0.85;">${(err && err.message) ? err.message : err}</span><br>` +
+    `Screenshot this banner and send it back \u2014 this is a bug in the dashboard's code, not your data.`;
+  document.body.insertBefore(banner, document.body.firstChild);
+}
+
 fetch('dashboard-data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
-  .then(render)
+  .then(data => {
+    // Real data fetched and parsed successfully -- from here on, any error
+    // is a genuine bug in render(), NOT a missing-file situation. Handling
+    // it in its own try/catch (rather than letting it bubble into the
+    // .catch() below) means a real bug shows an honest error message
+    // instead of silently masquerading as "no data yet, here's the sample".
+    try {
+      render(data);
+    } catch (err) {
+      console.error('Render failed on real data:', err);
+      showRenderErrorBanner(err);
+    }
+  })
   .catch(() => {
     // Real data isn't there yet -- fall back to the bundled sample so the
     // dashboard is previewable immediately, rather than a blank/empty page.
