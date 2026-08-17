@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+// Set the theme attribute before first paint (from a saved choice, else the
+// device's own light/dark setting) so there's no flash of the wrong theme.
+(function(){
+  try {
+    var saved = localStorage.getItem('klse-theme');
+    var theme = saved || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KLSE Screener</title>
@@ -12,7 +25,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root, :root[data-theme="dark"]{
+    color-scheme:dark;
     --bg:#0B0F14;
     --surface:#131A22;
     --surface-raised:#1A222C;
@@ -41,6 +55,35 @@
     --chart-ref:#556170;
   }
 
+  /* Light mode -- same roles, light-mode dataviz steps for the chart series
+     (blue/orange/aqua/violet), re-validated with the CVD-safety validator
+     against a white chart surface rather than just inverted. */
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --bg:#F7F8FA;
+    --surface:#FFFFFF;
+    --surface-raised:#F1F3F6;
+    --border:#DDE1E6;
+    --text:#14181F;
+    --text-muted:#667085;
+    --gold:#9C7A25;
+    --buy:#1A8754;
+    --buy-dim:#E3F5EC;
+    --watch:#B15C00;
+    --watch-dim:#FBEDDA;
+    --sell:#C4314B;
+    --sell-dim:#FBE7EA;
+    --radius:10px;
+
+    --chart-macd:#2A78D6;
+    --chart-signal:#EB6834;
+    --chart-ema20:#1BAF7A;
+    --chart-ema40:#4A3AA7;
+    --chart-price:#14181F;
+    --chart-grid:#E2E6EB;
+    --chart-ref:#98A2B3;
+  }
+
   *{box-sizing:border-box; margin:0; padding:0;}
 
   body{
@@ -50,6 +93,7 @@
     -webkit-font-smoothing:antialiased;
     padding-bottom:2rem;
     min-height:100vh;
+    transition:background-color 0.15s, color 0.15s;
   }
 
   h1,h2,.display{
@@ -95,11 +139,39 @@
     max-width:640px;
     margin:0 auto;
   }
+  .header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:0.5rem;
+  }
   header h1{
     font-size:1.5rem;
     font-weight:700;
   }
   header h1 .accent{ color:var(--gold); }
+  .theme-toggle{
+    flex-shrink:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+    border-radius:999px;
+    width:2.5rem;
+    height:2.5rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle:active{ background:var(--surface-raised); }
+  .theme-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .theme-toggle svg{ width:1.15rem; height:1.15rem; }
+  .theme-toggle.dm-theme-toggle{ width:2.75rem; height:2.75rem; flex-shrink:0; }
+  .theme-toggle .icon-moon{ display:block; }
+  .theme-toggle .icon-sun{ display:none; }
+  :root[data-theme="light"] .theme-toggle .icon-moon{ display:none; }
+  :root[data-theme="light"] .theme-toggle .icon-sun{ display:block; }
   .meta{
     color:var(--text-muted);
     font-size:0.82rem;
@@ -361,21 +433,37 @@
     padding:0.75rem 1rem;
     z-index:2;
   }
-  .dm-close{
+  .dm-header-row{
+    display:flex;
+    align-items:flex-start;
+    gap:0.6rem;
+  }
+  .dm-back{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:0.3em;
     background:var(--surface);
     border:1px solid var(--border);
-    color:var(--text-muted);
+    color:var(--text);
     border-radius:999px;
-    width:2rem;
-    height:2rem;
-    font-size:1rem;
-    line-height:1;
+    min-width:2.75rem;
+    height:2.75rem;
+    padding:0 0.9rem 0 0.7rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.82rem;
+    font-weight:600;
     cursor:pointer;
-    float:right;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
   }
-  .dm-close:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .dm-back:active{ background:var(--surface-raised); }
+  .dm-back:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .dm-back svg{ width:1.1em; height:1.1em; flex-shrink:0; }
   .dm-top{
     display:flex;
+    flex:1;
+    min-width:0;
     justify-content:space-between;
     align-items:flex-start;
     gap:0.5rem;
@@ -482,7 +570,13 @@
 <div class="tape-wrap"><div class="tape mono" id="tape"></div></div>
 
 <header>
-  <h1>KLSE <span class="accent">Screener</span></h1>
+  <div class="header-top">
+    <h1>KLSE <span class="accent">Screener</span></h1>
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    </button>
+  </div>
   <div class="meta"><span class="dot"></span><span id="metaText">Loading&hellip;</span></div>
 </header>
 
@@ -502,21 +596,30 @@
 
 <div class="detail-modal" id="detailModal" hidden role="dialog" aria-modal="true" aria-label="Stock technical detail">
   <div class="dm-header">
-    <button class="dm-close" id="dmClose" aria-label="Close">&times;</button>
-    <div class="dm-top">
-      <div>
-        <div class="dm-ticker mono" id="dmTicker"></div>
-        <div class="dm-name" id="dmName"></div>
-        <div class="dm-sub" id="dmSub"></div>
+    <div class="dm-header-row">
+      <button class="dm-back" id="dmClose" aria-label="Back to dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Back
+      </button>
+      <div class="dm-top">
+        <div>
+          <div class="dm-ticker mono" id="dmTicker"></div>
+          <div class="dm-name" id="dmName"></div>
+          <div class="dm-sub" id="dmSub"></div>
+        </div>
+        <div>
+          <div class="dm-price mono" id="dmPrice"></div>
+          <div class="dm-tag" id="dmTag"></div>
+        </div>
       </div>
-      <div>
-        <div class="dm-price mono" id="dmPrice"></div>
-        <div class="dm-tag" id="dmTag"></div>
-      </div>
+      <button class="theme-toggle dm-theme-toggle" aria-label="Switch to light mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
     </div>
   </div>
   <div class="dm-body">
-    <p class="dm-footer-hint" style="padding-top:0;">Tap for full technical detail</p>
+    <p class="dm-footer-hint" style="padding-top:0;">Tap anywhere outside a chart to go back</p>
     <div class="dm-stat-row" id="dmStatRow"></div>
 
     <div class="chart-block">
@@ -544,7 +647,7 @@
     </div>
 
     <div class="dm-detail-table" id="dmDetailTable"></div>
-    <p class="dm-footer-hint">Tap for full technical detail</p>
+    <p class="dm-footer-hint">Tap anywhere outside a chart to go back</p>
   </div>
 </div>
 
@@ -898,7 +1001,12 @@ function setChartAvailability(name, available, message) {
 // One shared pointer handler per canvas: finds the nearest bar, draws a
 // thin crosshair, and positions a small tooltip with that date's values.
 function attachCrosshair(canvas, tooltipEl, dates, redraw, getRows) {
-  const wrap = canvas.parentElement;
+  // draw*Chart() (and therefore this) can be called again on window resize
+  // or a theme toggle to redraw with fresh colors -- strip any listeners a
+  // previous call attached to this same canvas first, or they'd stack and
+  // each pointer move would fire the handler multiple times.
+  if (canvas._crosshairCleanup) canvas._crosshairCleanup();
+
   function handle(clientX) {
     const rect = canvas.getBoundingClientRect();
     const relX = clientX - rect.left;
@@ -915,11 +1023,24 @@ function attachCrosshair(canvas, tooltipEl, dates, redraw, getRows) {
     const x = xAt(idx, n, w);
     tooltipEl.style.left = Math.min(Math.max(x, 40), w - 40) + 'px';
   }
-  canvas.addEventListener('mousemove', e => handle(e.clientX));
-  canvas.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; redraw(null); });
-  canvas.addEventListener('touchstart', e => { handle(e.touches[0].clientX); }, { passive: true });
-  canvas.addEventListener('touchmove', e => { handle(e.touches[0].clientX); }, { passive: true });
-  canvas.addEventListener('touchend', () => { tooltipEl.style.display = 'none'; redraw(null); });
+  const onMouseMove = e => handle(e.clientX);
+  const onMouseLeave = () => { tooltipEl.style.display = 'none'; redraw(null); };
+  const onTouchStart = e => { handle(e.touches[0].clientX); };
+  const onTouchMove = e => { handle(e.touches[0].clientX); };
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mouseleave', onMouseLeave);
+  canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+  canvas.addEventListener('touchmove', onTouchMove, { passive: true });
+  const onTouchEnd = () => { tooltipEl.style.display = 'none'; redraw(null); };
+  canvas.addEventListener('touchend', onTouchEnd);
+
+  canvas._crosshairCleanup = () => {
+    canvas.removeEventListener('mousemove', onMouseMove);
+    canvas.removeEventListener('mouseleave', onMouseLeave);
+    canvas.removeEventListener('touchstart', onTouchStart);
+    canvas.removeEventListener('touchmove', onTouchMove);
+    canvas.removeEventListener('touchend', onTouchEnd);
+  };
 }
 
 function drawCrosshairLine(ctx, idx, n, w, h) {
@@ -1110,6 +1231,17 @@ async function openDetailModal(tickerLower) {
   document.body.style.overflow = 'hidden';
   modal.scrollTop = 0;
 
+  // Register this as a step in the browser's history so the phone's
+  // hardware/gesture back action closes the detail view instead of
+  // leaving the page entirely (or doing nothing).
+  const hash = '#' + s.ticker.replace('.KL', '');
+  if (!modalHistoryPushed) {
+    history.pushState({ klseDetail: true }, '', hash);
+    modalHistoryPushed = true;
+  } else {
+    history.replaceState({ klseDetail: true }, '', hash);
+  }
+
   ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
   const series = await loadChartHistory();
   const hist = series[s.ticker];
@@ -1127,28 +1259,96 @@ async function openDetailModal(tickerLower) {
   }
 }
 
-function closeDetailModal() {
+let modalHistoryPushed = false;
+
+// fromPopstate=true means the browser already popped the history entry
+// (back button/gesture) -- just hide the UI. fromPopstate=false (button
+// click / Escape) means WE need to pop it ourselves via history.back(),
+// which then triggers the popstate handler below to actually hide it --
+// this keeps forward/back navigation consistent either way it's closed.
+function closeDetailModal(fromPopstate) {
   const modal = document.getElementById('detailModal');
+  if (modal.hidden) return;
   modal.hidden = true;
   document.body.style.overflow = '';
+  if (modalHistoryPushed) {
+    modalHistoryPushed = false;
+    if (fromPopstate) {
+      history.replaceState(null, '', location.pathname + location.search);
+    } else {
+      history.back();
+    }
+  }
 }
 
-document.getElementById('dmClose').addEventListener('click', closeDetailModal);
+document.getElementById('dmClose').addEventListener('click', () => closeDetailModal(false));
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !document.getElementById('detailModal').hidden) closeDetailModal();
+  if (e.key === 'Escape' && !document.getElementById('detailModal').hidden) closeDetailModal(false);
 });
+window.addEventListener('popstate', () => closeDetailModal(true));
+
+// Tap anywhere in the detail view that ISN'T a chart (crosshair inspection),
+// a legend dot (series toggle), or a button also closes it -- a large,
+// forgiving close target without swallowing the taps that do something.
+document.getElementById('detailModal').addEventListener('click', e => {
+  if (e.target.closest('canvas, .legend-item, button, a')) return;
+  closeDetailModal(false);
+});
+
+function currentModalStock() {
+  const modal = document.getElementById('detailModal');
+  if (modal.hidden) return null;
+  const tickerText = document.getElementById('dmTicker').textContent;
+  return [...stocksByTicker.values()].find(x => x.ticker.replace('.KL', '') === tickerText) || null;
+}
+
+// Redraws the four charts in place (fresh colors, fresh canvas size) without
+// touching scroll position or re-fetching -- used by both the resize handler
+// and the theme toggle, neither of which should jump the user back to the top.
+async function redrawOpenModalCharts() {
+  const s = currentModalStock();
+  if (!s) return;
+  const series = await loadChartHistory();
+  const hist = series[s.ticker];
+  if (!hist) return;
+  drawMacdChart(hist);
+  drawPriceChart(s, hist);
+  drawRsiChart(hist);
+  drawVolumeChart(hist);
+}
 
 let resizeTimer = null;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    const modal = document.getElementById('detailModal');
-    if (modal.hidden) return;
-    const tickerText = document.getElementById('dmTicker').textContent;
-    const s = [...stocksByTicker.values()].find(x => x.ticker.replace('.KL', '') === tickerText);
-    if (s) openDetailModal(s.ticker.toLowerCase());
-  }, 150);
+  resizeTimer = setTimeout(redrawOpenModalCharts, 150);
 });
+
+// --- Light / dark theme toggle -------------------------------------------
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+
+function applyThemeColor(theme) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#F7F8FA' : '#0B0F14');
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  applyThemeColor(theme);
+  // Two toggle buttons exist (page header + inside the detail view, since
+  // the detail view covers the header entirely) -- keep both in sync.
+  document.querySelectorAll('.theme-toggle').forEach(btn =>
+    btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'));
+  try { localStorage.setItem('klse-theme', theme); } catch (e) { /* private mode etc -- non-fatal */ }
+  // Chart colors are read live from CSS custom properties at draw time, so
+  // redraw whatever's open now to pick up the new theme immediately.
+  redrawOpenModalCharts();
+}
+
+applyThemeColor(currentTheme());
+document.querySelectorAll('.theme-toggle').forEach(btn =>
+  btn.addEventListener('click', () => setTheme(currentTheme() === 'light' ? 'dark' : 'light')));
 
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
