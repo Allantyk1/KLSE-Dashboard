@@ -38,7 +38,8 @@ klse_screener/                       <- your existing folder
     ├── .gitignore
     ├── sample-dashboard-data.json
     ├── DEPLOYMENT.md
-    └── dashboard-data.json          <- written here automatically each run
+    ├── dashboard-data.json          <- written here automatically each run (by generate_dashboard_data.py)
+    └── chart-history.json           <- written here automatically each run (by klse_screener.py) -- powers the MACD/Price-EMA/RSI/Volume charts on each stock's detail view
 ```
 
 ## Part 1 — GitHub
@@ -120,16 +121,21 @@ python generate_excel_report.py
 python build_portfolio_tracker.py
 python generate_dashboard_data.py
 ```
-(The last one is new — it reads your screener CSV and portfolio xlsx, and writes
-`dashboard/dashboard-data.json` automatically.)
+(`klse_screener.py` itself now also writes `dashboard/chart-history.json` -- a trailing
+~90-trading-day window of price/EMA/MACD/RSI/volume per ticker, used by the tap-to-expand
+detail charts. `generate_dashboard_data.py` reads your screener CSV and portfolio xlsx and
+writes `dashboard/dashboard-data.json`.)
 
-Then move into the `dashboard/` subfolder to push:
+Then move into the `dashboard/` subfolder to push **both** generated files:
 ```
 cd dashboard
-git add dashboard-data.json
+git add dashboard-data.json chart-history.json
 git commit -m "Update data"
 git push
 ```
+(`chart-history.json` only changes when you rerun `klse_screener.py` -- on a day you skip
+straight to `generate_dashboard_data.py` there's nothing new to add for it, `git add` just
+no-ops on that file.)
 Cloudflare Pages picks up the push and redeploys within a minute or two — refresh the page on
 your phone and the new numbers are there.
 
