@@ -825,7 +825,11 @@ function render(data) {
     if (cat.key === 'portfolio') {
       panel.innerHTML = portfolioHTML(data.portfolio);
     } else {
-      const rows = data[cat.key] || [];
+      let rows = data[cat.key] || [];
+      if (cat.key === 'all') {
+        // Highest score (most favorable to rise further) first.
+        rows = [...rows].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity));
+      }
       panel.innerHTML = rows.length
         ? rows.map(s => cardHTML(s, cat.key)).join('')
         : `<div class="empty"><h2>Nothing here</h2><p>No stocks currently qualify as ${cat.label} this run.</p></div>`;
