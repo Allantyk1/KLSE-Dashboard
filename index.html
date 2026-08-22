@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
 <script>
-  // Runs before first paint to avoid a flash of the wrong theme: check for a
-  // saved preference first, otherwise fall back to the device's system
-  // preference, defaulting to dark if neither is set. Wrapped in try/catch
-  // since some private-browsing modes block localStorage entirely -- a
-  // thrown error here would otherwise break the whole page before it even
-  // starts rendering.
+// Set the theme attribute before first paint (from a saved choice, else the
+// device's own light/dark setting) so there's no flash of the wrong theme.
+(function(){
   try {
     var saved = localStorage.getItem('klse-theme');
-    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
-  } catch (e) { /* localStorage blocked -- just use the default dark theme */ }
+    var theme = saved || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
 </script>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KLSE Screener</title>
 <link rel="manifest" href="manifest.json">
@@ -25,7 +25,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root, :root[data-theme="dark"]{
+    color-scheme:dark;
     --bg:#0B0F14;
     --surface:#131A22;
     --surface-raised:#1A222C;
@@ -40,25 +41,48 @@
     --sell:#E5484D;
     --sell-dim:#4A1F21;
     --radius:10px;
+
+    /* Chart series colors -- validated categorical set (dataviz skill:
+       blue/orange/aqua/violet dark-mode steps), kept separate from the
+       buy/watch/sell status colors so a line's identity never collides
+       with a card's bullish/bearish tag. */
+    --chart-macd:#3987E5;
+    --chart-signal:#D95926;
+    --chart-ema20:#199E70;
+    --chart-ema40:#9085E9;
+    --chart-price:#E8EDF2;
+    --chart-grid:#232C36;
+    --chart-ref:#556170;
   }
 
-  html[data-theme="light"]{
+  /* Light mode -- same roles, light-mode dataviz steps for the chart series
+     (blue/orange/aqua/violet), re-validated with the CVD-safety validator
+     against a white chart surface rather than just inverted. */
+  :root[data-theme="light"]{
+    color-scheme:light;
     --bg:#F7F8FA;
     --surface:#FFFFFF;
-    --surface-raised:#F0F2F5;
-    --border:#E3E6EA;
-    --text:#1E2A3A;
-    --text-muted:#6B7684;
-    --gold:#9C7A1E;
-    --buy:#1B7F4C;
-    --buy-dim:#DCF3E5;
-    --watch:#A66A0A;
-    --watch-dim:#FBEED9;
-    --sell:#B23B3B;
-    --sell-dim:#FBE3E3;
-  }
+    --surface-raised:#F1F3F6;
+    --border:#DDE1E6;
+    --text:#14181F;
+    --text-muted:#667085;
+    --gold:#9C7A25;
+    --buy:#1A8754;
+    --buy-dim:#E3F5EC;
+    --watch:#B15C00;
+    --watch-dim:#FBEDDA;
+    --sell:#C4314B;
+    --sell-dim:#FBE7EA;
+    --radius:10px;
 
-  body{ transition:background 0.15s, color 0.15s; }
+    --chart-macd:#2A78D6;
+    --chart-signal:#EB6834;
+    --chart-ema20:#1BAF7A;
+    --chart-ema40:#4A3AA7;
+    --chart-price:#14181F;
+    --chart-grid:#E2E6EB;
+    --chart-ref:#98A2B3;
+  }
 
   *{box-sizing:border-box; margin:0; padding:0;}
 
@@ -69,6 +93,7 @@
     -webkit-font-smoothing:antialiased;
     padding-bottom:2rem;
     min-height:100vh;
+    transition:background-color 0.15s, color 0.15s;
   }
 
   h1,h2,.display{
@@ -116,8 +141,9 @@
   }
   .header-top{
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:flex-start;
+    gap:0.5rem;
   }
   header h1{
     font-size:1.5rem;
@@ -125,21 +151,27 @@
   }
   header h1 .accent{ color:var(--gold); }
   .theme-toggle{
+    flex-shrink:0;
     background:var(--surface);
     border:1px solid var(--border);
-    color:var(--text);
-    width:38px;
-    height:38px;
+    color:var(--text-muted);
     border-radius:999px;
-    font-size:1.1rem;
-    cursor:pointer;
+    width:2.5rem;
+    height:2.5rem;
     display:flex;
     align-items:center;
     justify-content:center;
-    transition:background 0.15s, border-color 0.15s;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
   }
-  .theme-toggle:hover{ border-color:var(--gold); }
+  .theme-toggle:active{ background:var(--surface-raised); }
   .theme-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .theme-toggle svg{ width:1.15rem; height:1.15rem; }
+  .theme-toggle.dm-theme-toggle{ width:2.75rem; height:2.75rem; flex-shrink:0; }
+  .theme-toggle .icon-moon{ display:block; }
+  .theme-toggle .icon-sun{ display:none; }
+  :root[data-theme="light"] .theme-toggle .icon-moon{ display:none; }
+  :root[data-theme="light"] .theme-toggle .icon-sun{ display:block; }
   .meta{
     color:var(--text-muted);
     font-size:0.82rem;
@@ -207,6 +239,7 @@
   .tab[data-cat="buy"].active{ background:var(--buy-dim); border-color:var(--buy); color:var(--buy); }
   .tab[data-cat="watch"].active{ background:var(--watch-dim); border-color:var(--watch); color:var(--watch); }
   .tab[data-cat="sell"].active{ background:var(--sell-dim); border-color:var(--sell); color:var(--sell); }
+  .tab[data-cat="all"].active{ background:var(--surface-raised); border-color:var(--text-muted); color:var(--text); }
   .tab[data-cat="portfolio"].active{ background:var(--surface-raised); border-color:var(--gold); color:var(--gold); }
 
   main{
@@ -303,20 +336,12 @@
 
   .card.expandable{ cursor:pointer; }
   .card.expandable:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
-  .expand-hint{
-    margin-left:auto;
-    color:var(--gold);
-    font-size:0.68rem;
-    opacity:0.8;
-  }
   .detail-panel{
-    display:none;
+    display:block;
     margin-top:0.6rem;
     padding-top:0.6rem;
     border-top:1px dashed var(--border);
   }
-  .card.open .detail-panel{ display:block; }
-  .card.open .expand-hint{ display:none; }
   .detail-row{
     display:flex;
     justify-content:space-between;
@@ -379,6 +404,166 @@
     font-size:0.72rem;
     text-align:center;
   }
+
+  /* Tap-for-detail hint on the card itself */
+  .detail-cta{
+    display:block;
+    margin-top:0.5rem;
+    padding-top:0.5rem;
+    border-top:1px dashed var(--border);
+    color:var(--gold);
+    font-size:0.72rem;
+    text-align:center;
+  }
+
+  /* ---------------- Full technical detail modal ---------------- */
+  .detail-modal{
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    z-index:50;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .detail-modal[hidden]{ display:none; }
+  .dm-header{
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+    padding:0.75rem 1rem;
+    z-index:2;
+  }
+  .dm-header-row{
+    display:flex;
+    align-items:flex-start;
+    gap:0.6rem;
+  }
+  .dm-back{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:0.3em;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:999px;
+    min-width:2.75rem;
+    height:2.75rem;
+    padding:0 0.9rem 0 0.7rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.82rem;
+    font-weight:600;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  .dm-back:active{ background:var(--surface-raised); }
+  .dm-back:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .dm-back svg{ width:1.1em; height:1.1em; flex-shrink:0; }
+  .dm-top{
+    display:flex;
+    flex:1;
+    min-width:0;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:0.5rem;
+  }
+  .dm-ticker{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size:1.3rem;
+  }
+  .dm-name{ color:var(--text-muted); font-size:0.82rem; margin-top:0.1rem; }
+  .dm-sub{ color:var(--text-muted); font-size:0.78rem; margin-top:0.3rem; }
+  .dm-price{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:700;
+    font-size:1.3rem;
+    text-align:right;
+  }
+  .dm-tag{ margin-top:0.35rem; text-align:right; }
+
+  .dm-body{ max-width:640px; margin:0 auto; padding:0.85rem 1rem 2rem; }
+
+  .dm-stat-row{ display:flex; gap:0.5rem; margin-bottom:1rem; }
+  .dm-stat-row .price-stat{ flex:1; }
+
+  .chart-block{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:0.7rem 0.7rem 0.5rem;
+    margin-bottom:0.75rem;
+  }
+  .chart-block h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:0.4rem;
+  }
+  .chart-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.15rem 0.8rem;
+    margin-bottom:0.3rem;
+  }
+  .legend-item{
+    display:inline-flex;
+    align-items:center;
+    gap:0.35em;
+    font-size:0.72rem;
+    color:var(--text-muted);
+    background:none;
+    border:none;
+    padding:0.15rem 0;
+    cursor:pointer;
+    font-family:'Inter', sans-serif;
+  }
+  .legend-item:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+  .legend-item .dot{
+    width:8px; height:8px; border-radius:50%;
+    display:inline-block;
+    flex-shrink:0;
+  }
+  .legend-item.off{ opacity:0.35; text-decoration:line-through; }
+  .chart-canvas-wrap{ position:relative; width:100%; }
+  .chart-canvas-wrap canvas{ display:block; width:100%; touch-action:pan-y; }
+  .chart-canvas-wrap canvas[hidden]{ display:none; }
+  .chart-tooltip{
+    position:absolute;
+    top:0; left:0;
+    transform:translate(-50%,-100%);
+    background:var(--surface-raised);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:0.3rem 0.5rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    white-space:nowrap;
+    pointer-events:none;
+    display:none;
+    z-index:3;
+  }
+  .chart-tooltip .tt-date{ color:var(--text-muted); margin-bottom:0.15rem; }
+  .chart-tooltip .tt-row{ display:flex; gap:0.5em; justify-content:space-between; }
+  .chart-empty{
+    color:var(--text-muted);
+    font-size:0.78rem;
+    text-align:center;
+    padding:1.5rem 0.5rem;
+  }
+
+  .dm-detail-table{ margin-top:0.5rem; }
+  .dm-footer-hint{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.72rem;
+    padding:1rem 0 0.5rem;
+  }
 </style>
 </head>
 <body>
@@ -388,7 +573,10 @@
 <header>
   <div class="header-top">
     <h1>KLSE <span class="accent">Screener</span></h1>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle light/dark theme" title="Toggle light/dark theme">&#9789;</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    </button>
   </div>
   <div class="meta"><span class="dot"></span><span id="metaText">Loading&hellip;</span></div>
 </header>
@@ -406,6 +594,63 @@
 </main>
 
 <footer>Generated by your KLSE screener &middot; data refreshes when you push a new <code class="mono">dashboard-data.json</code></footer>
+
+<div class="detail-modal" id="detailModal" hidden role="dialog" aria-modal="true" aria-label="Stock technical detail">
+  <div class="dm-header">
+    <div class="dm-header-row">
+      <button class="dm-back" id="dmClose" aria-label="Back to dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Back
+      </button>
+      <div class="dm-top">
+        <div>
+          <div class="dm-ticker mono" id="dmTicker"></div>
+          <div class="dm-name" id="dmName"></div>
+          <div class="dm-sub" id="dmSub"></div>
+        </div>
+        <div>
+          <div class="dm-price mono" id="dmPrice"></div>
+          <div class="dm-tag" id="dmTag"></div>
+        </div>
+      </div>
+      <button class="theme-toggle dm-theme-toggle" aria-label="Switch to light mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="dm-body">
+    <p class="dm-footer-hint" style="padding-top:0;">Tap anywhere outside a chart to go back</p>
+    <div class="dm-stat-row" id="dmStatRow"></div>
+
+    <div class="chart-block">
+      <h3>MACD</h3>
+      <div class="chart-legend" id="legendMacd"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartMacd" height="150"></canvas><div class="chart-tooltip" id="ttMacd"></div><div class="chart-empty" id="emptyMacd" hidden></div></div>
+    </div>
+
+    <div class="chart-block">
+      <h3>Price / EMA</h3>
+      <div class="chart-legend" id="legendPrice"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartPrice" height="150"></canvas><div class="chart-tooltip" id="ttPrice"></div><div class="chart-empty" id="emptyPrice" hidden></div></div>
+    </div>
+
+    <div class="chart-block">
+      <h3>RSI</h3>
+      <div class="chart-legend" id="legendRsi"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartRsi" height="110"></canvas><div class="chart-tooltip" id="ttRsi"></div><div class="chart-empty" id="emptyRsi" hidden></div></div>
+    </div>
+
+    <div class="chart-block">
+      <h3>Volume</h3>
+      <div class="chart-legend" id="legendVolume"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartVolume" height="110"></canvas><div class="chart-tooltip" id="ttVolume"></div><div class="chart-empty" id="emptyVolume" hidden></div></div>
+    </div>
+
+    <div class="dm-detail-table" id="dmDetailTable"></div>
+    <p class="dm-footer-hint">Tap anywhere outside a chart to go back</p>
+  </div>
+</div>
 
 <script>
 const CATEGORIES = [
@@ -470,10 +715,7 @@ function histogramTrendClass(trend) {
   return null;
 }
 
-function cardHTML(s, cat) {
-  const trendClass = histogramTrendClass(s.histogramTrend);
-  const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
-
+function priceStatRowHTML(s) {
   const entries = [];
   if (s.entryEma20) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 EMA20</div><div class="val">RM ${s.entryEma20.toFixed(3)}</div></div>`);
   if (s.entryBbZone) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 BB Zone</div><div class="val">RM ${s.entryBbZone.toFixed(3)}</div></div>`);
@@ -482,6 +724,13 @@ function cardHTML(s, cat) {
     const upsideSign = (s.pctUpsideToTarget || 0) >= 0 ? '+' : '';
     entries.push(`<div class="price-stat target"><div class="label">Target Price</div><div class="val">RM ${s.targetPrice.toFixed(3)}<span class="upside" style="color:${upsideColor}">${upsideSign}${s.pctUpsideToTarget}%</span></div></div>`);
   }
+  return entries;
+}
+
+function cardHTML(s, cat) {
+  const trendClass = histogramTrendClass(s.histogramTrend);
+  const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
+  const entries = priceStatRowHTML(s);
   const priceRow = entries.length ? `<div class="price-row">${entries.join('')}</div>` : '';
 
   return `
@@ -500,10 +749,9 @@ function cardHTML(s, cat) {
         <span>RSI <b>${s.rsi}</b></span>
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
         ${trendTag}
-        <span class="expand-hint">Tap for more \u25be</span>
       </div>
       ${priceRow}
-      ${detailPanelHTML(s)}
+      <span class="detail-cta">Tap for full technical detail \u25be</span>
     </div>`;
 }
 
@@ -542,11 +790,18 @@ function portfolioHTML(rows) {
   return summary + cards;
 }
 
+const stocksByTicker = new Map();
+
 function render(data) {
   document.getElementById('metaText').textContent =
     `${data.universeCount} stocks screened \u00b7 Updated ${fmtTimestamp(data.generatedAt)}`;
 
   renderTape(data);
+
+  stocksByTicker.clear();
+  ['buy', 'watch', 'sell', 'all'].forEach(key => {
+    (data[key] || []).forEach(s => stocksByTicker.set(s.ticker.toLowerCase(), s));
+  });
 
   const tabsEl = document.getElementById('tabs');
   const mainEl = document.getElementById('main');
@@ -569,7 +824,11 @@ function render(data) {
     if (cat.key === 'portfolio') {
       panel.innerHTML = portfolioHTML(data.portfolio);
     } else {
-      const rows = data[cat.key] || [];
+      let rows = data[cat.key] || [];
+      if (cat.key === 'all') {
+        // Highest score (most favorable to rise further) first.
+        rows = [...rows].sort((a, b) => (b.score ?? -Infinity) - (a.score ?? -Infinity));
+      }
       panel.innerHTML = rows.length
         ? rows.map(s => cardHTML(s, cat.key)).join('')
         : `<div class="empty"><h2>Nothing here</h2><p>No stocks currently qualify as ${cat.label} this run.</p></div>`;
@@ -582,16 +841,518 @@ function render(data) {
 
 function wireCardExpansion() {
   document.querySelectorAll('.card.expandable').forEach(card => {
-    const toggle = () => {
-      const nowOpen = card.classList.toggle('open');
-      card.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
-    };
-    card.addEventListener('click', toggle);
+    const open = () => openDetailModal(card.dataset.ticker);
+    card.addEventListener('click', open);
     card.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
     });
   });
 }
+
+/* =========================================================================
+   Technical detail charts (MACD / Price-EMA / RSI / Volume)
+   Vanilla canvas, no external chart library -- fetches chart-history.json
+   once (lazily, on first modal open) and caches it for the session.
+   ========================================================================= */
+
+let chartHistoryPromise = null;
+function loadChartHistory() {
+  if (!chartHistoryPromise) {
+    chartHistoryPromise = fetch('chart-history.json?t=' + Date.now())
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+      .then(d => d.series || {})
+      .catch(() => fetch('chart-history.sample.json?t=' + Date.now())
+        .then(r => { if (!r.ok) throw new Error('no sample either'); return r.json(); })
+        .then(d => d.series || {})
+        .catch(() => ({})));
+  }
+  return chartHistoryPromise;
+}
+
+// Per-series show/hide, toggled via the legend dots -- persists across
+// stocks for the session so a hidden line stays hidden as you browse.
+const chartVisibility = {
+  macd: { macdLine: true, macdSignal: true, macdHistogram: true },
+  price: { close: true, ema20: true, ema40: true, support: true, resistance: true, middleBb: true },
+  rsi: { rsi: true },
+  volume: { volume: true, volumeSma20: true },
+};
+
+function fitCanvas(canvas, cssHeight) {
+  const cssW = Math.max(1, canvas.parentElement.clientWidth);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(cssW * dpr);
+  canvas.height = Math.round(cssHeight * dpr);
+  canvas.style.height = cssHeight + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cssW, cssHeight);
+  return { ctx, w: cssW, h: cssHeight };
+}
+
+function niceMinMax(valueArrays, padFrac) {
+  padFrac = padFrac == null ? 0.1 : padFrac;
+  const nums = [];
+  valueArrays.forEach(arr => (arr || []).forEach(v => { if (v != null && isFinite(v)) nums.push(v); }));
+  if (!nums.length) return [0, 1];
+  let min = Math.min(...nums), max = Math.max(...nums);
+  if (min === max) { min -= Math.abs(min) * 0.1 || 1; max += Math.abs(max) * 0.1 || 1; }
+  const pad = (max - min) * padFrac;
+  return [min - pad, max + pad];
+}
+
+function xAt(i, n, w, pad) {
+  pad = pad == null ? 6 : pad;
+  if (n <= 1) return pad;
+  return pad + (i / (n - 1)) * (w - pad * 2);
+}
+
+function yAt(v, min, max, h, pad) {
+  pad = pad == null ? 8 : pad;
+  const t = (v - min) / ((max - min) || 1);
+  return h - pad - t * (h - pad * 2);
+}
+
+function drawGrid(ctx, w, h) {
+  ctx.strokeStyle = getCssVar('--chart-grid');
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 0; i <= 2; i++) {
+    const y = (h / 2) * i;
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(w, y + 0.5);
+  }
+  ctx.stroke();
+}
+
+function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth) {
+  const n = values.length;
+  let started = false;
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const v = values[i];
+    if (v == null) { started = false; continue; }
+    const x = xAt(i, n, w), y = yAt(v, min, max, h);
+    if (!started) { ctx.moveTo(x, y); started = true; } else { ctx.lineTo(x, y); }
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth || 1.6;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+function drawHRef(ctx, value, min, max, w, h, color, dash) {
+  if (value == null) return;
+  const y = yAt(value, min, max, h);
+  ctx.save();
+  ctx.setLineDash(dash || [4, 3]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, y);
+  ctx.lineTo(w, y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBarSeries(ctx, values, w, h, min, max, baseline, colorFn) {
+  const n = values.length;
+  const barW = Math.max(1, (w / n) * 0.55);
+  const zeroY = yAt(baseline, min, max, h);
+  for (let i = 0; i < n; i++) {
+    const v = values[i];
+    if (v == null) continue;
+    const x = xAt(i, n, w) - barW / 2;
+    const y = yAt(v, min, max, h);
+    const top = Math.min(y, zeroY), barH = Math.max(1, Math.abs(y - zeroY));
+    ctx.fillStyle = colorFn(v, i);
+    ctx.fillRect(x, top, barW, barH);
+  }
+}
+
+function getCssVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function buildLegend(containerId, visKey, items, onChange) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(item => {
+    const on = chartVisibility[visKey][item.key];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'legend-item' + (on ? '' : ' off');
+    btn.innerHTML = `<span class="dot" style="background:${item.color}"></span>${item.label}`;
+    btn.addEventListener('click', () => {
+      chartVisibility[visKey][item.key] = !chartVisibility[visKey][item.key];
+      btn.classList.toggle('off', !chartVisibility[visKey][item.key]);
+      onChange();
+    });
+    el.appendChild(btn);
+  });
+}
+
+function setChartAvailability(name, available, message) {
+  const canvas = document.getElementById(`chart${name}`);
+  const empty = document.getElementById(`empty${name}`);
+  canvas.hidden = !available;
+  empty.hidden = available;
+  if (!available) empty.textContent = message || 'Chart history not available for this stock yet.';
+}
+
+// --- Crosshair + tooltip -------------------------------------------------
+// One shared pointer handler per canvas: finds the nearest bar, draws a
+// thin crosshair, and positions a small tooltip with that date's values.
+function attachCrosshair(canvas, tooltipEl, dates, redraw, getRows) {
+  // draw*Chart() (and therefore this) can be called again on window resize
+  // or a theme toggle to redraw with fresh colors -- strip any listeners a
+  // previous call attached to this same canvas first, or they'd stack and
+  // each pointer move would fire the handler multiple times.
+  if (canvas._crosshairCleanup) canvas._crosshairCleanup();
+
+  function handle(clientX) {
+    const rect = canvas.getBoundingClientRect();
+    const relX = clientX - rect.left;
+    const n = dates.length;
+    if (n === 0) return;
+    const w = rect.width;
+    let idx = Math.round(((relX - 6) / (w - 12)) * (n - 1));
+    idx = Math.max(0, Math.min(n - 1, idx));
+    redraw(idx);
+    const rows = getRows(idx);
+    tooltipEl.innerHTML = `<div class="tt-date">${dates[idx]}</div>` +
+      rows.map(r => `<div class="tt-row"><span style="color:${r.color}">${r.label}</span><b style="margin-left:0.6em">${r.value}</b></div>`).join('');
+    tooltipEl.style.display = 'block';
+    const x = xAt(idx, n, w);
+    tooltipEl.style.left = Math.min(Math.max(x, 40), w - 40) + 'px';
+  }
+  const onMouseMove = e => handle(e.clientX);
+  const onMouseLeave = () => { tooltipEl.style.display = 'none'; redraw(null); };
+  const onTouchStart = e => { handle(e.touches[0].clientX); };
+  const onTouchMove = e => { handle(e.touches[0].clientX); };
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mouseleave', onMouseLeave);
+  canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+  canvas.addEventListener('touchmove', onTouchMove, { passive: true });
+  const onTouchEnd = () => { tooltipEl.style.display = 'none'; redraw(null); };
+  canvas.addEventListener('touchend', onTouchEnd);
+
+  canvas._crosshairCleanup = () => {
+    canvas.removeEventListener('mousemove', onMouseMove);
+    canvas.removeEventListener('mouseleave', onMouseLeave);
+    canvas.removeEventListener('touchstart', onTouchStart);
+    canvas.removeEventListener('touchmove', onTouchMove);
+    canvas.removeEventListener('touchend', onTouchEnd);
+  };
+}
+
+function drawCrosshairLine(ctx, idx, n, w, h) {
+  if (idx == null) return;
+  const x = xAt(idx, n, w);
+  ctx.save();
+  ctx.strokeStyle = getCssVar('--chart-ref');
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath();
+  ctx.moveTo(x, 0);
+  ctx.lineTo(x, h);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMacdChart(hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.macd;
+  const cssH = 150;
+  const macdColor = getCssVar('--chart-macd'), signalColor = getCssVar('--chart-signal');
+  const buyColor = getCssVar('--buy'), sellColor = getCssVar('--sell');
+
+  buildLegend('legendMacd', 'macd', [
+    { key: 'macdLine', label: 'MACD', color: macdColor },
+    { key: 'macdSignal', label: 'Signal', color: signalColor },
+    { key: 'macdHistogram', label: 'Histogram', color: buyColor },
+  ], () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartMacd'), cssH);
+    const active = [];
+    if (vis.macdHistogram) active.push(hist.macdHistogram);
+    if (vis.macdLine) active.push(hist.macdLine);
+    if (vis.macdSignal) active.push(hist.macdSignal);
+    const [min, max] = niceMinMax(active.length ? active : [hist.macdLine]);
+    drawGrid(ctx, w, h);
+    drawHRef(ctx, 0, min, max, w, h, getCssVar('--chart-ref'), [2, 2]);
+    if (vis.macdHistogram) {
+      drawBarSeries(ctx, hist.macdHistogram, w, h, min, max, 0, v => v >= 0 ? buyColor : sellColor);
+    }
+    if (vis.macdSignal) drawLineSeries(ctx, hist.macdSignal, w, h, min, max, signalColor, 1.4);
+    if (vis.macdLine) drawLineSeries(ctx, hist.macdLine, w, h, min, max, macdColor, 1.6);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartMacd'), document.getElementById('ttMacd'), hist.dates, render, idx => {
+    const rows = [];
+    if (vis.macdLine) rows.push({ label: 'MACD', color: macdColor, value: fmt5(hist.macdLine[idx]) });
+    if (vis.macdSignal) rows.push({ label: 'Signal', color: signalColor, value: fmt5(hist.macdSignal[idx]) });
+    if (vis.macdHistogram) rows.push({ label: 'Hist', color: buyColor, value: fmt5(hist.macdHistogram[idx]) });
+    return rows;
+  });
+}
+
+function drawPriceChart(s, hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.price;
+  const cssH = 150;
+  const priceColor = getCssVar('--chart-price'), ema20Color = getCssVar('--chart-ema20'), ema40Color = getCssVar('--chart-ema40');
+  const refColor = getCssVar('--chart-ref'), goldColor = getCssVar('--gold');
+  const d = s.detail || {};
+
+  const legendItems = [
+    { key: 'close', label: 'Price', color: priceColor },
+    { key: 'ema20', label: 'EMA20', color: ema20Color },
+    { key: 'ema40', label: 'EMA40', color: ema40Color },
+  ];
+  if (d.bbLower != null) legendItems.push({ key: 'support', label: 'Support', color: refColor });
+  if (d.bbUpper != null) legendItems.push({ key: 'resistance', label: 'Resistance', color: refColor });
+  if (d.bbMid != null) legendItems.push({ key: 'middleBb', label: 'Middle BB', color: goldColor });
+  buildLegend('legendPrice', 'price', legendItems, () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartPrice'), cssH);
+    const active = [];
+    if (vis.close) active.push(hist.close);
+    if (vis.ema20) active.push(hist.ema20);
+    if (vis.ema40) active.push(hist.ema40);
+    const refVals = [];
+    if (vis.support && d.bbLower != null) refVals.push(d.bbLower);
+    if (vis.resistance && d.bbUpper != null) refVals.push(d.bbUpper);
+    if (vis.middleBb && d.bbMid != null) refVals.push(d.bbMid);
+    const [min, max] = niceMinMax(active.length ? [...active, refVals] : [hist.close]);
+    drawGrid(ctx, w, h);
+    if (vis.support) drawHRef(ctx, d.bbLower, min, max, w, h, refColor);
+    if (vis.resistance) drawHRef(ctx, d.bbUpper, min, max, w, h, refColor);
+    if (vis.middleBb) drawHRef(ctx, d.bbMid, min, max, w, h, goldColor);
+    if (vis.ema40) drawLineSeries(ctx, hist.ema40, w, h, min, max, ema40Color, 1.4);
+    if (vis.ema20) drawLineSeries(ctx, hist.ema20, w, h, min, max, ema20Color, 1.4);
+    if (vis.close) drawLineSeries(ctx, hist.close, w, h, min, max, priceColor, 1.8);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartPrice'), document.getElementById('ttPrice'), hist.dates, render, idx => {
+    const rows = [];
+    if (vis.close) rows.push({ label: 'Price', color: priceColor, value: 'RM ' + fmt3(hist.close[idx]) });
+    if (vis.ema20) rows.push({ label: 'EMA20', color: ema20Color, value: 'RM ' + fmt3(hist.ema20[idx]) });
+    if (vis.ema40) rows.push({ label: 'EMA40', color: ema40Color, value: 'RM ' + fmt3(hist.ema40[idx]) });
+    return rows;
+  });
+}
+
+function drawRsiChart(hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.rsi;
+  const cssH = 110;
+  const rsiColor = getCssVar('--chart-macd'), sellColor = getCssVar('--sell'), buyColor = getCssVar('--buy'), refColor = getCssVar('--chart-ref');
+
+  buildLegend('legendRsi', 'rsi', [
+    { key: 'rsi', label: 'RSI', color: rsiColor },
+  ], () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartRsi'), cssH);
+    const min = 0, max = 100;
+    drawGrid(ctx, w, h);
+    drawHRef(ctx, 70, min, max, w, h, sellColor, [3, 2]);
+    drawHRef(ctx, 30, min, max, w, h, buyColor, [3, 2]);
+    drawHRef(ctx, 50, min, max, w, h, refColor, [1, 3]);
+    if (vis.rsi) drawLineSeries(ctx, hist.rsi, w, h, min, max, rsiColor, 1.6);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartRsi'), document.getElementById('ttRsi'), hist.dates, render, idx => [
+    { label: 'RSI', color: rsiColor, value: hist.rsi[idx] != null ? hist.rsi[idx].toFixed(1) : '—' },
+  ]);
+}
+
+function drawVolumeChart(hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.volume;
+  const cssH = 110;
+  const volColor = getCssVar('--text-muted'), smaColor = getCssVar('--gold');
+
+  buildLegend('legendVolume', 'volume', [
+    { key: 'volume', label: 'Volume', color: volColor },
+    { key: 'volumeSma20', label: '20D SMA', color: smaColor },
+  ], () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartVolume'), cssH);
+    const active = [];
+    if (vis.volume) active.push(hist.volume);
+    if (vis.volumeSma20) active.push(hist.volumeSma20);
+    const [, max] = niceMinMax(active.length ? active : [hist.volume], 0.15);
+    const min = 0;
+    drawGrid(ctx, w, h);
+    if (vis.volume) drawBarSeries(ctx, hist.volume, w, h, min, max, 0, () => volColor);
+    if (vis.volumeSma20) drawLineSeries(ctx, hist.volumeSma20, w, h, min, max, smaColor, 1.4);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartVolume'), document.getElementById('ttVolume'), hist.dates, render, idx => {
+    const rows = [];
+    if (vis.volume) rows.push({ label: 'Vol', color: volColor, value: fmtVol(hist.volume[idx]) });
+    if (vis.volumeSma20) rows.push({ label: '20D Avg', color: smaColor, value: fmtVol(hist.volumeSma20[idx]) });
+    return rows;
+  });
+}
+
+function fmt3(v) { return v == null ? '—' : v.toFixed(3); }
+function fmt5(v) { return v == null ? '—' : v.toFixed(5); }
+function fmtVol(v) {
+  if (v == null) return '—';
+  if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return (v / 1e3).toFixed(0) + 'K';
+  return String(v);
+}
+
+async function openDetailModal(tickerLower) {
+  const s = stocksByTicker.get(tickerLower);
+  if (!s) return;
+  const modal = document.getElementById('detailModal');
+
+  document.getElementById('dmTicker').textContent = s.ticker.replace('.KL', '');
+  document.getElementById('dmName').textContent = s.name || '';
+  document.getElementById('dmSub').textContent = `RSI ${s.rsi} · Trend ${s.emaTrend || '—'}`;
+  document.getElementById('dmPrice').textContent = 'RM ' + s.price.toFixed(3);
+  const trendClass = histogramTrendClass(s.histogramTrend);
+  document.getElementById('dmTag').innerHTML = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
+  const entries = priceStatRowHTML(s);
+  document.getElementById('dmStatRow').innerHTML = entries.join('') ||
+    '<div class="price-stat"><div class="label">Last Price</div><div class="val">RM ' + s.price.toFixed(3) + '</div></div>';
+  document.getElementById('dmDetailTable').innerHTML = detailPanelHTML(s);
+
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  modal.scrollTop = 0;
+
+  // Register this as a step in the browser's history so the phone's
+  // hardware/gesture back action closes the detail view instead of
+  // leaving the page entirely (or doing nothing).
+  const hash = '#' + s.ticker.replace('.KL', '');
+  if (!modalHistoryPushed) {
+    history.pushState({ klseDetail: true }, '', hash);
+    modalHistoryPushed = true;
+  } else {
+    history.replaceState({ klseDetail: true }, '', hash);
+  }
+
+  ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
+  const series = await loadChartHistory();
+  const hist = series[s.ticker];
+  if (!modal.hidden && document.getElementById('dmTicker').textContent === s.ticker.replace('.KL', '')) {
+    if (!hist) {
+      ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name =>
+        setChartAvailability(name, false, 'Chart history not available for this stock yet — push a fresh chart-history.json from the pipeline.'));
+      return;
+    }
+    ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, true));
+    drawMacdChart(hist);
+    drawPriceChart(s, hist);
+    drawRsiChart(hist);
+    drawVolumeChart(hist);
+  }
+}
+
+let modalHistoryPushed = false;
+
+// fromPopstate=true means the browser already popped the history entry
+// (back button/gesture) -- just hide the UI. fromPopstate=false (button
+// click / Escape) means WE need to pop it ourselves via history.back(),
+// which then triggers the popstate handler below to actually hide it --
+// this keeps forward/back navigation consistent either way it's closed.
+function closeDetailModal(fromPopstate) {
+  const modal = document.getElementById('detailModal');
+  if (modal.hidden) return;
+  modal.hidden = true;
+  document.body.style.overflow = '';
+  if (modalHistoryPushed) {
+    modalHistoryPushed = false;
+    if (fromPopstate) {
+      history.replaceState(null, '', location.pathname + location.search);
+    } else {
+      history.back();
+    }
+  }
+}
+
+document.getElementById('dmClose').addEventListener('click', () => closeDetailModal(false));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !document.getElementById('detailModal').hidden) closeDetailModal(false);
+});
+window.addEventListener('popstate', () => closeDetailModal(true));
+
+// Tap anywhere in the detail view that ISN'T a chart (crosshair inspection),
+// a legend dot (series toggle), or a button also closes it -- a large,
+// forgiving close target without swallowing the taps that do something.
+document.getElementById('detailModal').addEventListener('click', e => {
+  if (e.target.closest('canvas, .legend-item, button, a')) return;
+  closeDetailModal(false);
+});
+
+function currentModalStock() {
+  const modal = document.getElementById('detailModal');
+  if (modal.hidden) return null;
+  const tickerText = document.getElementById('dmTicker').textContent;
+  return [...stocksByTicker.values()].find(x => x.ticker.replace('.KL', '') === tickerText) || null;
+}
+
+// Redraws the four charts in place (fresh colors, fresh canvas size) without
+// touching scroll position or re-fetching -- used by both the resize handler
+// and the theme toggle, neither of which should jump the user back to the top.
+async function redrawOpenModalCharts() {
+  const s = currentModalStock();
+  if (!s) return;
+  const series = await loadChartHistory();
+  const hist = series[s.ticker];
+  if (!hist) return;
+  drawMacdChart(hist);
+  drawPriceChart(s, hist);
+  drawRsiChart(hist);
+  drawVolumeChart(hist);
+}
+
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(redrawOpenModalCharts, 150);
+});
+
+// --- Light / dark theme toggle -------------------------------------------
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+
+function applyThemeColor(theme) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#F7F8FA' : '#0B0F14');
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  applyThemeColor(theme);
+  // Two toggle buttons exist (page header + inside the detail view, since
+  // the detail view covers the header entirely) -- keep both in sync.
+  document.querySelectorAll('.theme-toggle').forEach(btn =>
+    btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'));
+  try { localStorage.setItem('klse-theme', theme); } catch (e) { /* private mode etc -- non-fatal */ }
+  // Chart colors are read live from CSS custom properties at draw time, so
+  // redraw whatever's open now to pick up the new theme immediately.
+  redrawOpenModalCharts();
+}
+
+applyThemeColor(currentTheme());
+document.querySelectorAll('.theme-toggle').forEach(btn =>
+  btn.addEventListener('click', () => setTheme(currentTheme() === 'light' ? 'dark' : 'light')));
 
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
@@ -642,28 +1403,6 @@ function showRenderErrorBanner(err) {
     `Screenshot this banner and send it back \u2014 this is a bug in the dashboard's code, not your data.`;
   document.body.insertBefore(banner, document.body.firstChild);
 }
-
-function initThemeToggle() {
-  const btn = document.getElementById('themeToggle');
-  const metaTheme = document.querySelector('meta[name="theme-color"]');
-  const updateIcon = () => {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    btn.textContent = isLight ? '\u263C' : '\u263D'; // sun : crescent moon
-    if (metaTheme) metaTheme.setAttribute('content', isLight ? '#F7F8FA' : '#0B0F14');
-  };
-  updateIcon();
-  btn.addEventListener('click', () => {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    if (isLight) {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
-    try { localStorage.setItem('klse-theme', isLight ? 'dark' : 'light'); } catch (e) { /* ignore if blocked */ }
-    updateIcon();
-  });
-}
-initThemeToggle();
 
 fetch('dashboard-data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
