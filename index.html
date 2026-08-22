@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+  // Runs before first paint to avoid a flash of the wrong theme: check for a
+  // saved preference first, otherwise fall back to the device's system
+  // preference, defaulting to dark if neither is set. Wrapped in try/catch
+  // since some private-browsing modes block localStorage entirely -- a
+  // thrown error here would otherwise break the whole page before it even
+  // starts rendering.
+  try {
+    var saved = localStorage.getItem('klse-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  } catch (e) { /* localStorage blocked -- just use the default dark theme */ }
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KLSE Screener</title>
 <link rel="manifest" href="manifest.json">
@@ -28,6 +41,24 @@
     --sell-dim:#4A1F21;
     --radius:10px;
   }
+
+  html[data-theme="light"]{
+    --bg:#F7F8FA;
+    --surface:#FFFFFF;
+    --surface-raised:#F0F2F5;
+    --border:#E3E6EA;
+    --text:#1E2A3A;
+    --text-muted:#6B7684;
+    --gold:#9C7A1E;
+    --buy:#1B7F4C;
+    --buy-dim:#DCF3E5;
+    --watch:#A66A0A;
+    --watch-dim:#FBEED9;
+    --sell:#B23B3B;
+    --sell-dim:#FBE3E3;
+  }
+
+  body{ transition:background 0.15s, color 0.15s; }
 
   *{box-sizing:border-box; margin:0; padding:0;}
 
@@ -83,11 +114,32 @@
     max-width:640px;
     margin:0 auto;
   }
+  .header-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
   header h1{
     font-size:1.5rem;
     font-weight:700;
   }
   header h1 .accent{ color:var(--gold); }
+  .theme-toggle{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    width:38px;
+    height:38px;
+    border-radius:999px;
+    font-size:1.1rem;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 0.15s, border-color 0.15s;
+  }
+  .theme-toggle:hover{ border-color:var(--gold); }
+  .theme-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .meta{
     color:var(--text-muted);
     font-size:0.82rem;
@@ -334,7 +386,10 @@
 <div class="tape-wrap"><div class="tape mono" id="tape"></div></div>
 
 <header>
-  <h1>KLSE <span class="accent">Screener</span></h1>
+  <div class="header-top">
+    <h1>KLSE <span class="accent">Screener</span></h1>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle light/dark theme" title="Toggle light/dark theme">&#9789;</button>
+  </div>
   <div class="meta"><span class="dot"></span><span id="metaText">Loading&hellip;</span></div>
 </header>
 
@@ -587,6 +642,28 @@ function showRenderErrorBanner(err) {
     `Screenshot this banner and send it back \u2014 this is a bug in the dashboard's code, not your data.`;
   document.body.insertBefore(banner, document.body.firstChild);
 }
+
+function initThemeToggle() {
+  const btn = document.getElementById('themeToggle');
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  const updateIcon = () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    btn.textContent = isLight ? '\u263C' : '\u263D'; // sun : crescent moon
+    if (metaTheme) metaTheme.setAttribute('content', isLight ? '#F7F8FA' : '#0B0F14');
+  };
+  updateIcon();
+  btn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    try { localStorage.setItem('klse-theme', isLight ? 'dark' : 'light'); } catch (e) { /* ignore if blocked */ }
+    updateIcon();
+  });
+}
+initThemeToggle();
 
 fetch('dashboard-data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
