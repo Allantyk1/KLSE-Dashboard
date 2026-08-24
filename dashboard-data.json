@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-24T18:28:20",
-  "universeCount": 275,
+  "generatedAt": "2026-08-24T21:01:37",
+  "universeCount": 278,
   "buy": [
     {
       "ticker": "5555.KL",
@@ -7139,6 +7139,37 @@
       }
     },
     {
+      "ticker": "5075.KL",
+      "name": "PLENITU",
+      "price": 1.51,
+      "score": 21.4,
+      "rsi": 50.0,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 1.51,
+      "entryEma20": 1.51,
+      "entryBbZone": 1.487,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -34.4,
+      "detail": {
+        "ema40": 1.513,
+        "bbLower": 1.468,
+        "bbMid": 1.506,
+        "bbUpper": 1.545,
+        "high52wk": 2.302,
+        "macdLine": 0.00216,
+        "macdSignalLine": 0.00192,
+        "macdHistogram": 0.00024,
+        "volumeRatio": 0.82,
+        "dividendYield": 0.0,
+        "analystCount": null,
+        "pctVsSma50": 0.4,
+        "pctVsSma200": -10.28
+      }
+    },
+    {
       "ticker": "5094.KL",
       "name": "CSCSTEL",
       "price": 1.26,
@@ -7635,6 +7666,37 @@
       }
     },
     {
+      "ticker": "5236.KL",
+      "name": "MATRIX",
+      "price": 1.19,
+      "score": 42.5,
+      "rsi": 49.8,
+      "emaTrend": "Turning Bullish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Weakening (Bearish)",
+      "ema20": 1.185,
+      "entryEma20": 1.185,
+      "entryBbZone": 1.167,
+      "targetPrice": 1.609,
+      "pctUpsideToTarget": 35.2,
+      "pctOffHigh": -18.2,
+      "detail": {
+        "ema40": 1.201,
+        "bbLower": 1.147,
+        "bbMid": 1.186,
+        "bbUpper": 1.225,
+        "high52wk": 1.456,
+        "macdLine": -0.01348,
+        "macdSignalLine": -0.01269,
+        "macdHistogram": -0.0008,
+        "volumeRatio": 0.72,
+        "dividendYield": 5.13,
+        "analystCount": 7,
+        "pctVsSma50": -0.83,
+        "pctVsSma200": -8.42
+      }
+    },
+    {
       "ticker": "5238.KL",
       "name": "AAGB",
       "price": 0.78,
@@ -8097,6 +8159,37 @@
         "analystCount": 3,
         "pctVsSma50": -6.02,
         "pctVsSma200": -6.9
+      }
+    },
+    {
+      "ticker": "5322.KL",
+      "name": "FEYTECH",
+      "price": 0.25,
+      "score": 43.6,
+      "rsi": 60.1,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Weakening (Bearish)",
+      "ema20": 0.241,
+      "entryEma20": 0.241,
+      "entryBbZone": 0.231,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -29.0,
+      "detail": {
+        "ema40": 0.235,
+        "bbLower": 0.222,
+        "bbMid": 0.241,
+        "bbUpper": 0.261,
+        "high52wk": 0.352,
+        "macdLine": 0.0054,
+        "macdSignalLine": 0.00603,
+        "macdHistogram": -0.00063,
+        "volumeRatio": 1.94,
+        "dividendYield": 0.0,
+        "analystCount": null,
+        "pctVsSma50": 10.42,
+        "pctVsSma200": 1.57
       }
     },
     {
