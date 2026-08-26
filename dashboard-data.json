@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-26T20:27:48",
-  "universeCount": 285,
+  "generatedAt": "2026-08-26T22:32:20",
+  "universeCount": 288,
   "buy": [
     {
       "ticker": "0201.KL",
@@ -6953,6 +6953,37 @@
       }
     },
     {
+      "ticker": "4731.KL",
+      "name": "SCIENTX",
+      "price": 3.7,
+      "score": 46.0,
+      "rsi": 47.6,
+      "emaTrend": "Turning Bearish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Weakening (Bullish)",
+      "ema20": 3.722,
+      "entryEma20": 3.722,
+      "entryBbZone": 3.68,
+      "targetPrice": 4.153,
+      "pctUpsideToTarget": 12.2,
+      "pctOffHigh": -5.8,
+      "detail": {
+        "ema40": 3.709,
+        "bbLower": 3.643,
+        "bbMid": 3.718,
+        "bbUpper": 3.793,
+        "high52wk": 3.927,
+        "macdLine": 0.00612,
+        "macdSignalLine": 0.00586,
+        "macdHistogram": 0.00026,
+        "volumeRatio": 1.48,
+        "dividendYield": 3.24,
+        "analystCount": 7,
+        "pctVsSma50": -0.71,
+        "pctVsSma200": 3.49
+      }
+    },
+    {
       "ticker": "4863.KL",
       "name": "TM",
       "price": 7.78,
@@ -7229,6 +7260,37 @@
         "analystCount": 1,
         "pctVsSma50": 0.59,
         "pctVsSma200": -8.65
+      }
+    },
+    {
+      "ticker": "5100.KL",
+      "name": "BPPLAS",
+      "price": 0.76,
+      "score": 53.9,
+      "rsi": 51.2,
+      "emaTrend": "Turning Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Strengthening (Bearish)",
+      "ema20": 0.761,
+      "entryEma20": 0.761,
+      "entryBbZone": 0.741,
+      "targetPrice": 0.87,
+      "pctUpsideToTarget": 14.5,
+      "pctOffHigh": -11.6,
+      "detail": {
+        "ema40": 0.749,
+        "bbLower": 0.719,
+        "bbMid": 0.763,
+        "bbUpper": 0.806,
+        "high52wk": 0.86,
+        "macdLine": 0.01023,
+        "macdSignalLine": 0.01354,
+        "macdHistogram": -0.00331,
+        "volumeRatio": 0.81,
+        "dividendYield": 5.92,
+        "analystCount": 1,
+        "pctVsSma50": 4.07,
+        "pctVsSma200": 11.06
       }
     },
     {
@@ -8965,6 +9027,37 @@
         "analystCount": null,
         "pctVsSma50": -2.81,
         "pctVsSma200": 12.0
+      }
+    },
+    {
+      "ticker": "7034.KL",
+      "name": "TGUAN",
+      "price": 1.61,
+      "score": 64.9,
+      "rsi": 68.0,
+      "emaTrend": "Bullish",
+      "macdSignal": "Bullish",
+      "histogramTrend": "Strengthening (Bullish)",
+      "ema20": 1.538,
+      "entryEma20": 1.538,
+      "entryBbZone": 1.502,
+      "targetPrice": 1.73,
+      "pctUpsideToTarget": 7.5,
+      "pctOffHigh": -0.8,
+      "detail": {
+        "ema40": 1.512,
+        "bbLower": 1.469,
+        "bbMid": 1.536,
+        "bbUpper": 1.603,
+        "high52wk": 1.622,
+        "macdLine": 0.02755,
+        "macdSignalLine": 0.02461,
+        "macdHistogram": 0.00294,
+        "volumeRatio": 1.99,
+        "dividendYield": 4.35,
+        "analystCount": 1,
+        "pctVsSma50": 8.6,
+        "pctVsSma200": 21.38
       }
     },
     {
