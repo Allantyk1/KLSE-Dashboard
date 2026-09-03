@@ -727,9 +727,11 @@ function priceStatRowHTML(s) {
   if (s.entryEma20) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 EMA20</div><div class="val">RM ${s.entryEma20.toFixed(3)}</div></div>`);
   if (s.entryBbZone) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 BB Zone</div><div class="val">RM ${s.entryBbZone.toFixed(3)}</div></div>`);
   if (s.targetPrice) {
+    const hasUpside = s.pctUpsideToTarget != null && !isNaN(s.pctUpsideToTarget);
     const upsideColor = (s.pctUpsideToTarget || 0) >= 0 ? 'var(--buy)' : 'var(--sell)';
     const upsideSign = (s.pctUpsideToTarget || 0) >= 0 ? '+' : '';
-    entries.push(`<div class="price-stat target"><div class="label">Target Price</div><div class="val">RM ${s.targetPrice.toFixed(3)}<span class="upside" style="color:${upsideColor}">${upsideSign}${s.pctUpsideToTarget}%</span></div></div>`);
+    const upsideText = hasUpside ? `<span class="upside" style="color:${upsideColor}">${upsideSign}${s.pctUpsideToTarget}%</span>` : '';
+    entries.push(`<div class="price-stat target"><div class="label">Target Price</div><div class="val">RM ${s.targetPrice.toFixed(3)}${upsideText}</div></div>`);
   }
   return entries;
 }
