@@ -482,37 +482,12 @@
     font-size:1.3rem;
     text-align:right;
   }
-  .dm-score{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:0.8rem;
-    color:var(--text-muted);
-    text-align:right;
-    margin-top:0.1rem;
-  }
   .dm-tag{ margin-top:0.35rem; text-align:right; }
 
   .dm-body{ max-width:640px; margin:0 auto; padding:0.85rem 1rem 2rem; }
 
-  /* Entry/target stat cards now live in the sticky dm-header (pinned
-     alongside ticker/price/score while scrolling the charts below).
-     dm-header already supplies the 1rem horizontal inset and its own
-     bottom padding -- this wrap just adds a little top space to separate
-     the cards from the ticker/price row above. */
-  .dm-stat-row-wrap{ padding-top:0.5rem; }
-  .dm-stat-row{ display:flex; gap:0.5rem; }
-  .dm-stat-row .price-stat{ flex:1; min-width:0; padding:0.35rem 0.5rem; }
-  /* Three cards in a narrower pinned row than the main list's price-row --
-     tighter label so "Entry - BB Zone" stays on one line, and the upside
-     % drops to its own line instead of wrapping mid-value. */
-  .dm-stat-row .price-stat .label{
-    font-size:0.58rem;
-    letter-spacing:0.01em;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .dm-stat-row .price-stat .val{ font-size:0.78rem; white-space:nowrap; }
-  .dm-stat-row .price-stat .upside{ display:block; margin-left:0; margin-top:0.05rem; }
+  .dm-stat-row{ display:flex; gap:0.5rem; margin-bottom:1rem; }
+  .dm-stat-row .price-stat{ flex:1; }
 
   .chart-block{
     background:var(--surface);
@@ -635,7 +610,6 @@
         </div>
         <div>
           <div class="dm-price mono" id="dmPrice"></div>
-          <div class="dm-score mono" id="dmScore"></div>
           <div class="dm-tag" id="dmTag"></div>
         </div>
       </div>
@@ -644,12 +618,10 @@
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       </button>
     </div>
-    <div class="dm-stat-row-wrap">
-      <div class="dm-stat-row" id="dmStatRow"></div>
-    </div>
   </div>
   <div class="dm-body">
     <p class="dm-footer-hint" style="padding-top:0;">Tap anywhere outside a chart to go back</p>
+    <div class="dm-stat-row" id="dmStatRow"></div>
 
     <div class="chart-block">
       <h3>MACD</h3>
@@ -661,18 +633,6 @@
       <h3>Price / EMA</h3>
       <div class="chart-legend" id="legendPrice"></div>
       <div class="chart-canvas-wrap"><canvas id="chartPrice" height="150"></canvas><div class="chart-tooltip" id="ttPrice"></div><div class="chart-empty" id="emptyPrice" hidden></div></div>
-    </div>
-
-    <div class="chart-block">
-      <h3>VWMA (20d) &plusmn;2&sigma;</h3>
-      <div class="chart-legend" id="legendVwap"></div>
-      <div class="chart-canvas-wrap"><canvas id="chartVwap" height="150"></canvas><div class="chart-tooltip" id="ttVwap"></div><div class="chart-empty" id="emptyVwap" hidden></div></div>
-    </div>
-
-    <div class="chart-block">
-      <h3>VWAP Distance (&sigma;)</h3>
-      <div class="chart-legend" id="legendVwapDist"></div>
-      <div class="chart-canvas-wrap"><canvas id="chartVwapDist" height="110"></canvas><div class="chart-tooltip" id="ttVwapDist"></div><div class="chart-empty" id="emptyVwapDist" hidden></div></div>
     </div>
 
     <div class="chart-block">
@@ -710,6 +670,13 @@ function fmtTimestamp(iso) {
   });
 }
 
+function fmtPrice(v) {
+  // Guards against a stock with a missing/invalid price (a real edge case
+  // seen among 297 real tickers -- some data source hiccup for one
+  // particular counter) so the page shows "RM —" instead of crashing.
+  return (v == null || isNaN(v)) ? 'RM \u2014' : `RM ${v.toFixed(3)}`;
+}
+
 function renderTape(data) {
   const el = document.getElementById('tape');
   const items = [...(data.buy || []).slice(0, 6), ...(data.sell || []).slice(0, 4)];
@@ -717,7 +684,7 @@ function renderTape(data) {
   const spans = items.map(s => {
     const cls = (data.buy || []).includes(s) ? 'up' : 'down';
     const arrow = cls === 'up' ? '&#9650;' : '&#9660;';
-    return `<span><b>${s.ticker.replace('.KL','')}</b>RM ${s.price.toFixed(3)} <span class="${cls}">${arrow}</span></span>`;
+    return `<span><b>${s.ticker.replace('.KL','')}</b>${fmtPrice(s.price)} <span class="${cls}">${arrow}</span></span>`;
   });
   el.innerHTML = spans.join('') + spans.join('');
 }
@@ -781,7 +748,7 @@ function cardHTML(s, cat) {
           <span class="name">${s.name || ''}</span>
         </div>
         <div>
-          <span class="price">RM ${s.price.toFixed(3)}</span>
+          <span class="price">${fmtPrice(s.price)}</span>
           <span class="score">Score ${s.score != null ? s.score : '\u2014'}</span>
         </div>
       </div>
@@ -914,8 +881,6 @@ function loadChartHistory() {
 const chartVisibility = {
   macd: { macdLine: true, macdSignal: true, macdHistogram: true },
   price: { close: true, ema20: true, ema40: true, support: true, resistance: true, middleBb: true },
-  vwap: { close: true, vwap20: true, vwapBand: true },
-  vwapDist: { vwapDistanceSigma: true },
   rsi: { rsi: true },
   volume: { volume: true, volumeSma20: true },
 };
@@ -967,11 +932,9 @@ function drawGrid(ctx, w, h) {
   ctx.stroke();
 }
 
-function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth, dash) {
+function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth) {
   const n = values.length;
   let started = false;
-  ctx.save();
-  ctx.setLineDash(dash || []);
   ctx.beginPath();
   for (let i = 0; i < n; i++) {
     const v = values[i];
@@ -984,7 +947,6 @@ function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth, dash) {
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   ctx.stroke();
-  ctx.restore();
 }
 
 function drawHRef(ctx, value, min, max, w, h, color, dash) {
@@ -1193,81 +1155,6 @@ function drawPriceChart(s, hist) {
   });
 }
 
-function drawVwapChart(hist) {
-  const n = hist.dates.length;
-  const vis = chartVisibility.vwap;
-  const cssH = 150;
-  const priceColor = getCssVar('--chart-price'), vwapColor = getCssVar('--chart-signal'), bandColor = getCssVar('--chart-ref');
-  const close = hist.close || [], vwap20 = hist.vwap20 || [], vwapUpper = hist.vwapUpper || [], vwapLower = hist.vwapLower || [];
-
-  buildLegend('legendVwap', 'vwap', [
-    { key: 'close', label: 'Price', color: priceColor },
-    { key: 'vwap20', label: 'VWMA (20d)', color: vwapColor },
-    { key: 'vwapBand', label: '±2σ Band', color: bandColor },
-  ], () => render(null));
-
-  function render(hoverIdx) {
-    const { ctx, w, h } = fitCanvas(document.getElementById('chartVwap'), cssH);
-    const active = [];
-    if (vis.close) active.push(close);
-    if (vis.vwap20) active.push(vwap20);
-    if (vis.vwapBand) { active.push(vwapUpper); active.push(vwapLower); }
-    const [min, max] = niceMinMax(active.length ? active : [close]);
-    drawGrid(ctx, w, h);
-    if (vis.vwapBand) {
-      drawLineSeries(ctx, vwapUpper, w, h, min, max, bandColor, 1.1, [4, 3]);
-      drawLineSeries(ctx, vwapLower, w, h, min, max, bandColor, 1.1, [4, 3]);
-    }
-    if (vis.vwap20) drawLineSeries(ctx, vwap20, w, h, min, max, vwapColor, 1.5);
-    if (vis.close) drawLineSeries(ctx, close, w, h, min, max, priceColor, 1.8);
-    drawCrosshairLine(ctx, hoverIdx, n, w, h);
-  }
-  render(null);
-  attachCrosshair(document.getElementById('chartVwap'), document.getElementById('ttVwap'), hist.dates, render, idx => {
-    const rows = [];
-    if (vis.close) rows.push({ label: 'Price', color: priceColor, value: 'RM ' + fmt3(close[idx]) });
-    if (vis.vwap20) rows.push({ label: 'VWMA', color: vwapColor, value: 'RM ' + fmt3(vwap20[idx]) });
-    if (vis.vwapBand) {
-      rows.push({ label: '+2σ', color: bandColor, value: 'RM ' + fmt3(vwapUpper[idx]) });
-      rows.push({ label: '-2σ', color: bandColor, value: 'RM ' + fmt3(vwapLower[idx]) });
-    }
-    return rows;
-  });
-}
-
-function drawVwapDistanceChart(hist) {
-  const n = hist.dates.length;
-  const vis = chartVisibility.vwapDist;
-  const cssH = 110;
-  const lineColor = getCssVar('--chart-signal'), extremeHighColor = getCssVar('--sell'),
-        extremeLowColor = getCssVar('--buy'), moderateColor = getCssVar('--chart-ref'), refColor = getCssVar('--chart-ref');
-  const vals = hist.vwapDistanceSigma || [];
-
-  buildLegend('legendVwapDist', 'vwapDist', [
-    { key: 'vwapDistanceSigma', label: 'VWAP Distance (σ)', color: lineColor },
-  ], () => render(null));
-
-  function render(hoverIdx) {
-    const { ctx, w, h } = fitCanvas(document.getElementById('chartVwapDist'), cssH);
-    let maxAbs = 0;
-    vals.forEach(v => { if (v != null && isFinite(v)) maxAbs = Math.max(maxAbs, Math.abs(v)); });
-    const bound = Math.max(3, maxAbs * 1.15);
-    const min = -bound, max = bound;
-    drawGrid(ctx, w, h);
-    drawHRef(ctx, 2, min, max, w, h, extremeHighColor, [3, 2]);
-    drawHRef(ctx, -2, min, max, w, h, extremeLowColor, [3, 2]);
-    drawHRef(ctx, 1, min, max, w, h, moderateColor, [2, 3]);
-    drawHRef(ctx, -1, min, max, w, h, moderateColor, [2, 3]);
-    drawHRef(ctx, 0, min, max, w, h, refColor, [1, 3]);
-    if (vis.vwapDistanceSigma) drawLineSeries(ctx, vals, w, h, min, max, lineColor, 1.6);
-    drawCrosshairLine(ctx, hoverIdx, n, w, h);
-  }
-  render(null);
-  attachCrosshair(document.getElementById('chartVwapDist'), document.getElementById('ttVwapDist'), hist.dates, render, idx => [
-    { label: 'Dist (σ)', color: lineColor, value: vals[idx] != null ? vals[idx].toFixed(2) + 'σ' : '—' },
-  ]);
-}
-
 function drawRsiChart(hist) {
   const n = hist.dates.length;
   const vis = chartVisibility.rsi;
@@ -1343,13 +1230,12 @@ async function openDetailModal(tickerLower) {
   document.getElementById('dmTicker').textContent = s.ticker.replace('.KL', '');
   document.getElementById('dmName').textContent = s.name || '';
   document.getElementById('dmSub').textContent = `RSI ${s.rsi} · Trend ${s.emaTrend || '—'}`;
-  document.getElementById('dmPrice').textContent = 'RM ' + s.price.toFixed(3);
-  document.getElementById('dmScore').textContent = 'Score ' + (s.score != null ? s.score : '—');
+  document.getElementById('dmPrice').textContent = fmtPrice(s.price);
   const trendClass = histogramTrendClass(s.histogramTrend);
   document.getElementById('dmTag').innerHTML = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
   const entries = priceStatRowHTML(s);
   document.getElementById('dmStatRow').innerHTML = entries.join('') ||
-    '<div class="price-stat"><div class="label">Last Price</div><div class="val">RM ' + s.price.toFixed(3) + '</div></div>';
+    '<div class="price-stat"><div class="label">Last Price</div><div class="val">' + fmtPrice(s.price) + '</div></div>';
   document.getElementById('dmDetailTable').innerHTML = detailPanelHTML(s);
 
   modal.hidden = false;
@@ -1367,20 +1253,18 @@ async function openDetailModal(tickerLower) {
     history.replaceState({ klseDetail: true }, '', hash);
   }
 
-  ['Macd', 'Price', 'Vwap', 'VwapDist', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
+  ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
   const series = await loadChartHistory();
   const hist = series[s.ticker];
   if (!modal.hidden && document.getElementById('dmTicker').textContent === s.ticker.replace('.KL', '')) {
     if (!hist) {
-      ['Macd', 'Price', 'Vwap', 'VwapDist', 'Rsi', 'Volume'].forEach(name =>
+      ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name =>
         setChartAvailability(name, false, 'Chart history not available for this stock yet — push a fresh chart-history.json from the pipeline.'));
       return;
     }
-    ['Macd', 'Price', 'Vwap', 'VwapDist', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, true));
+    ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, true));
     drawMacdChart(hist);
     drawPriceChart(s, hist);
-    drawVwapChart(hist);
-    drawVwapDistanceChart(hist);
     drawRsiChart(hist);
     drawVolumeChart(hist);
   }
@@ -1440,8 +1324,6 @@ async function redrawOpenModalCharts() {
   if (!hist) return;
   drawMacdChart(hist);
   drawPriceChart(s, hist);
-  drawVwapChart(hist);
-  drawVwapDistanceChart(hist);
   drawRsiChart(hist);
   drawVolumeChart(hist);
 }
