@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T18:27:18",
+  "generatedAt": "2026-09-04T19:02:37",
   "universeCount": 298,
   "buy": [
     {
@@ -9991,7 +9991,198 @@
       }
     }
   ],
-  "portfolio": [],
+  "portfolio": [
+    {
+      "ticker": "ABMB",
+      "name": "Alliance Bank Malaysia Berhad",
+      "shares": 1000,
+      "avgCost": 4.83,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "AEMULUS",
+      "name": "AEMULUS",
+      "shares": 2000,
+      "avgCost": 0.39,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "BIG",
+      "name": "B.I.G Industries",
+      "shares": 3000,
+      "avgCost": 0.645,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "CIMB",
+      "name": "CIMB Group Holdings Bhd",
+      "shares": 2500,
+      "avgCost": 6.885,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "CTOS",
+      "name": "CTOS Digital Berhad",
+      "shares": 3000,
+      "avgCost": 0.66,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "FFB",
+      "name": "Farm Fresh Berhad",
+      "shares": 1000,
+      "avgCost": 2.05,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "GAMUDA",
+      "name": "Gamuda Berhad",
+      "shares": 7000,
+      "avgCost": 4.779,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "IGBREIT",
+      "name": "IGB Real Estate Investment Trust",
+      "shares": 1000,
+      "avgCost": 2.69,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "INTA",
+      "name": "Inta Bina Group Bhd",
+      "shares": 2000,
+      "avgCost": 0.4,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "MAYBANK",
+      "name": "Malayan Banking Bhd",
+      "shares": 4500,
+      "avgCost": 9.738,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "NOVA",
+      "name": "Nova Wellness Group Bhd",
+      "shares": 2000,
+      "avgCost": 0.37,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "OCK",
+      "name": "OCK Group Bhd",
+      "shares": 3000,
+      "avgCost": 0.42,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "PAVREIT",
+      "name": "Pavillion Real Estate Investment Trust",
+      "shares": 3000,
+      "avgCost": 1.61,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "PBBANK",
+      "name": "Public Bank Bhd",
+      "shares": 1000,
+      "avgCost": 5.18,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "RHBBANK",
+      "name": "RHB Bank Bhd",
+      "shares": 2000,
+      "avgCost": 6.253,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "SUNREIT",
+      "name": "Sunway Real Estate Investment Trust",
+      "shares": 2000,
+      "avgCost": 2.245,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "SWKPLNT",
+      "name": "Sarawak Plantation Bhd",
+      "shares": 3000,
+      "avgCost": 2.3,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "TIMECOM",
+      "name": "Time Dotcom Bhd",
+      "shares": 1000,
+      "avgCost": 5.92,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    },
+    {
+      "ticker": "YTLREIT",
+      "name": "YTL Hospitality REIT",
+      "shares": 7000,
+      "avgCost": 1.036,
+      "currentPrice": null,
+      "marketValue": null,
+      "pnl": null,
+      "pnlPct": null
+    }
+  ],
   "trackerSummary": {
     "totalLogged": 182,
     "buyCount": 47,
