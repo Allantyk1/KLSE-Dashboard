@@ -438,7 +438,16 @@
     display:flex;
     align-items:flex-start;
     gap:0.6rem;
+    max-width:640px;
+    margin:0 auto;
   }
+  .dm-score{
+    font-size:0.75rem;
+    color:var(--text-muted);
+    text-align:right;
+    margin-top:0.1rem;
+  }
+  .dm-score b{ color:var(--gold); font-weight:600; }
   .dm-back{
     flex-shrink:0;
     display:flex;
@@ -486,8 +495,22 @@
 
   .dm-body{ max-width:640px; margin:0 auto; padding:0.85rem 1rem 2rem; }
 
-  .dm-stat-row{ display:flex; gap:0.5rem; margin-bottom:1rem; }
-  .dm-stat-row .price-stat{ flex:1; }
+  /* Pinned stat row inside the sticky header (Entry EMA20 / BB Zone / Target) */
+  .dm-stat-row{
+    display:flex;
+    gap:0.5rem;
+    max-width:640px;
+    margin:0.6rem auto 0;
+  }
+  .dm-stat-row:empty{ display:none; }
+  .dm-stat-row .price-stat{ flex:1; min-width:0; padding:0.3rem 0.5rem; }
+  .dm-stat-row .price-stat .label{ font-size:0.6rem; }
+  .dm-stat-row .price-stat .val{ font-size:0.78rem; }
+  .dm-price{ white-space:nowrap; }
+  @media (max-width: 420px){
+    .dm-ticker, .dm-price{ font-size:1.1rem; }
+    .dm-stat-row .price-stat .upside{ display:block; margin-left:0; }
+  }
 
   .chart-block{
     background:var(--surface);
@@ -610,6 +633,7 @@
         </div>
         <div>
           <div class="dm-price mono" id="dmPrice"></div>
+          <div class="dm-score mono" id="dmScore"></div>
           <div class="dm-tag" id="dmTag"></div>
         </div>
       </div>
@@ -618,10 +642,12 @@
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       </button>
     </div>
+    <!-- Entry / Target Price stat row lives INSIDE the sticky header so it
+         stays pinned while the charts below scroll. -->
+    <div class="dm-stat-row" id="dmStatRow"></div>
   </div>
   <div class="dm-body">
     <p class="dm-footer-hint" style="padding-top:0;">Tap anywhere outside a chart to go back</p>
-    <div class="dm-stat-row" id="dmStatRow"></div>
 
     <div class="chart-block">
       <h3>MACD</h3>
@@ -633,6 +659,18 @@
       <h3>Price / EMA</h3>
       <div class="chart-legend" id="legendPrice"></div>
       <div class="chart-canvas-wrap"><canvas id="chartPrice" height="150"></canvas><div class="chart-tooltip" id="ttPrice"></div><div class="chart-empty" id="emptyPrice" hidden></div></div>
+    </div>
+
+    <div class="chart-block">
+      <h3>VWMA (20d) &plusmn;2&sigma;</h3>
+      <div class="chart-legend" id="legendVwma"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartVwma" height="150"></canvas><div class="chart-tooltip" id="ttVwma"></div><div class="chart-empty" id="emptyVwma" hidden></div></div>
+    </div>
+
+    <div class="chart-block">
+      <h3>VWAP Distance (&sigma;)</h3>
+      <div class="chart-legend" id="legendVwapDist"></div>
+      <div class="chart-canvas-wrap"><canvas id="chartVwapDist" height="110"></canvas><div class="chart-tooltip" id="ttVwapDist"></div><div class="chart-empty" id="emptyVwapDist" hidden></div></div>
     </div>
 
     <div class="chart-block">
@@ -883,6 +921,8 @@ function loadChartHistory() {
 const chartVisibility = {
   macd: { macdLine: true, macdSignal: true, macdHistogram: true },
   price: { close: true, ema20: true, ema40: true, support: true, resistance: true, middleBb: true },
+  vwma: { close: true, vwap20: true, vwapUpper: true, vwapLower: true },
+  vwapDist: { vwapDistanceSigma: true },
   rsi: { rsi: true },
   volume: { volume: true, volumeSma20: true },
 };
@@ -934,9 +974,11 @@ function drawGrid(ctx, w, h) {
   ctx.stroke();
 }
 
-function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth) {
+function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth, dash) {
   const n = values.length;
   let started = false;
+  ctx.save();
+  if (dash) ctx.setLineDash(dash);
   ctx.beginPath();
   for (let i = 0; i < n; i++) {
     const v = values[i];
@@ -949,6 +991,7 @@ function drawLineSeries(ctx, values, w, h, min, max, color, lineWidth) {
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   ctx.stroke();
+  ctx.restore();
 }
 
 function drawHRef(ctx, value, min, max, w, h, color, dash) {
@@ -1215,6 +1258,74 @@ function drawVolumeChart(hist) {
   });
 }
 
+function drawVwmaChart(hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.vwma;
+  const cssH = 150;
+  const priceColor = getCssVar('--chart-price'), vwapColor = getCssVar('--chart-signal'), refColor = getCssVar('--chart-ref');
+
+  buildLegend('legendVwma', 'vwma', [
+    { key: 'close', label: 'Price', color: priceColor },
+    { key: 'vwap20', label: 'VWMA', color: vwapColor },
+    { key: 'vwapUpper', label: '+2σ', color: refColor },
+    { key: 'vwapLower', label: '-2σ', color: refColor },
+  ], () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartVwma'), cssH);
+    const active = [];
+    if (vis.close) active.push(hist.close);
+    if (vis.vwap20) active.push(hist.vwap20);
+    if (vis.vwapUpper) active.push(hist.vwapUpper);
+    if (vis.vwapLower) active.push(hist.vwapLower);
+    const [min, max] = niceMinMax(active.length ? active : [hist.close]);
+    drawGrid(ctx, w, h);
+    if (vis.vwapUpper) drawLineSeries(ctx, hist.vwapUpper, w, h, min, max, refColor, 1, [4, 3]);
+    if (vis.vwapLower) drawLineSeries(ctx, hist.vwapLower, w, h, min, max, refColor, 1, [4, 3]);
+    if (vis.vwap20) drawLineSeries(ctx, hist.vwap20, w, h, min, max, vwapColor, 1.4);
+    if (vis.close) drawLineSeries(ctx, hist.close, w, h, min, max, priceColor, 1.8);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartVwma'), document.getElementById('ttVwma'), hist.dates, render, idx => {
+    const rows = [];
+    if (vis.close) rows.push({ label: 'Price', color: priceColor, value: 'RM ' + fmt3(hist.close[idx]) });
+    if (vis.vwap20) rows.push({ label: 'VWMA', color: vwapColor, value: 'RM ' + fmt3(hist.vwap20[idx]) });
+    if (vis.vwapUpper) rows.push({ label: '+2σ', color: refColor, value: 'RM ' + fmt3(hist.vwapUpper[idx]) });
+    if (vis.vwapLower) rows.push({ label: '-2σ', color: refColor, value: 'RM ' + fmt3(hist.vwapLower[idx]) });
+    return rows;
+  });
+}
+
+function drawVwapDistChart(hist) {
+  const n = hist.dates.length;
+  const vis = chartVisibility.vwapDist;
+  const cssH = 110;
+  const lineColor = getCssVar('--chart-signal'), sellColor = getCssVar('--sell'), buyColor = getCssVar('--buy'), refColor = getCssVar('--chart-ref');
+
+  buildLegend('legendVwapDist', 'vwapDist', [
+    { key: 'vwapDistanceSigma', label: 'Distance (σ)', color: lineColor },
+  ], () => render(null));
+
+  function render(hoverIdx) {
+    const { ctx, w, h } = fitCanvas(document.getElementById('chartVwapDist'), cssH);
+    const [dataMin, dataMax] = niceMinMax([hist.vwapDistanceSigma], 0.2);
+    const min = Math.min(dataMin, -2.3), max = Math.max(dataMax, 2.3);
+    drawGrid(ctx, w, h);
+    drawHRef(ctx, 0, min, max, w, h, refColor, [1, 3]);
+    drawHRef(ctx, 2, min, max, w, h, sellColor, [3, 2]);
+    drawHRef(ctx, -2, min, max, w, h, buyColor, [3, 2]);
+    drawHRef(ctx, 1, min, max, w, h, refColor, [3, 2]);
+    drawHRef(ctx, -1, min, max, w, h, refColor, [3, 2]);
+    if (vis.vwapDistanceSigma) drawLineSeries(ctx, hist.vwapDistanceSigma, w, h, min, max, lineColor, 1.6);
+    drawCrosshairLine(ctx, hoverIdx, n, w, h);
+  }
+  render(null);
+  attachCrosshair(document.getElementById('chartVwapDist'), document.getElementById('ttVwapDist'), hist.dates, render, idx => [
+    { label: 'Distance', color: lineColor, value: hist.vwapDistanceSigma[idx] != null ? hist.vwapDistanceSigma[idx].toFixed(2) + 'σ' : '—' },
+  ]);
+}
+
 function fmt3(v) { return v == null ? '—' : v.toFixed(3); }
 function fmt5(v) { return v == null ? '—' : v.toFixed(5); }
 function fmtVol(v) {
@@ -1233,11 +1344,13 @@ async function openDetailModal(tickerLower) {
   document.getElementById('dmName').textContent = s.name || '';
   document.getElementById('dmSub').textContent = `RSI ${s.rsi} · Trend ${s.emaTrend || '—'}`;
   document.getElementById('dmPrice').textContent = fmtPrice(s.price);
+  document.getElementById('dmScore').innerHTML = s.score != null ? `Score <b>${s.score}</b>` : '';
   const trendClass = histogramTrendClass(s.histogramTrend);
   document.getElementById('dmTag').innerHTML = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
   const entries = priceStatRowHTML(s);
-  document.getElementById('dmStatRow').innerHTML = entries.join('') ||
-    '<div class="price-stat"><div class="label">Last Price</div><div class="val">' + fmtPrice(s.price) + '</div></div>';
+  // Empty string when there are no entry/target values -> the row collapses
+  // via CSS :empty (the last price is already shown in the header).
+  document.getElementById('dmStatRow').innerHTML = entries.join('');
   document.getElementById('dmDetailTable').innerHTML = detailPanelHTML(s);
 
   modal.hidden = false;
@@ -1255,18 +1368,20 @@ async function openDetailModal(tickerLower) {
     history.replaceState({ klseDetail: true }, '', hash);
   }
 
-  ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
+  ['Macd', 'Price', 'Vwma', 'VwapDist', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, false, 'Loading…'));
   const series = await loadChartHistory();
   const hist = series[s.ticker];
   if (!modal.hidden && document.getElementById('dmTicker').textContent === s.ticker.replace('.KL', '')) {
     if (!hist) {
-      ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name =>
+      ['Macd', 'Price', 'Vwma', 'VwapDist', 'Rsi', 'Volume'].forEach(name =>
         setChartAvailability(name, false, 'Chart history not available for this stock yet — push a fresh chart-history.json from the pipeline.'));
       return;
     }
-    ['Macd', 'Price', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, true));
+    ['Macd', 'Price', 'Vwma', 'VwapDist', 'Rsi', 'Volume'].forEach(name => setChartAvailability(name, true));
     drawMacdChart(hist);
     drawPriceChart(s, hist);
+    drawVwmaChart(hist);
+    drawVwapDistChart(hist);
     drawRsiChart(hist);
     drawVolumeChart(hist);
   }
@@ -1304,7 +1419,10 @@ window.addEventListener('popstate', () => closeDetailModal(true));
 // a legend dot (series toggle), or a button also closes it -- a large,
 // forgiving close target without swallowing the taps that do something.
 document.getElementById('detailModal').addEventListener('click', e => {
-  if (e.target.closest('canvas, .legend-item, button, a')) return;
+  // The pinned header (ticker / price / score / target stats) is excluded so
+  // a stray tap on it while scrolling doesn't kick the user out -- Back is
+  // right there for that.
+  if (e.target.closest('canvas, .legend-item, button, a, .dm-header')) return;
   closeDetailModal(false);
 });
 
@@ -1326,6 +1444,8 @@ async function redrawOpenModalCharts() {
   if (!hist) return;
   drawMacdChart(hist);
   drawPriceChart(s, hist);
+  drawVwmaChart(hist);
+  drawVwapDistChart(hist);
   drawRsiChart(hist);
   drawVolumeChart(hist);
 }
