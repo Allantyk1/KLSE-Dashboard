@@ -366,6 +366,46 @@
   .tag.neg{ background:var(--sell-dim); color:var(--sell); }
   .tag.neu{ background:var(--watch-dim); color:var(--watch); }
 
+  /* KDJ Action badge -- reuses the same pos/neg/neu color language as .tag
+     above (so it reads as part of the same system) with a thin outline
+     instead of a filled background, marking it as a distinct layer: the
+     trend tag = trend HEALTH, .tag.kdj = entry/exit TIMING. Informational
+     only -- does not affect Score or which Buy/Watch/Sell tab a ticker
+     falls into. Must come after .tag.pos/.neg/.neu so its transparent
+     background wins the cascade at equal specificity. */
+  .tag.kdj{ background:transparent; border:1px solid currentColor; }
+  .tag.kdj.pos{ color:var(--buy); }
+  .tag.kdj.neg{ color:var(--sell); }
+  .tag.kdj.neu{ color:var(--watch); }
+  .tag.kdj:not(.pos):not(.neg):not(.neu){ color:var(--text-muted); border-color:var(--border); }
+
+  /* KDJ Action filter -- a SECOND, independent filter (entry/exit timing)
+     layered on top of the Buy/Watch/Sell/All/Portfolio tabs above
+     (attractiveness). Combines with whichever tab + search are active;
+     purely a client-side visibility filter on already-rendered cards, same
+     mechanism as the search box (see applyFilters()). */
+  .kdj-filter-row{
+    display:flex; gap:0.4rem; flex-wrap:wrap;
+    max-width:640px; margin:0 auto 0.6rem; padding:0 1rem;
+  }
+  .kdj-chip{
+    font-family:'IBM Plex Mono', monospace; font-size:0.68rem; font-weight:600;
+    padding:0.22rem 0.55rem; border-radius:999px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text-muted); cursor:pointer;
+  }
+  .kdj-chip .kdj-count{ opacity:0.65; margin-left:0.2em; }
+  .kdj-chip.active{ border-color:currentColor; color:var(--text); }
+  .kdj-chip.active[data-kdj="Buy Zone"],
+  .kdj-chip.active[data-kdj="Accumulate on Dip"]{ background:var(--buy-dim); color:var(--buy); }
+  .kdj-chip.active[data-kdj="Trim Zone"],
+  .kdj-chip.active[data-kdj="Pullback Watch"]{ background:var(--watch-dim); color:var(--watch); }
+  .kdj-chip.active[data-kdj="Exit"]{ background:var(--sell-dim); color:var(--sell); }
+
+  .holding-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-top:0.4rem; font-size:0.78rem; color:var(--text-muted);
+  }
+
   .pf-summary{
     display:flex;
     gap:0.75rem;
@@ -610,6 +650,16 @@
   <input type="text" id="searchBox" class="search-box" placeholder="Search by ticker or name&hellip;" autocomplete="off">
 </div>
 
+<div class="kdj-filter-row" id="kdjFilterRow">
+  <button class="kdj-chip active" data-kdj="ALL">All KDJ</button>
+  <button class="kdj-chip" data-kdj="Buy Zone">&#9650; Buy Zone <span class="kdj-count" id="countKdjBuyZone">0</span></button>
+  <button class="kdj-chip" data-kdj="Accumulate on Dip">&#9650; Accumulate <span class="kdj-count" id="countKdjAccum">0</span></button>
+  <button class="kdj-chip" data-kdj="Pullback Watch">&hellip; Pullback <span class="kdj-count" id="countKdjPullback">0</span></button>
+  <button class="kdj-chip" data-kdj="Trim Zone">&#9660; Trim <span class="kdj-count" id="countKdjTrim">0</span></button>
+  <button class="kdj-chip" data-kdj="Exit">&#10005; Exit <span class="kdj-count" id="countKdjExit">0</span></button>
+  <button class="kdj-chip" data-kdj="Waiting">&hellip; Waiting <span class="kdj-count" id="countKdjWaiting">0</span></button>
+</div>
+
 <main id="main">
   <div class="empty" id="loadingState">
     <h2>Loading dashboard&hellip;</h2>
@@ -734,7 +784,10 @@ function detailRow(label, value) {
 
 function detailPanelHTML(s) {
   const d = s.detail || {};
+  const isHolding = s.shares != null; // only Portfolio-tab rows carry this (see load_portfolio())
   const rows = [
+    detailRow('Shares Held', isHolding ? `${s.shares} @ avg RM ${Number(s.avgCost).toFixed(3)}` : null),
+    detailRow('Market Value', isHolding ? `RM ${(s.marketValue || 0).toFixed(2)}` : null),
     detailRow('EMA20 / EMA40', d.ema40 != null ? `RM ${s.ema20?.toFixed(3) ?? '\u2014'} / RM ${d.ema40.toFixed(3)}` : null),
     detailRow('Support / Resistance', (d.bbLower != null && d.bbUpper != null) ? `RM ${d.bbLower.toFixed(3)} / RM ${d.bbUpper.toFixed(3)}` : null),
     detailRow('Middle BB', d.bbMid != null ? `RM ${d.bbMid.toFixed(3)}` : null),
@@ -745,8 +798,36 @@ function detailPanelHTML(s) {
     detailRow('Dividend Yield (T4Q)', d.dividendYield != null ? `${d.dividendYield}%` : null),
     detailRow('Analyst Count', d.analystCount != null ? d.analystCount : null),
     detailRow('vs SMA50 / SMA200', (d.pctVsSma50 != null && d.pctVsSma200 != null) ? `${d.pctVsSma50 >= 0 ? '+' : ''}${d.pctVsSma50}% / ${d.pctVsSma200 >= 0 ? '+' : ''}${d.pctVsSma200}%` : null),
+    detailRow('KDJ (K/D/J)', (s.kdjK != null && s.kdjD != null && s.kdjJ != null)
+      ? `${s.kdjK} / ${s.kdjD} / ${s.kdjJ}${s.kdjCross && s.kdjCross !== 'NONE' ? ` (${s.kdjCross === 'GOLDEN' ? 'Golden Cross' : 'Death Cross'})` : ''}`
+      : null),
   ].filter(Boolean).join('');
   return `<div class="detail-panel">${rows || '<div class="detail-row"><span>No further detail available</span></div>'}</div>`;
+}
+
+// KDJ Action badge -- entry/exit TIMING layer, computed in klse_screener.py
+// (determine_kdj_action) from a KDJ K/D crossover + EMA/BB confluence. This
+// is a SEPARATE question from the histogram trend tag (trend health) and
+// Score (is this attractive) -- it answers "is it time to act". Purely
+// informational: does not change Score or which Buy/Watch/Sell tab a
+// ticker falls into. Reuses the .tag pos/neg/neu color language via
+// kdjTagClass, styled with an outline instead of a fill (see .tag.kdj CSS).
+function kdjTagClass(action) {
+  if (action === 'Buy Zone' || action === 'Accumulate on Dip') return 'pos';
+  if (action === 'Trim Zone' || action === 'Pullback Watch') return 'neu';
+  if (action === 'Exit') return 'neg';
+  return '';
+}
+function kdjIcon(action) {
+  if (action === 'Buy Zone' || action === 'Accumulate on Dip') return '&#9650;';
+  if (action === 'Trim Zone') return '&#9660;';
+  if (action === 'Exit') return '&#10005;';
+  return '&hellip;';
+}
+function kdjTagHTML(action, k, d) {
+  if (!action) return '';
+  const kd = (k != null && d != null) ? ` <span class="mono" style="opacity:0.75;">K${Math.round(k)} D${Math.round(d)}</span>` : '';
+  return `<span class="tag kdj ${kdjTagClass(action)}" title="KDJ entry/exit timing signal — separate from Score">${kdjIcon(action)} ${action}${kd}</span>`;
 }
 
 function histogramTrendClass(trend) {
@@ -779,11 +860,26 @@ function priceStatRowHTML(s) {
 function cardHTML(s, cat) {
   const trendClass = histogramTrendClass(s.histogramTrend);
   const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
+  const kdjTag = kdjTagHTML(s.kdjAction, s.kdjK, s.kdjD);
   const entries = priceStatRowHTML(s);
   const priceRow = entries.length ? `<div class="price-row">${entries.join('')}</div>` : '';
 
+  // Portfolio cards additionally carry shares/avg-cost/P&L (merged in by
+  // load_portfolio() in generate_dashboard_data.py) -- shown as their own
+  // row right under the ticker, same layout as the other tabs' RSI/Trend
+  // row below it. isHolding guards against a portfolio ticker that fell
+  // out of this run's screener universe and so has no merged fields.
+  const isHolding = cat === 'portfolio' && s.shares != null;
+  const pnlPositive = (s.pnlPct || 0) >= 0;
+  const holdingRow = isHolding ? `
+      <div class="holding-row">
+        <span>${s.shares} sh &middot; avg RM ${Number(s.avgCost).toFixed(3)}</span>
+        <span style="color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}">RM ${(s.pnl || 0).toFixed(2)} (${pnlPositive ? '+' : ''}${(s.pnlPct || 0).toFixed(1)}%)</span>
+      </div>` : '';
+  const borderStyle = isHolding ? ` style="border-left-color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}"` : '';
+
   return `
-    <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" tabindex="0" role="button" aria-expanded="false">
+    <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" data-kdj="${s.kdjAction || 'Waiting'}" data-cat="${cat}" tabindex="0" role="button" aria-expanded="false"${borderStyle}>
       <div class="card-top">
         <div>
           <span class="ticker">${s.ticker.replace('.KL','')}</span>
@@ -794,10 +890,11 @@ function cardHTML(s, cat) {
           <span class="score">Score ${s.score != null ? s.score : '\u2014'}</span>
         </div>
       </div>
+      ${holdingRow}
       <div class="card-details">
-        <span>RSI <b>${s.rsi}</b></span>
+        <span>RSI <b>${s.rsi ?? '\u2014'}</b></span>
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
-        ${trendTag}
+        ${trendTag}${kdjTag}
       </div>
       ${priceRow}
       <span class="detail-cta">Tap for full technical detail \u25be</span>
@@ -815,31 +912,19 @@ function portfolioHTML(rows) {
       <div class="pf-stat"><div class="label">Market Value</div><div class="value">RM ${totalValue.toFixed(2)}</div></div>
       <div class="pf-stat"><div class="label">Unrealized P&amp;L</div><div class="value" style="color:${totalPnl>=0?'var(--buy)':'var(--sell)'}">RM ${totalPnl.toFixed(2)}</div></div>
     </div>`;
-  const cards = rows.map(r => {
-    const pnlPositive = (r.pnlPct || 0) >= 0;
-    return `
-      <div class="card" data-ticker="${r.ticker.toLowerCase()}" data-name="${(r.name || '').toLowerCase()}" style="border-left-color:${pnlPositive ? 'var(--buy)' : 'var(--sell)'}">
-        <div class="card-top">
-          <div>
-            <span class="ticker">${r.ticker.replace('.KL','')}</span>
-            <span class="name">${r.name || ''}</span>
-          </div>
-          <div>
-            <span class="price">RM ${(r.currentPrice||0).toFixed(3)}</span>
-            <span class="score" style="color:${pnlPositive?'var(--buy)':'var(--sell)'}">${pnlPositive?'+':''}${(r.pnlPct||0).toFixed(1)}%</span>
-          </div>
-        </div>
-        <div class="card-details">
-          <span>${r.shares} shares</span>
-          <span>Avg RM <b>${r.avgCost}</b></span>
-          <span>P&amp;L RM <b style="color:${pnlPositive?'var(--buy)':'var(--sell)'}">${(r.pnl||0).toFixed(2)}</b></span>
-        </div>
-      </div>`;
-  }).join('');
-  return summary + cards;
+  // Portfolio holdings are merged (in generate_dashboard_data.py) with the
+  // same technical fields the other tabs use, so they share cardHTML() --
+  // same RSI/Trend/KDJ Action labelling and tap-to-expand technical detail
+  // as every other tab, via wireCardExpansion()/openDetailModal() below.
+  return summary + rows.map(r => cardHTML(r, 'portfolio')).join('');
 }
 
 const stocksByTicker = new Map();
+// Portfolio holdings are kept in their OWN map, separate from stocksByTicker
+// above -- a held ticker's Buy/Watch/Sell/All card should open the plain
+// screener detail, not the shares/avg-cost-enriched Portfolio one. Which map
+// openDetailModal() reads from is decided by the card's data-cat attribute.
+const portfolioByTicker = new Map();
 
 function render(data) {
   document.getElementById('metaText').textContent =
@@ -851,6 +936,8 @@ function render(data) {
   ['buy', 'watch', 'sell', 'all'].forEach(key => {
     (data[key] || []).forEach(s => stocksByTicker.set(s.ticker.toLowerCase(), s));
   });
+  portfolioByTicker.clear();
+  (data.portfolio || []).forEach(r => portfolioByTicker.set(r.ticker.toLowerCase(), r));
 
   const tabsEl = document.getElementById('tabs');
   const mainEl = document.getElementById('main');
@@ -886,16 +973,42 @@ function render(data) {
   });
 
   wireCardExpansion();
+  updateKdjChipCounts(); // scoped to the initially-active tab (CATEGORIES[0] = Buy)
 }
 
 function wireCardExpansion() {
   document.querySelectorAll('.card.expandable').forEach(card => {
-    const open = () => openDetailModal(card.dataset.ticker);
+    const open = () => openDetailModal(card.dataset.ticker, card.dataset.cat);
     card.addEventListener('click', open);
     card.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
     });
   });
+}
+
+// KDJ chip counts are scoped to the currently active Signal tab (Buy/Watch/
+// Sell/All/Portfolio), counted straight off the already-rendered DOM cards'
+// data-kdj attribute -- simpler than re-deriving from the raw data arrays,
+// and automatically stays correct across tab switches since it's called
+// from switchTab() below, not just once at load.
+function updateKdjChipCounts() {
+  const activePanel = document.querySelector('.panel.active');
+  const counts = {
+    'Buy Zone': 0, 'Accumulate on Dip': 0, 'Pullback Watch': 0,
+    'Trim Zone': 0, 'Exit': 0, 'Waiting': 0,
+  };
+  if (activePanel) {
+    activePanel.querySelectorAll('.card[data-kdj]').forEach(card => {
+      const k = card.dataset.kdj;
+      if (k in counts) counts[k]++;
+    });
+  }
+  document.getElementById('countKdjBuyZone').textContent = counts['Buy Zone'];
+  document.getElementById('countKdjAccum').textContent = counts['Accumulate on Dip'];
+  document.getElementById('countKdjPullback').textContent = counts['Pullback Watch'];
+  document.getElementById('countKdjTrim').textContent = counts['Trim Zone'];
+  document.getElementById('countKdjExit').textContent = counts['Exit'];
+  document.getElementById('countKdjWaiting').textContent = counts['Waiting'];
 }
 
 /* =========================================================================
@@ -1337,18 +1450,22 @@ function fmtVol(v) {
   return String(v);
 }
 
-async function openDetailModal(tickerLower) {
-  const s = stocksByTicker.get(tickerLower);
+let currentModalCat = null;
+
+async function openDetailModal(tickerLower, cat) {
+  const s = (cat === 'portfolio' ? portfolioByTicker : stocksByTicker).get(tickerLower);
   if (!s) return;
+  currentModalCat = cat || null;
   const modal = document.getElementById('detailModal');
 
   document.getElementById('dmTicker').textContent = s.ticker.replace('.KL', '');
   document.getElementById('dmName').textContent = s.name || '';
-  document.getElementById('dmSub').textContent = `RSI ${s.rsi} · Trend ${s.emaTrend || '—'}`;
+  document.getElementById('dmSub').textContent = `RSI ${s.rsi ?? '—'} · Trend ${s.emaTrend || '—'}`;
   document.getElementById('dmPrice').textContent = fmtPrice(s.price);
   document.getElementById('dmScore').innerHTML = s.score != null ? `Score <b>${s.score}</b>` : '';
   const trendClass = histogramTrendClass(s.histogramTrend);
-  document.getElementById('dmTag').innerHTML = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
+  const trendTagHtml = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
+  document.getElementById('dmTag').innerHTML = trendTagHtml + kdjTagHTML(s.kdjAction, s.kdjK, s.kdjD);
   const entries = priceStatRowHTML(s);
   // Empty string when there are no entry/target values -> the row collapses
   // via CSS :empty (the last price is already shown in the header).
@@ -1432,7 +1549,8 @@ function currentModalStock() {
   const modal = document.getElementById('detailModal');
   if (modal.hidden) return null;
   const tickerText = document.getElementById('dmTicker').textContent;
-  return [...stocksByTicker.values()].find(x => x.ticker.replace('.KL', '') === tickerText) || null;
+  const map = currentModalCat === 'portfolio' ? portfolioByTicker : stocksByTicker;
+  return [...map.values()].find(x => x.ticker.replace('.KL', '') === tickerText) || null;
 }
 
 // Redraws the four charts in place (fresh colors, fresh canvas size) without
@@ -1488,10 +1606,17 @@ document.querySelectorAll('.theme-toggle').forEach(btn =>
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${key}`));
-  applySearchFilter();
+  updateKdjChipCounts(); // counts are scoped to whichever tab is now active
+  applyFilters();
 }
 
-function applySearchFilter() {
+// activeKdjFilter is a SECOND, independent filter dimension (KDJ Action --
+// entry/exit timing) layered on top of whichever Buy/Watch/Sell/All/
+// Portfolio tab is active. It persists across tab switches, same as the
+// search box does, and both combine (AND) in applyFilters() below.
+let activeKdjFilter = 'ALL';
+
+function applyFilters() {
   const query = (document.getElementById('searchBox').value || '').trim().toLowerCase();
   const activePanel = document.querySelector('.panel.active');
   if (!activePanel) return;
@@ -1499,25 +1624,39 @@ function applySearchFilter() {
   const cards = activePanel.querySelectorAll('.card[data-ticker]');
   let visibleCount = 0;
   cards.forEach(card => {
-    const matches = !query || card.dataset.ticker.includes(query) || card.dataset.name.includes(query);
-    card.style.display = matches ? '' : 'none';
-    if (matches) visibleCount++;
+    const matchesSearch = !query || card.dataset.ticker.includes(query) || card.dataset.name.includes(query);
+    const matchesKdj = activeKdjFilter === 'ALL' || card.dataset.kdj === activeKdjFilter;
+    const show = matchesSearch && matchesKdj;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
   });
 
   let noResults = activePanel.querySelector('.no-search-results');
-  if (query && cards.length && visibleCount === 0) {
+  if (cards.length && visibleCount === 0 && (query || activeKdjFilter !== 'ALL')) {
     if (!noResults) {
       noResults = document.createElement('div');
       noResults.className = 'empty no-search-results';
-      noResults.innerHTML = `<h2>No match</h2><p>Nothing here matches "${query}" -- try a different ticker or name.</p>`;
       activePanel.appendChild(noResults);
     }
+    const kdjNote = activeKdjFilter !== 'ALL' ? ` in "${activeKdjFilter}"` : '';
+    noResults.innerHTML = query
+      ? `<h2>No match</h2><p>Nothing here matches "${query}"${kdjNote} — try a different ticker, name, or KDJ filter.</p>`
+      : `<h2>No match</h2><p>No stocks here are currently in "${activeKdjFilter}" — try a different KDJ filter.</p>`;
   } else if (noResults) {
     noResults.remove();
   }
 }
 
-document.getElementById('searchBox').addEventListener('input', applySearchFilter);
+document.getElementById('searchBox').addEventListener('input', applyFilters);
+
+document.getElementById('kdjFilterRow').addEventListener('click', e => {
+  const btn = e.target.closest('.kdj-chip');
+  if (!btn) return;
+  document.querySelectorAll('.kdj-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeKdjFilter = btn.dataset.kdj;
+  applyFilters();
+});
 
 function showSampleBanner() {
   const banner = document.createElement('div');
