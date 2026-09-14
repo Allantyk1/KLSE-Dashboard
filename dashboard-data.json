@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T19:26:05",
+  "generatedAt": "2026-09-14T20:14:38",
   "universeCount": 307,
   "buy": [
     {
@@ -13635,11 +13635,11 @@
         "pctVsSma50": -2.57,
         "pctVsSma200": -4.04
       },
-      "shares": 4500,
+      "shares": 4000,
       "avgCost": 9.738,
       "currentPrice": 10.46,
-      "marketValue": 47070.0,
-      "pnl": 3249.0,
+      "marketValue": 41840.0,
+      "pnl": 2888.0,
       "pnlPct": 7.41
     },
     {
@@ -13971,12 +13971,12 @@
         "pctVsSma50": -1.28,
         "pctVsSma200": 1.21
       },
-      "shares": 1000,
-      "avgCost": 5.92,
+      "shares": 2000,
+      "avgCost": 5.885,
       "currentPrice": 5.85,
-      "marketValue": 5850.0,
+      "marketValue": 11700.0,
       "pnl": -70.0,
-      "pnlPct": -1.18
+      "pnlPct": -0.59
     },
     {
       "ticker": "5109.KL",
@@ -14013,11 +14013,11 @@
         "pctVsSma50": -0.58,
         "pctVsSma200": -0.97
       },
-      "shares": 7000,
+      "shares": 4000,
       "avgCost": 1.036,
       "currentPrice": 1.0,
-      "marketValue": 7000.0,
-      "pnl": -252.0,
+      "marketValue": 4000.0,
+      "pnl": -144.0,
       "pnlPct": -3.47
     }
   ],
