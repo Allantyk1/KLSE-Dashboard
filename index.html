@@ -761,6 +761,10 @@ const CATEGORIES = [
   { key: 'portfolio', label: 'Portfolio' },
 ];
 
+// Tab selected by default on every page load. KDJ filter defaults to "All
+// KDJ" already, via activeKdjFilter = 'ALL' below.
+const DEFAULT_TAB = 'all';
+
 function fmtTimestamp(iso) {
   const d = new Date(iso);
   // Matches the US dashboard's style, e.g. "8/21/2026, 2:00:15 PM"
@@ -959,7 +963,7 @@ function render(data) {
   CATEGORIES.forEach((cat, i) => {
     const count = cat.key === 'portfolio' ? (data.portfolio || []).length : (data[cat.key] || []).length;
     const btn = document.createElement('button');
-    btn.className = 'tab' + (i === 0 ? ' active' : '');
+    btn.className = 'tab' + (cat.key === DEFAULT_TAB ? ' active' : '');
     btn.dataset.cat = cat.key;
     btn.setAttribute('role', 'tab');
     btn.innerHTML = `${cat.label}<span class="count">${count}</span>`;
@@ -967,7 +971,7 @@ function render(data) {
     tabsEl.appendChild(btn);
 
     const panel = document.createElement('div');
-    panel.className = 'panel' + (i === 0 ? ' active' : '');
+    panel.className = 'panel' + (cat.key === DEFAULT_TAB ? ' active' : '');
     panel.id = `panel-${cat.key}`;
     if (cat.key === 'portfolio') {
       panel.innerHTML = portfolioHTML(data.portfolio);
@@ -985,7 +989,7 @@ function render(data) {
   });
 
   wireCardExpansion();
-  updateKdjChipCounts(); // scoped to the initially-active tab (CATEGORIES[0] = Buy)
+  updateKdjChipCounts(); // scoped to the initially-active tab (DEFAULT_TAB)
 }
 
 function wireCardExpansion() {
