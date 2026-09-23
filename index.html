@@ -755,6 +755,7 @@
       <h3 id="titlePriceDist">Price Distribution</h3>
       <div class="chart-canvas-wrap"><canvas id="chartPriceDist" height="230"></canvas><div class="chart-tooltip" id="ttPriceDist"></div><div class="chart-empty" id="emptyPriceDist" hidden></div></div>
       <div class="chart-caption" id="captionPriceDist"></div>
+      <div class="detail-panel" id="statsPriceDist"></div>
     </div>
 
     <div class="dm-detail-table" id="dmDetailTable"></div>
@@ -806,6 +807,15 @@ function renderTape(data) {
 function detailRow(label, value) {
   if (value === null || value === undefined || value === '') return '';
   return `<div class="detail-row"><span>${label}</span><b>${value}</b></div>`;
+}
+
+// Same as detailRow(), plus a small color swatch before the label -- used
+// for the Price Distribution "chip distribution" stats so each figure's
+// color matches its reference line on the chart above it.
+function detailRowSwatch(label, value, color) {
+  if (value === null || value === undefined || value === '') return '';
+  const swatch = color ? `<span style="display:inline-block;width:10px;height:2px;background:${color};margin-right:6px;vertical-align:middle;"></span>` : '';
+  return `<div class="detail-row"><span>${swatch}${label}</span><b>${value}</b></div>`;
 }
 
 function detailPanelHTML(s) {
@@ -1405,10 +1415,24 @@ function drawVolumeChart(hist) {
 // NOT actual holder cost basis). Unlike the time-series charts above, the
 // axis here is price (rows), not time, so it doesn't use fitCanvas's
 // x-index crosshair helper -- it has its own simple row-hover instead.
+function priceDistStatsHTML(dist, colors) {
+  const rows = [
+    detailRowSwatch('Resistance', dist.resistance != null ? `RM ${fmt3(dist.resistance)}` : null, colors.resistance),
+    detailRowSwatch('Avg Cost', dist.avgCost != null ? `RM ${fmt3(dist.avgCost)}` : null, colors.avgCost),
+    detailRowSwatch('Support', dist.support != null ? `RM ${fmt3(dist.support)}` : null, colors.support),
+    detailRow('Profit Ratio', dist.pctVolumeBelow != null ? `${dist.pctVolumeBelow}%` : null),
+    detailRow('Range Overlap', dist.rangeOverlapPct != null ? `${dist.rangeOverlapPct}%` : null),
+    detailRow('90% Range', dist.range90 ? `RM ${fmt3(dist.range90[0])} ~ ${fmt3(dist.range90[1])}` : null),
+    detailRow('70% Range', dist.range70 ? `RM ${fmt3(dist.range70[0])} ~ ${fmt3(dist.range70[1])}` : null),
+  ].filter(Boolean).join('');
+  return rows;
+}
+
 function drawPriceDistChart(hist) {
   const dist = hist.priceDistribution;
   const canvas = document.getElementById('chartPriceDist');
   const tooltip = document.getElementById('ttPriceDist');
+  const statsEl = document.getElementById('statsPriceDist');
   document.getElementById('titlePriceDist').textContent =
     `Price Distribution (${dist ? dist.lookbackDays : '—'}d volume by price)`;
 
@@ -1417,6 +1441,7 @@ function drawPriceDistChart(hist) {
   if (!dist || !dist.buckets || !dist.buckets.length) {
     setChartAvailability('PriceDist', false, 'Price distribution not available for this stock yet — push a fresh chart-history.json from the pipeline.');
     document.getElementById('captionPriceDist').textContent = '';
+    if (statsEl) statsEl.innerHTML = '';
     return;
   }
   setChartAvailability('PriceDist', true);
@@ -1426,10 +1451,23 @@ function drawPriceDistChart(hist) {
   const buckets = dist.buckets; // ascending price order (low bucket first)
   const n = buckets.length;
   const cssH = Math.max(180, n * 18 + 40);
-  const buyColor = getCssVar('--buy'), sellColor = getCssVar('--sell'), textMuted = getCssVar('--text-muted');
+  const buyColor = getCssVar('--buy'), sellColor = getCssVar('--sell'), goldColor = getCssVar('--gold'), textMuted = getCssVar('--text-muted');
   const maxVol = Math.max(1, ...buckets.map(b => b.volume));
   const labelW = 78;
   const annoH = 20;
+
+  if (statsEl) statsEl.innerHTML = priceDistStatsHTML(dist, { resistance: sellColor, avgCost: goldColor, support: buyColor });
+
+  // Row index of the bucket containing `price` (clamped to the histogram's
+  // range) -- same coordinate system the bar rows above are drawn in, so a
+  // reference line lines up exactly with the bar it refers to.
+  function rowForPrice(price) {
+    if (price == null) return null;
+    for (let i = 0; i < n; i++) {
+      if (price >= buckets[i].low && price < buckets[i].high) return i;
+    }
+    return price < buckets[0].low ? 0 : n - 1;
+  }
 
   function render(hoverRow) {
     const { ctx, w, h } = fitCanvas(canvas, cssH);
@@ -1453,6 +1491,51 @@ function drawPriceDistChart(hist) {
       ctx.textBaseline = 'middle';
       ctx.fillText(`${fmt3(b.low)}-${fmt3(b.high)}`, labelW - 6, y + rowH / 2);
     }
+
+    // Resistance / Avg Cost / Support reference lines -- an informal
+    // "chip distribution" summary (see build_price_distribution() in
+    // klse_screener.py for the exact method and its limits), computed
+    // server-side from this same histogram so it can never disagree with
+    // the bars above. Nudge Resistance/Support off Avg Cost's row when
+    // they land on the same (or adjacent) row so all three stay visible.
+    const lineDefs = [
+      { role: 'resistance', value: dist.resistance, color: sellColor, dash: [] },
+      { role: 'avgCost', value: dist.avgCost, color: goldColor, dash: [4, 3] },
+      { role: 'support', value: dist.support, color: buyColor, dash: [] },
+    ];
+    const byRole = {};
+    lineDefs.forEach(l => { if (l.value != null) byRole[l.role] = rowForPrice(l.value); });
+    if (byRole.avgCost != null) {
+      if (byRole.resistance === byRole.avgCost) byRole.resistance = Math.min(n - 1, byRole.resistance + 1);
+      if (byRole.support === byRole.avgCost) byRole.support = Math.max(0, byRole.support - 1);
+    }
+    lineDefs.forEach(l => {
+      if (l.value == null) return;
+      const rowPos = n - 1 - byRole[l.role];
+      const y = rowPos * rowH + rowH / 2;
+      ctx.save();
+      ctx.strokeStyle = l.color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash(l.dash);
+      ctx.beginPath();
+      ctx.moveTo(labelW, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const label = fmt3(l.value);
+      ctx.font = '600 9px "IBM Plex Mono", monospace';
+      const textW = ctx.measureText(label).width;
+      const padX = 4, boxH = 13;
+      const boxX = w - textW - padX * 2;
+      ctx.fillStyle = l.color;
+      ctx.fillRect(boxX, y - boxH / 2, textW + padX * 2, boxH);
+      ctx.fillStyle = getCssVar('--bg');
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, boxX + padX, y + 0.5);
+      ctx.restore();
+    });
 
     const capY = h - annoH / 2;
     ctx.font = '600 11px Inter, sans-serif';
