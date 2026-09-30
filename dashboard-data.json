@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-30T19:09:53",
+  "generatedAt": "2026-09-30T19:52:33",
   "universeCount": 343,
   "buy": [
     {
@@ -14721,12 +14721,12 @@
         "pctVsSma50": -13.06,
         "pctVsSma200": -17.69
       },
-      "shares": 4000,
-      "avgCost": 0.656,
+      "shares": 5000,
+      "avgCost": 0.644,
       "currentPrice": 0.57,
-      "marketValue": 2280.0,
-      "pnl": -344.0,
-      "pnlPct": -13.11
+      "marketValue": 2850.0,
+      "pnl": -370.0,
+      "pnlPct": -11.49
     },
     {
       "ticker": "5306.KL",
@@ -15015,11 +15015,11 @@
         "pctVsSma50": 18.57,
         "pctVsSma200": 28.1
       },
-      "shares": 3000,
+      "shares": 1000,
       "avgCost": 0.42,
       "currentPrice": 0.485,
-      "marketValue": 1455.0,
-      "pnl": 195.0,
+      "marketValue": 485.0,
+      "pnl": 65.0,
       "pnlPct": 15.48
     },
     {
@@ -15225,12 +15225,12 @@
         "pctVsSma50": -6.26,
         "pctVsSma200": 12.97
       },
-      "shares": 3000,
-      "avgCost": 2.3,
+      "shares": 3500,
+      "avgCost": 2.579,
       "currentPrice": 4.19,
-      "marketValue": 12570.0,
-      "pnl": 5670.0,
-      "pnlPct": 82.17
+      "marketValue": 14665.0,
+      "pnl": 5638.5,
+      "pnlPct": 62.47
     },
     {
       "ticker": "5031.KL",
