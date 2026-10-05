@@ -175,6 +175,9 @@
   .theme-toggle:active{ background:var(--surface-raised); }
   .theme-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .theme-toggle svg{ width:1.15rem; height:1.15rem; }
+  .tracker-link{ flex-shrink:0; background:var(--surface); border:1px solid var(--border); color:var(--text-muted); border-radius:999px; height:2.5rem; padding:0 0.85rem; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:0.75rem; text-decoration:none; -webkit-tap-highlight-color:transparent; }
+  .tracker-link:hover{ color:var(--gold); border-color:var(--gold); }
+  .tracker-link:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
   .theme-toggle.dm-theme-toggle{ width:2.75rem; height:2.75rem; flex-shrink:0; }
   .theme-toggle .icon-moon{ display:block; }
   .theme-toggle .icon-sun{ display:none; }
@@ -596,10 +599,13 @@
 <header>
   <div class="header-top">
     <h1>KLSE <span class="accent">Screener</span></h1>
-    <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
+    <div class="header-actions" style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;">
+      <a href="tracker.html?from=public" class="tracker-link" title="Pick Tracker: how past recommendations performed">Tracker</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
     </button>
+    </div>
   </div>
   <div class="meta"><span class="dot"></span><span id="metaText">Loading&hellip;</span></div>
 </header>

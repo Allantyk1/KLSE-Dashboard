@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pick Tracker · KLSE Screener</title>
+<meta name="theme-color" content="#0B0F14">
+<link rel="icon" href="icon-192.png" type="image/png">
+<script>(function(){try{var s=localStorage.getItem('klse-theme');var t=s||((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}})();</script>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: Market Desk sibling page. Sticky control strip, then three stacked desks
+     (entry watch -> hit rate -> dollars), each a summary line + chart/table. Dark-first. */
+  /* KLSE Screener palette (matches index.html / public.html), tier ramp built on its gold. */
+  :root, :root[data-theme="dark"]{
+    --bg:#0B0F14; --panel:#131A22; --panel-2:#1A222C; --line:#232C36;
+    --ink:#E8EDF2; --ink-dim:#8A98A8; --ink-faint:#5E6B7A;
+    --amber:#C9A961; --amber-soft:#3A3120;
+    --green:#2FBF71; --green-soft:#1B4A32; --red:#E5484D; --red-soft:#4A1F21;
+    --t1:#5E4D27; --t2:#86703A; --t3:#A88C4C; --t4:#C9A961; --t5:#E6CF95;
+    --font-display:'Space Grotesk','Inter',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-data:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    color-scheme:dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#F7F8FA; --panel:#FFFFFF; --panel-2:#F1F3F6; --line:#DDE1E6;
+    --ink:#14181F; --ink-dim:#667085; --ink-faint:#98A2B3;
+    --amber:#9C7A25; --amber-soft:#F5EDD8;
+    --green:#1A8754; --green-soft:#E3F5EC; --red:#C4314B; --red-soft:#FBE7EA;
+    --t1:#D9C287; --t2:#BE9E4E; --t3:#9C7A25; --t4:#765A15; --t5:#4F3C0A;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:hidden;max-width:100vw}
+  .wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 56px}
+  .num{font-family:var(--font-data);font-variant-numeric:tabular-nums}
+  header.top{padding-block:22px 14px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-end;justify-content:space-between}
+  .eyebrow{font-family:var(--font-data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:0 0 4px}
+  h1{font-family:var(--font-display);font-size:30px;line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+  .meta{font-size:12px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:4px 16px}
+  .meta b{color:var(--ink);font-weight:500}
+  .controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-block:1px solid var(--line);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px 22px}
+  .ctl{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .ctl label,.ctl .lbl{font-family:var(--font-data);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:2px;flex-wrap:wrap}
+  .seg button{font:500 12px var(--font-body);color:var(--ink-dim);background:none;border:0;border-radius:7px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+  .seg button[aria-pressed="true"]{background:var(--amber);color:var(--bg)}
+  .seg button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  select{font:500 12px var(--font-body);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 8px}
+  section.desk{margin-top:30px}
+  .desk-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:6px}
+  .desk-head .idx{font-family:var(--font-data);font-size:12px;color:var(--amber)}
+  h2{font-family:var(--font-display);font-size:21px;margin:0;letter-spacing:-.005em}
+  .lede{color:var(--ink-dim);max-width:72ch;margin:0 0 14px;font-size:13px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .tile .k{font-family:var(--font-data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);display:flex;align-items:center;gap:6px}
+  .tile .v{font-family:var(--font-data);font-size:24px;font-weight:600;margin-top:2px}
+  .tile .s{font-size:11px;color:var(--ink-dim)}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0}
+  .grid2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:12px}
+  @media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+  @media (max-width:600px){.controls{position:static}.co{max-width:110px}}
+  .chart-box{position:relative;height:280px}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th{font-family:var(--font-data);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-family:var(--font-data);font-variant-numeric:tabular-nums}
+  th:first-child,td:first-child{text-align:left}
+  tr.sel td{background:var(--amber-soft)}
+  tbody tr.clickable{cursor:pointer}
+  tbody tr.clickable:hover td{background:var(--panel-2)}
+  td.muted,.muted{color:var(--ink-faint)}
+  .pos{color:var(--green)} .neg{color:var(--red)}
+  .tk{font-weight:600;color:var(--ink);font-family:var(--font-data)}
+  .co{display:block;font:400 11px var(--font-body);color:var(--ink-faint);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .pill{display:inline-block;font:600 10.5px var(--font-data);padding:2px 7px;border-radius:999px;letter-spacing:.03em}
+  .pill.hot{background:var(--green-soft);color:var(--green)}
+  .pill.warm{background:var(--amber-soft);color:var(--amber)}
+  .pill.cold{background:var(--panel-2);color:var(--ink-faint)}
+  .strip{display:inline-flex;gap:3px;vertical-align:middle}
+  .strip i{width:13px;height:18px;border-radius:3px;background:var(--panel-2);border:1px solid var(--line);display:block;position:relative}
+  .strip i.hit{background:var(--green);border-color:var(--green)}
+  .strip i.miss{background:transparent}
+  .strip i.na{background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)}
+  .strip i.wk{margin-left:5px}
+  .strip i.in20::after{content:"";position:absolute;left:3px;right:3px;bottom:-5px;height:2px;border-radius:2px;background:var(--amber)}
+  .days-list{font:400 11px var(--font-body);color:var(--ink-dim);white-space:normal;text-align:left;min-width:160px;max-width:260px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--ink-dim);margin:2px 0 10px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .note{font-size:12px;color:var(--ink-dim);margin-top:10px;max-width:80ch}
+  .note b{color:var(--ink);font-weight:600}
+  details{margin-top:12px}
+  summary{cursor:pointer;color:var(--amber);font-weight:500;font-size:13px}
+  .tip{position:fixed;z-index:20;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font:12px var(--font-data);color:var(--ink);box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:240px}
+  .bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .mini{height:6px;border-radius:3px;background:var(--t4);display:inline-block}
+  footer{margin-top:36px;color:var(--ink-faint);font-size:11.5px;max-width:90ch}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  .board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  @media (max-width:760px){.board{grid-template-columns:minmax(0,1fr)}}
+  .rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+  .rank li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+  .rank li:last-child{border-bottom:0}
+  .rank .no{font:500 11px var(--font-data);color:var(--ink-faint)}
+  .rank .who{min-width:0}
+  .rank .who .tk{font-size:13px}
+  .rank .who small{display:block;font-size:11px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank .val{text-align:right;font-family:var(--font-data);font-variant-numeric:tabular-nums}
+  .rank .val b{display:block;font-size:14px;font-weight:600}
+  .rank .val small{font-size:11px;color:var(--ink-dim)}
+  .rank .barline{grid-column:2 / 4;height:4px;border-radius:2px;background:var(--panel-2);overflow:hidden}
+  .rank .barline span{display:block;height:100%;border-radius:2px}
+  .board h3{font-family:var(--font-display);font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:10px}
+  input[type=search]{font:500 13px var(--font-body);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px;min-width:0;width:180px}
+  input[type=search]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  th.sort{cursor:pointer;user-select:none}
+  th.sort:hover{color:var(--ink)}
+  th.sort[aria-sort="descending"]::after{content:" ▼";color:var(--amber)}
+  th.sort[aria-sort="ascending"]::after{content:" ▲";color:var(--amber)}
+  .btn{font:500 12px var(--font-body);color:var(--amber);background:none;border:1px solid var(--line);border-radius:9px;padding:6px 12px;cursor:pointer}
+  .btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .sig{font:600 10px var(--font-data);padding:1px 6px;border-radius:999px}
+  .sig.B{background:var(--green-soft);color:var(--green)} .sig.W{background:var(--amber-soft);color:var(--amber)} .sig.S{background:var(--red-soft);color:var(--red)}
+  .t20tag{white-space:nowrap;font:600 9.5px var(--font-data);color:var(--amber);border:1px solid var(--amber);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px}
+  .jumptag{font:600 9.5px var(--font-data);color:var(--red);border:1px solid var(--red);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px;white-space:nowrap}
+  tr.base td{color:var(--ink-dim);font-style:italic}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <style>.back-btn{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:7px 12px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);font:500 12px var(--font-data);letter-spacing:.04em;text-decoration:none;cursor:pointer}.back-btn:hover{border-color:var(--amber);color:var(--amber)}.back-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}.back-btn .arrow{font-size:14px;line-height:1}</style><a id="backLink" class="back-btn" href="index.html" aria-label="Back to KLSE Screener"><span class="arrow">‹</span> KLSE Screener</a><script>if(/from=public/.test(location.search))document.getElementById("backLink").href="public.html"</script>
+      <p class="eyebrow">KLSE · Recommendation follow-through</p>
+      <h1>Pick Tracker</h1>
+    </div>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Dashboard settings">
+    <div class="ctl"><span class="lbl">Picks</span>
+      <div class="seg" id="src">
+        <button type="button" data-v="top20" aria-pressed="true">Top 20</button>
+        <button type="button" data-v="buy" aria-pressed="false">All BUY signals</button>
+      </div></div>
+    <div class="ctl"><span class="lbl">Pick window</span>
+      <div class="seg" id="win">
+        <button type="button" data-v="1" aria-pressed="false">1 mo</button>
+        <button type="button" data-v="3" aria-pressed="true">3 mo</button>
+        <button type="button" data-v="0" aria-pressed="false">All</button>
+      </div></div>
+    <div class="ctl"><span class="lbl">Weekly average price</span>
+      <div class="seg" id="refMode">
+        <button type="button" data-v="se" aria-pressed="true">Avg Entry EMA20</button>
+        <button type="button" data-v="bb" aria-pressed="false">Avg Entry BB Zone</button>
+        <button type="button" data-v="rec" aria-pressed="false">Avg close on Top-20 days</button>
+      </div></div>
+    <div class="ctl"><span class="lbl">Measure weekly gain by</span>
+      <div class="seg" id="measure">
+        <button type="button" data-v="close" aria-pressed="true">Close at week end</button>
+        <button type="button" data-v="peak" aria-pressed="false">Best close so far</button>
+      </div></div>
+  </div>
+
+  <!-- 1 leaderboard -->
+  <section class="desk" id="board">
+    <div class="desk-head"><span class="idx">1</span><h2>Best and worst since day 1</h2></div>
+    <p class="lede" id="boardLede"></p>
+    <div class="toolbar">
+      <div class="ctl"><span class="lbl">Rank by</span>
+        <div class="seg" id="rankBy">
+          <button type="button" data-v="pct" aria-pressed="true">% gain / loss</button>
+          <button type="button" data-v="usd" aria-pressed="false">RM per share</button>
+          <button type="button" data-v="pos" aria-pressed="false">RM on RM1,000</button>
+        </div></div>
+    </div>
+    <div class="tiles" id="boardTiles"></div>
+    <div class="board">
+      <div class="panel"><h3><i class="sw" style="background:var(--green)"></i>Best 10</h3><ol class="rank" id="best"></ol></div>
+      <div class="panel"><h3><i class="sw" style="background:var(--red)"></i>Worst 10</h3><ol class="rank" id="worst"></ol></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="toolbar">
+        <label class="lbl" for="boardSearch" style="font:500 10px var(--font-data);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)">Find a stock</label>
+        <input type="search" id="boardSearch" placeholder="Ticker or name" autocomplete="off">
+        <span class="muted" id="boardCount" style="font-size:12px"></span>
+      </div>
+      <div class="scroll"><table id="boardTable"></table></div>
+      <div style="margin-top:10px"><button type="button" class="btn" id="boardMore"></button></div>
+    </div>
+  </section>
+
+  <!-- 2 entry watch -->
+  <section class="desk" id="watch">
+    <div class="desk-head"><span class="idx">2</span><h2>Below-weekly-average days</h2></div>
+    <p class="lede" id="watchLede"></p>
+    <div class="toolbar">
+      <div class="ctl"><span class="lbl">Stocks</span>
+        <div class="seg" id="watchSet">
+          <button type="button" data-v="top20" aria-pressed="true">Today's Top 20</button>
+          <button type="button" data-v="buy" aria-pressed="false">Today's BUY signals</button>
+        </div></div>
+      <div class="ctl"><span class="lbl">Look-back</span>
+        <div class="seg" id="lookback">
+          <button type="button" data-v="5" aria-pressed="false">1 wk</button>
+          <button type="button" data-v="10" aria-pressed="true">2 wk</button>
+          <button type="button" data-v="20" aria-pressed="false">4 wk</button>
+        </div></div>
+      <div class="ctl"><label class="lbl" for="watchSearch">Add any ticker</label>
+        <input type="search" id="watchSearch" placeholder="e.g. 1155 or MAYBANK" autocomplete="off" list="tickerList"></div>
+      <datalist id="tickerList"></datalist>
+    </div>
+    <div class="tiles" id="watchTiles"></div>
+    <div class="panel">
+      <div class="legend">
+        <span><i class="sw" style="background:var(--green)"></i>Closed below weekly avg (buy-at-avg would fill)</span>
+        <span><i class="sw" style="border:1px solid var(--line)"></i>Closed above</span>
+        <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)"></i>No weekly avg available</span>
+        <span><i class="sw" style="height:3px;background:var(--amber)"></i>In Top 20 that day</span>
+      </div>
+      <div class="scroll"><table id="watchTable"></table></div>
+    </div>
+  </section>
+
+  <!-- 3 hit rate -->
+  <section class="desk" id="hits">
+    <div class="desk-head"><span class="idx">3</span><h2>Hit rate, week 1 to week 13</h2></div>
+    <p class="lede" id="hitLede"></p>
+    <div class="tiles" id="hitTiles"></div>
+    <div class="grid2">
+      <div class="panel"><div class="legend" id="hitLegend"></div><div class="chart-box"><canvas id="hitChart" aria-label="Hit rate by week chart" role="img"></canvas></div></div>
+      <div class="panel"><div class="scroll"><table id="hitTable"></table></div>
+        <p class="note">Tap a week to update the tiles. <b>n</b> is the number of picks tracked for at least that many weeks. The italic <b>Market</b> row is every ticker on every logged day, for comparison.</p></div>
+    </div>
+  </section>
+
+  <!-- 4 dollars -->
+  <section class="desk" id="dollars">
+    <div class="desk-head"><span class="idx">4</span><h2>Ringgit gain, week 1 to week 13</h2></div>
+    <p class="lede" id="usdLede"></p>
+    <div class="tiles" id="usdTiles"></div>
+    <div class="grid2">
+      <div class="panel"><div class="legend"><span><i class="sw" style="background:var(--green)"></i>Avg RM gain per RM1,000 per pick</span><span><i class="sw" style="background:var(--red)"></i>Avg RM loss</span><span><i class="sw" style="height:2px;background:var(--ink-dim)"></i>Market avg</span></div><div class="chart-box"><canvas id="usdChart" aria-label="Average ringgit gain by week chart" role="img"></canvas></div></div>
+      <div class="panel"><div class="scroll"><table id="usdTable"></table></div></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <p class="note" style="margin-top:0">Ringgit gain by hit tier for <b id="usdTierWeek"></b>. Each row covers the picks that cleared that tier.</p>
+      <div class="scroll"><table id="usdTier"></table></div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+(function(){
+const TIERS=[{k:0,label:"Above rec price",short:">0%",tok:"--t1"},{k:.05,label:"≥ 5%",short:"≥5%",tok:"--t2"},{k:.10,label:"≥ 10%",short:"≥10%",tok:"--t3"},{k:.15,label:"≥ 15%",short:"≥15%",tok:"--t4"},{k:.20,label:"≥ 20%",short:"≥20%",tok:"--t5"}];
+const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
+const S={src:"top20",win:3,ref:"se",measure:"close",week:4,look:10,watchSet:"top20",rankBy:"pct",sortKey:"pct",sortDir:-1};
+try{Object.assign(S,JSON.parse(localStorage.getItem("klsePickTrackerPrefs")||"{}"))}catch(e){}
+const extra=new Set(); let boardShow=25;
+let D=null,hitChart=null,usdChart=null;
+const $=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtP=v=>v==null?"–":(v*100).toFixed(1)+"%";
+const fmtS=v=>v==null?"–":(v>=0?"+":"−")+(Math.abs(v*100)).toFixed(1)+"%";
+const money=(v,dp=0)=>v==null||isNaN(v)?"–":(v<0?"−RM":"RM")+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:dp,maximumFractionDigits:dp});
+const tkd=t=>String(t||"").replace(/\.KL$/,"");   // show 1155 not 1155.KL, like the dashboard
+const px=v=>money(v,3);   // Bursa prices go to RM0.005, so prices and per-share values use 3 dp
+const spx=v=>smoney(v,3);
+const smoney=(v,dp=0)=>v==null||isNaN(v)?"–":(v>=0?"+":"")+money(v,dp);
+const cls=v=>v==null?"muted":v>0?"pos":v<0?"neg":"";
+const dshort=iso=>new Date(iso+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
+const dlong=iso=>new Date(iso+"T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/864e5);
+function save(){try{localStorage.setItem("klsePickTrackerPrefs",JSON.stringify(S))}catch(e){}}
+function tile(k,v,s,sw){return `<div class="tile"><div class="k">${sw?`<i class="sw" style="background:var(${sw})"></i>`:""}${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`}
+function bindSeg(id,key,num,after){
+  const el=$(id);
+  const sync=()=>el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(String(S[key])===b.dataset.v)));
+  el.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S[key]=num?+b.dataset.v:b.dataset.v;if(after)after();sync();save();render();});
+  sync();
+}
+const srcName=()=>S.src==="top20"?"Top-20 picks":"BUY-signal picks";
+const winTxt=()=>S.win?`the last ${S.win} month${S.win>1?"s":""}`:"all logged history";
+function cutoff(){if(!S.win)return "0000";const a=new Date(D.as_of_session+"T00:00:00");a.setMonth(a.getMonth()-S.win);return a.toISOString().slice(0,10)}
+const windowEvents=()=>{const c=cutoff();return D.events.filter(e=>e.src===S.src&&e.d>=c)};
+
+/* ---------- 1. leaderboard ---------- */
+function boardRows(){
+  const by={};
+  for(const e of windowEvents()){(by[e.t]=by[e.t]||[]).push(e)}
+  const rows=[];
+  for(const t in by){
+    const evs=by[t].sort((a,b)=>a.d.localeCompare(b.d)), f=evs[0], info=D.tickers[t]||{};
+    if(f.lc==null) continue;
+    // best/worst close since day 1 = across every event of this stock (the first event spans the longest)
+    const pct=f.lc/f.rp-1;
+    const jump=evs.map(e=>e.jump).filter(Boolean).pop()||null;
+    rows.push({t,jump,co:info.co,cat:info.cat,sig:info.sig,t20:info.t20,d:f.d,rp:f.rp,lc:f.lc,pct,usd:f.lc-f.rp,pos:1000*pct,
+      hi:f.hi!=null?f.hi/f.rp-1:null,lo:f.lo!=null?f.lo/f.rp-1:null,n:evs.length,days:daysBetween(f.d,D.last_price_date),ms:f.ms});
+  }
+  return rows;
+}
+function renderBoard(){
+  const rows=boardRows(), k=S.rankBy;
+  const unit=k==="pct"?"%":k==="usd"?"RM per share":"RM on RM1,000";
+  $("boardLede").innerHTML=`Each stock is measured from <b>day 1</b>, the first day it was recommended (${S.src==="top20"?"entered the Top 20, i.e. the dashboard's Buy tab":"got a BUY signal"}) in ${winTxt()}, to the latest close on ${dlong(D.last_price_date)}. The day-1 price is that day's close. <b>RM per share</b> favours high-priced stocks. <b>RM on RM1,000</b> shows what a RM1,000 position bought on day 1 has made or lost, which ranks the same as %. <b>⚠ jump</b> marks a one-day move of 50% or more, which is usually a bonus issue, share split or consolidation in the raw prices rather than a real loss.`;
+  const fmt=r=>k==="pct"?fmtS(r.pct):k==="usd"?spx(r.usd):smoney(r.pos,0);
+  const sub=r=>k==="pct"?`${spx(r.usd)}/sh · ${smoney(r.pos)} on RM1k`:k==="usd"?`${fmtS(r.pct)} · ${px(r.rp)} → ${px(r.lc)}`:`${fmtS(r.pct)} · ${spx(r.usd)}/sh`;
+  const sorted=[...rows].sort((a,b)=>b[k]-a[k]);
+  const best=sorted.slice(0,10), worst=sorted.slice(-10).reverse();
+  const maxAbs=Math.max(1e-9,...best.concat(worst).map(r=>Math.abs(r[k])));
+  const li=(r,i,col)=>`<li><span class="no">${i+1}</span><span class="who"><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<small>day 1 ${dshort(r.d)} · ${esc(r.co||"")}</small></span><span class="val"><b class="${cls(r[k])}">${fmt(r)}</b><small>${sub(r)}</small></span><span class="barline"><span style="width:${Math.max(2,Math.round(100*Math.abs(r[k])/maxAbs))}%;background:var(${col})"></span></span></li>`;
+  $("best").innerHTML=best.length?best.map((r,i)=>li(r,i,"--green")).join(""):`<li class="muted">No picks in this window yet.</li>`;
+  $("worst").innerHTML=worst.length?worst.map((r,i)=>li(r,i,"--red")).join(""):"";
+  const up=rows.filter(r=>r.pct>0).length, tot=rows.reduce((a,r)=>a+r.pos,0);
+  $("boardTiles").innerHTML=[
+    tile("Stocks recommended",`${rows.length}`,`${srcName()} in ${winTxt()}`),
+    tile("Up since day 1",`${rows.length?Math.round(100*up/rows.length):0}%`,`${up} up · ${rows.length-up} down`),
+    tile("Avg change since day 1",`<span class="${cls(tot)}">${rows.length?fmtS(tot/rows.length/1000):"–"}</span>`,`median ${rows.length?fmtS(median(rows.map(r=>r.pct))):"–"}`),
+    tile("RM1,000 in each on day 1",`<span class="${cls(tot)}">${smoney(tot)}</span>`,`${money(rows.length*1000)} deployed`),
+  ].join("");
+  // full table
+  const q=$("boardSearch").value.trim().toLowerCase();
+  let list=rows.filter(r=>!q||r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q));
+  const sk=S.sortKey, dir=S.sortDir;
+  list.sort((a,b)=>{const x=a[sk],y=b[sk];if(typeof x==="string")return dir*x.localeCompare(y);return dir*((x??-1e9)-(y??-1e9))});
+  $("boardCount").textContent=`${list.length} stock${list.length===1?"":"s"}`;
+  const cols=[["t","Stock"],["d","Day 1"],["rp","Day-1 price"],["lc","Now"],["days","Days"],["pct","% to date"],["usd","RM / share"],["pos","RM on RM1k"],["hi","Best since"],["lo","Worst since"],["n","Times picked"],["sig","Signal now"]];
+  let h=`<thead><tr>${cols.map(([c,l])=>`<th class="sort" data-k="${c}" ${sk===c?`aria-sort="${dir<0?"descending":"ascending"}"`:""} tabindex="0">${l}</th>`).join("")}</tr></thead><tbody>`;
+  for(const r of list.slice(0,boardShow)){
+    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
+  }
+  $("boardTable").innerHTML=h+"</tbody>";
+  const more=$("boardMore"); more.hidden=list.length<=25;
+  more.textContent=boardShow<list.length?`Show all ${list.length}`:"Show top 25 only";
+}
+function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2}
+
+/* ---------- 2. entry watch ---------- */
+function weeklyAvg(w,i,mode){
+  const lo=Math.max(0,i-5); const vals=[];
+  for(let j=lo;j<i;j++){
+    if(mode==="se"||mode==="bb"){const a=w[mode]||[];if(a[j]!=null)vals.push(a[j])}
+    else if(w.t20[j]==="1"&&w.c[j]!=null) vals.push(w.c[j]);
+  }
+  return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+}
+function watchTickers(){
+  const T=D.tickers; let list=Object.keys(D.watch).filter(t=>S.watchSet==="top20"?T[t]?.t20:T[t]?.sig==="B");
+  for(const t of extra) if(D.watch[t]&&!list.includes(t)) list.unshift(t);
+  return list;
+}
+function renderWatch(){
+  const L=S.look, dates=D.watch_dates, n=dates.length, start=n-L, rows=[]; let withHits=0,totalHits=0,totalDays=0;
+  const refName=S.ref==="se"?"5-session average of the daily Entry EMA20":S.ref==="bb"?"5-session average of the daily Entry BB Zone (midpoint of the lower and middle Bollinger Bands)":"average close on the days (within the prior 5 sessions) the stock was in the Top 20";
+  $("watchLede").innerHTML=`A green box means the stock <b>closed below</b> its weekly average price that day. Here the weekly average is the ${refName}, taken over the 5 sessions before each day so it was known in advance. A buy order at that price would have filled on every green day. <b>Bid now</b> is the weekly average to use for the next session.`;
+  for(const t of watchTickers()){
+    const w=D.watch[t], info=D.tickers[t]||{}; const cells=[]; let hits=0,valid=0; const hitDays=[];
+    for(let i=start;i<n;i++){
+      const avg=weeklyAvg(w,i,S.ref), c=w.c[i]; let st="na";
+      if(avg!=null&&c!=null){valid++; if(avg>c){st="hit";hits++;hitDays.push(dates[i])} else st="miss";}
+      const newWeek=i>start&&new Date(dates[i]+"T00:00:00").getDay()<new Date(dates[i-1]+"T00:00:00").getDay();
+      cells.push({d:dates[i],c,avg,st,newWeek,in20:w.t20[i]==="1"});
+    }
+    const bid=weeklyAvg(w,n,S.ref), last=w.c[n-1], gap=bid!=null&&last?bid/last-1:null;
+    if(hits>0)withHits++; totalHits+=hits; totalDays+=valid;
+    rows.push({t,info,cells,hits,valid,hitDays,bid,last,gap,pinned:extra.has(t)});
+  }
+  rows.sort((a,b)=>(b.pinned-a.pinned)||(b.hits/(b.valid||1))-(a.hits/(a.valid||1))||b.hits-a.hits);
+  const near=rows.filter(r=>r.gap!=null&&r.gap>-0.02).length;
+  $("watchTiles").innerHTML=[
+    tile("Stocks with ≥1 green day",`${withHits}<span class="muted" style="font-size:14px"> / ${rows.length}</span>`,`last ${L} sessions`),
+    tile("Green days, all stocks",`${totalDays?Math.round(totalHits/totalDays*100):0}%`,`${totalHits} of ${totalDays} stock-days`),
+    tile("Bid within 2% of close",`${near}`,`stocks where the weekly avg is close to the last price`),
+  ].join("");
+  let h=`<thead><tr><th>Stock</th><th>Green days</th><th style="text-align:left">Last ${L} sessions <span class="muted">(${dshort(dates[start])} → ${dshort(dates[n-1])})</span></th><th>Close</th><th>Bid now</th><th>vs close</th><th>Score</th><th style="text-align:left">Which days</th></tr></thead><tbody>`;
+  for(const r of rows){
+    const ratio=r.valid?r.hits/r.valid:0;
+    const pill=r.valid===0?`<span class="pill cold">no data</span>`:ratio>=.5?`<span class="pill hot">${r.hits}/${r.valid}</span>`:r.hits>0?`<span class="pill warm">${r.hits}/${r.valid}</span>`:`<span class="pill cold">0/${r.valid}</span>`;
+    const strip=r.cells.map(c=>`<i class="${c.st}${c.in20?" in20":""}${c.newWeek?" wk":""}" data-t="${esc(r.t)}" data-d="${c.d}" data-c="${c.c??""}" data-a="${c.avg??""}" data-in="${c.in20?1:0}"></i>`).join("");
+    const daysTxt=r.hitDays.length?r.hitDays.map(dlong).join(", "):`<span class="muted">none</span>`;
+    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.info.t20?'<span class="t20tag">TOP 20</span>':""}${r.pinned?' <button type="button" class="btn" data-unpin="'+esc(r.t)+'" style="padding:0 6px;font-size:11px" aria-label="Remove '+esc(r.t)+'">×</button>':""}<span class="co">${esc(r.info.co||"")}</span></td><td>${pill}</td><td style="text-align:left"><span class="strip">${strip}</span></td><td>${r.last!=null?px(r.last):"–"}</td><td>${r.bid!=null?px(r.bid):"<span class='muted'>–</span>"}</td><td class="${r.gap==null?"muted":r.gap>=0?"pos":"neg"}">${r.gap==null?"–":fmtS(r.gap)}</td><td>${r.info.ms??"–"}</td><td class="days-list">${daysTxt}</td></tr>`;
+  }
+  $("watchTable").innerHTML=h+(rows.length?"":`<tr><td colspan="8" class="muted">No stocks in this list today.</td></tr>`)+"</tbody>";
+}
+
+/* ---------- 3 & 4 stats ---------- */
+function stats(evs){
+  const H=D.settings.horizon_weeks,out=[];
+  for(let w=0;w<H;w++){
+    const rs=[];
+    for(const e of evs){const p=(S.measure==="peak"?e.fp:e.fc)[w]; if(p!=null&&e.rp>0) rs.push({r:p/e.rp-1,usd1k:1000*(p/e.rp-1),ps:p-e.rp});}
+    const n=rs.length;
+    const tiers=TIERS.map(t=>{const m=rs.filter(x=>t.k===0?x.r>0:x.r>=t.k);return{n:m.length,rate:n?m.length/n:null,usd1k:m.reduce((a,x)=>a+x.usd1k,0),avg1k:m.length?m.reduce((a,x)=>a+x.usd1k,0)/m.length:null,avgPs:m.length?m.reduce((a,x)=>a+x.ps,0)/m.length:null}});
+    out.push({w:w+1,n,tiers,total1k:rs.reduce((a,x)=>a+x.usd1k,0),avg1k:n?rs.reduce((a,x)=>a+x.usd1k,0)/n:null,med1k:median(rs.map(x=>x.usd1k)),
+      avgPs:n?rs.reduce((a,x)=>a+x.ps,0)/n:null,win1k:rs.filter(x=>x.usd1k>0).reduce((a,x)=>a+x.usd1k,0),loss1k:rs.filter(x=>x.usd1k<0).reduce((a,x)=>a+x.usd1k,0),
+      best:n?Math.max(...rs.map(x=>x.usd1k)):null,worst:n?Math.min(...rs.map(x=>x.usd1k)):null});
+  }
+  return out;
+}
+const base=()=>D.baseline[S.measure];
+function renderHits(st,evs){
+  const mtxt=S.measure==="peak"?"its best close at any point up to the end of that week":"its close at the end of that week (every 5 trading sessions)";
+  $("hitLede").innerHTML=`A <b>pick</b> is each time a stock ${S.src==="top20"?"newly enters the daily Top 20":"gets a new BUY signal"} (a return after ${D.settings.reentry_gap}+ sessions away counts again). The recommendation price is that day's close. A pick is a hit when ${mtxt} is above the recommendation price, or at least 5/10/15/20% above it. Covers <b>${evs.length}</b> ${srcName()} from ${winTxt()}, so the totals are cumulative.`;
+  const s=st[S.week-1], b=base()[S.week-1];
+  $("hitTiles").innerHTML=`<div class="tile"><div class="k">Horizon</div><div class="v">Week ${S.week}</div><div class="s">${s.n} picks matured</div></div>`+TIERS.map((t,i)=>{const diff=s.n&&b.n?s.tiers[i].rate-b.rates[i]:null;return tile(t.label,s.n?fmtP(s.tiers[i].rate):"–",s.n?`${s.tiers[i].n} of ${s.n} · market ${fmtP(b.rates[i])} <span class="${cls(diff)}">(${diff==null?"–":(diff>=0?"+":"−")+Math.abs(diff*100).toFixed(1)+" pts"})</span>`:"not enough history yet",t.tok)}).join("");
+  $("hitLegend").innerHTML=TIERS.map(t=>`<span><i class="sw" style="background:var(${t.tok})"></i>${t.label}</span>`).join("")+`<span><i class="sw" style="height:2px;background:var(--ink-dim)"></i>Market, above rec price</span>`;
+  let h=`<thead><tr><th>Week</th><th>n</th>${TIERS.map(t=>`<th>${t.short}</th>`).join("")}</tr></thead><tbody>`;
+  for(const r of st){const bb=base()[r.w-1];
+    h+=`<tr class="clickable${r.w===S.week?" sel":""}" data-w="${r.w}"><td>Wk ${r.w}</td><td class="${r.n?"":"muted"}">${r.n}</td>${r.tiers.map(t=>`<td class="${r.n?"":"muted"}">${r.n?fmtP(t.rate):"–"}</td>`).join("")}</tr>`;
+    if(r.w===S.week) h+=`<tr class="base"><td>Market</td><td>${bb.n.toLocaleString()}</td>${bb.rates.map(v=>`<td>${fmtP(v)}</td>`).join("")}</tr>`;}
+  $("hitTable").innerHTML=h+"</tbody>";
+  const ds=TIERS.map((t,i)=>({label:t.label,data:st.map(r=>r.n?+(r.tiers[i].rate*100).toFixed(1):null),borderColor:css(t.tok),backgroundColor:css(t.tok),borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.25}));
+  ds.push({label:"Market, above rec price",data:base().map(x=>x.n?+(x.rates[0]*100).toFixed(1):null),borderColor:css("--ink-dim"),backgroundColor:css("--ink-dim"),borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.25});
+  const mx=Math.max(10,...ds.flatMap(d=>d.data.filter(v=>v!=null)));
+  hitChart=drawChart(hitChart,"hitChart",{type:"line",data:{labels:st.map(r=>"Wk "+r.w),datasets:ds},options:baseOpts(v=>v+"%",ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}%`,{min:0,max:Math.min(100,Math.ceil((mx+5)/10)*10)})});
+}
+function renderUsd(st,evs){
+  const s=st[S.week-1], b=base()[S.week-1];
+  $("usdLede").innerHTML=`The same picks in ringgit: the gain if you had put <b>RM1,000 into every pick</b> at its recommendation price, plus the average gain <b>per share</b>. Brokerage, stamp duty and clearing fees are not included. Totals are cumulative over the pick window.`;
+  $("usdTiles").innerHTML=[
+    tile(`Total P/L · wk ${S.week}`,`<span class="${cls(s.total1k)}">${smoney(s.total1k)}</span>`,s.n?`RM1,000 × ${s.n} picks = ${money(s.n*1000)} deployed`:"not enough history yet"),
+    tile("Avg per pick",`<span class="${cls(s.avg1k)}">${smoney(s.avg1k,2)}</span>`,`per RM1,000 · market ${smoney(b.avg1k,2)}`),
+    tile("Avg per share",`<span class="${cls(s.avgPs)}">${spx(s.avgPs)}</span>`,"close minus recommendation price"),
+    tile("Winners vs losers",`<span class="pos">${smoney(s.win1k)}</span>`,`losers <span class="neg">${smoney(s.loss1k)}</span>`),
+  ].join("");
+  let h=`<thead><tr><th>Week</th><th>n</th><th>Total P/L</th><th>Avg/pick</th><th>Market avg</th><th>Avg/share</th><th>Best</th><th>Worst</th></tr></thead><tbody>`;
+  for(const r of st){const m=r.n?"":"muted",bb=base()[r.w-1];h+=`<tr class="clickable${r.w===S.week?" sel":""}" data-w="${r.w}"><td>Wk ${r.w}</td><td class="${m}">${r.n}</td><td class="${r.n?cls(r.total1k):m}">${r.n?smoney(r.total1k):"–"}</td><td class="${cls(r.avg1k)}">${smoney(r.avg1k,2)}</td><td class="${cls(bb.avg1k)}">${smoney(bb.avg1k,2)}</td><td class="${cls(r.avgPs)}">${spx(r.avgPs)}</td><td class="${cls(r.best)}">${smoney(r.best)}</td><td class="${cls(r.worst)}">${smoney(r.worst)}</td></tr>`;}
+  $("usdTable").innerHTML=h+"</tbody>";
+  $("usdTierWeek").textContent="week "+S.week+(s.n?` (${s.n} picks)`:"");
+  const maxAbs=Math.max(1,...s.tiers.map(t=>Math.abs(t.usd1k)));
+  let t=`<thead><tr><th>Tier</th><th>Picks</th><th>Hit rate</th><th>Total RM (per RM1k each)</th><th>Avg RM per pick</th><th>Avg RM per share</th></tr></thead><tbody>`;
+  TIERS.forEach((tr,i)=>{const x=s.tiers[i];t+=`<tr><td><span style="display:inline-flex;align-items:center;gap:6px"><i class="sw" style="background:var(${tr.tok})"></i>${tr.label}</span></td><td>${x.n}</td><td>${s.n?fmtP(x.rate):"–"}</td><td><span class="bar-cell"><span class="mini" style="width:${Math.round(60*Math.abs(x.usd1k)/maxAbs)}px;background:var(${tr.tok})"></span><span class="${cls(x.usd1k)}">${s.n?smoney(x.usd1k):"–"}</span></span></td><td class="${cls(x.avg1k)}">${smoney(x.avg1k,2)}</td><td class="${cls(x.avgPs)}">${spx(x.avgPs)}</td></tr>`;});
+  t+=`<tr><td class="muted">All picks</td><td>${s.n}</td><td class="muted">–</td><td class="${cls(s.total1k)}">${s.n?smoney(s.total1k):"–"}</td><td class="${cls(s.avg1k)}">${smoney(s.avg1k,2)}</td><td class="${cls(s.avgPs)}">${spx(s.avgPs)}</td></tr>`;
+  $("usdTier").innerHTML=t+"</tbody>";
+  const g=css("--green"),r=css("--red");
+  usdChart=drawChart(usdChart,"usdChart",{type:"bar",data:{labels:st.map(x=>"Wk "+x.w),datasets:[
+    {type:"line",label:"Market avg",data:base().map(x=>x.n?+x.avg1k.toFixed(2):null),borderColor:css("--ink-dim"),borderDash:[5,4],borderWidth:1.5,pointRadius:0,order:0},
+    {label:"Avg RM per RM1,000",data:st.map(x=>x.n?+x.avg1k.toFixed(2):null),backgroundColor:st.map(x=>x.avg1k>=0?g:r),borderRadius:4,barPercentage:.6,categoryPercentage:.9,order:1}]},
+    options:baseOpts(v=>"RM"+v,ctx=>{const x=st[ctx.dataIndex];if(ctx.dataset.type==="line")return `Market avg: ${smoney(ctx.parsed.y,2)}`;return[`Avg per pick: ${smoney(x.avg1k,2)}`,`Total: ${smoney(x.total1k)} (n=${x.n})`,`Avg per share: ${spx(x.avgPs)}`]})});
+}
+function baseOpts(tickFmt,tipFmt,yr){
+  const ink=css("--ink-dim"),line=css("--line");
+  return {responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:"index",intersect:false},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:tipFmt},backgroundColor:css("--panel"),titleColor:css("--ink"),bodyColor:css("--ink"),borderColor:line,borderWidth:1,titleFont:{family:"IBM Plex Mono"},bodyFont:{family:"IBM Plex Mono"}}},
+    scales:{x:{grid:{display:false},ticks:{color:ink,font:{family:"IBM Plex Mono",size:10}},border:{color:line}},
+      y:Object.assign({grid:{color:line},ticks:{color:ink,font:{family:"IBM Plex Mono",size:10},callback:tickFmt},border:{display:false}},yr||{})}};
+}
+function drawChart(old,id,cfg){if(old)old.destroy();if(!window.Chart)return null;return new Chart($(id),cfg)}
+
+function render(){
+  if(!D)return;
+  renderBoard(); renderWatch();
+  const evs=windowEvents(), st=stats(evs);
+  renderHits(st,evs); renderUsd(st,evs);
+}
+function boot(data){
+  D=data;
+  if(!D.version||D.version<2){$("boardLede").textContent="This page needs pick_tracker_data.json from the newer generate_pick_tracker.py. Run it once and publish again.";return;}
+  const nTop=D.events.filter(e=>e.src==="top20").length;
+  $("meta").innerHTML=`<span>Session <b>${dlong(D.as_of_session)}</b> close</span><span>History from <b>${dshort(D.first_logged_session)}</b> · ${D.logged_sessions} sessions</span><span><b>${nTop}</b> Top-20 picks · <b>${D.events.length-nTop}</b> BUY signals · ${Object.keys(D.tickers).length} tickers</span>`;
+  $("foot").innerHTML=`Built by generate_pick_tracker.py from top20_daily_log.json and chart-history.json. <b>Top 20</b> = the ${D.settings.top_n||20} highest-scoring stocks that pass the Buy rule (the dashboard's Buy tab). A <b>BUY signal</b> = any stock passing the Buy rule (Final Blended Score ≥ ${D.settings.buy_min??42} and MACD Bullish). Sessions are dated to the last completed Bursa close (5 PM Malaysia time); a run before 5 PM or on a weekend counts as the previous trading day. Weeks are 5 trading sessions after the recommendation day; week 13 needs a pick to be about 3 months old. Market comparison: ${esc(D.baseline_note)}. Generated ${esc(D.generated_at)} (Malaysia time). Not investment advice.`;
+  $("tickerList").innerHTML=Object.keys(D.watch).sort().map(t=>`<option value="${esc(t)}">${esc(D.tickers[t]?.co||"")}</option>`).join("")+Object.keys(D.watch).filter(t=>D.tickers[t]?.co).sort((a,b)=>D.tickers[a].co.localeCompare(D.tickers[b].co)).map(t=>`<option value="${esc(D.tickers[t].co)}">${esc(t)}</option>`).join("");
+  bindSeg("src","src",false,()=>{boardShow=25}); bindSeg("win","win",true); bindSeg("refMode","ref"); bindSeg("measure","measure");
+  bindSeg("rankBy","rankBy",false,()=>{S.sortKey=S.rankBy;S.sortDir=-1}); bindSeg("lookback","look",true); bindSeg("watchSet","watchSet");
+  $("boardSearch").addEventListener("input",()=>renderBoard());
+  $("boardMore").addEventListener("click",()=>{boardShow=boardShow>25?25:1e9;renderBoard()});
+  const sortBy=th=>{const k=th.dataset.k;if(S.sortKey===k)S.sortDir*=-1;else{S.sortKey=k;S.sortDir=(k==="t"||k==="d")?1:-1}save();renderBoard()};
+  $("boardTable").addEventListener("click",e=>{const th=e.target.closest("th.sort");if(th)sortBy(th)});
+  $("boardTable").addEventListener("keydown",e=>{const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sortBy(th)}});
+  const addTk=()=>{const v=$("watchSearch").value.trim().toUpperCase();if(!v)return;
+    let t=D.watch[v]?v:D.watch[v+".KL"]?v+".KL":Object.keys(D.watch).find(k=>(D.tickers[k]?.co||"").toUpperCase()===v);
+    if(t){extra.add(t);$("watchSearch").value="";renderWatch()}};
+  $("watchSearch").addEventListener("change",addTk); $("watchSearch").addEventListener("keydown",e=>{if(e.key==="Enter")addTk()});
+  $("watchTable").addEventListener("click",e=>{const b=e.target.closest("[data-unpin]");if(b){extra.delete(b.dataset.unpin);renderWatch()}});
+  document.addEventListener("click",e=>{const tr=e.target.closest("tr.clickable");if(tr){S.week=+tr.dataset.w;save();render()}});
+  const tip=$("tip");
+  const show=e=>{const i=e.target.closest(".strip i");if(!i){tip.hidden=true;return}
+    const c=i.dataset.c?+i.dataset.c:null,a=i.dataset.a?+i.dataset.a:null;
+    tip.innerHTML=`<b>${esc(tkd(i.dataset.t))}</b> · ${dlong(i.dataset.d)}<br>Close ${c!=null?px(c):"–"}<br>Weekly avg ${a!=null?px(a):"n/a"}${c!=null&&a!=null?`<br><span class="${a>c?"pos":"neg"}">${a>c?"Below avg: fill":"Above avg"}</span>`:""}${i.dataset.in==="1"?"<br>In Top 20":""}`;
+    tip.hidden=false;tip.style.left=Math.min(e.clientX+12,innerWidth-250)+"px";tip.style.top=(e.clientY+14)+"px"};
+  document.addEventListener("mousemove",show);document.addEventListener("click",e=>{if(e.target.closest(".strip i"))show(e)});
+  document.addEventListener("scroll",()=>tip.hidden=true,{passive:true});
+  render();
+  new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+  matchMedia("(prefers-color-scheme: light)").addEventListener?.("change",render);
+}
+if(window.__PICK_DATA__) boot(window.__PICK_DATA__);
+else fetch("pick_tracker_data.json?v="+Date.now()).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(boot)
+  .catch(err=>{$("boardLede").textContent="Could not load pick_tracker_data.json ("+err.message+"). Run generate_pick_tracker.py and publish again.";});
+})();
+</script>
+
+</body>
+</html>
