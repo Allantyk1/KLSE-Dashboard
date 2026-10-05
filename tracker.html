@@ -91,6 +91,8 @@
   .strip i.miss{background:transparent}
   .strip i.na{background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)}
   .strip i.wk{margin-left:5px}
+  .strip.dense i{width:9px}
+  .strip.dense i.in20::after{left:2px;right:2px}
   .strip i.in20::after{content:"";position:absolute;left:3px;right:3px;bottom:-5px;height:2px;border-radius:2px;background:var(--amber)}
   .days-list{font:400 11px var(--font-body);color:var(--ink-dim);white-space:normal;text-align:left;min-width:160px;max-width:260px}
   .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:11.5px;color:var(--ink-dim);margin:2px 0 10px}
@@ -131,6 +133,23 @@
   .sig{font:600 10px var(--font-data);padding:1px 6px;border-radius:999px}
   .sig.B{background:var(--green-soft);color:var(--green)} .sig.W{background:var(--amber-soft);color:var(--amber)} .sig.S{background:var(--red-soft);color:var(--red)}
   .t20tag{white-space:nowrap;font:600 9.5px var(--font-data);color:var(--amber);border:1px solid var(--amber);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px}
+  .addw{font:600 9.5px var(--font-data);color:var(--ink-dim);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:5px;cursor:pointer;vertical-align:1px}
+  .addw:hover{color:var(--amber);border-color:var(--amber)}
+  .addw:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .trgtag{font:600 9.5px var(--font-data);color:var(--green);border:1px solid var(--green);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px;white-space:nowrap}
+  tr.flash td{animation:flash 1.6s ease-out}
+  @keyframes flash{from{background:var(--amber-soft)}to{background:transparent}}
+  .tile-btn{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+  .tile-btn:hover{border-color:var(--amber)}
+  .tile-btn[aria-pressed="true"]{border-color:var(--amber);background:var(--amber-soft)}
+  .tile-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .calc{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600;padding:7px 16px}
+  .calc:hover{filter:brightness(1.08)}
+  input[type=number]{font:500 13px var(--font-data);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px;min-width:0}
+  input[type=number]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  #planOut .panel{margin-top:12px}
+  .plan-sum{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--ink-dim);margin-top:10px}
+  .plan-sum b{color:var(--ink)}
   .jumptag{font:600 9.5px var(--font-data);color:var(--red);border:1px solid var(--red);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px;white-space:nowrap}
   tr.base td{color:var(--ink-dim);font-style:italic}
 </style>
@@ -150,6 +169,7 @@
       <div class="seg" id="src">
         <button type="button" data-v="top20" aria-pressed="true">Top 20</button>
         <button type="button" data-v="buy" aria-pressed="false">All BUY signals</button>
+        <button type="button" data-v="trigger" aria-pressed="false" title="On trial: the buy-trigger rule">Buy triggers</button>
       </div></div>
     <div class="ctl"><span class="lbl">Pick window</span>
       <div class="seg" id="win">
@@ -169,6 +189,32 @@
         <button type="button" data-v="peak" aria-pressed="false">Best close so far</button>
       </div></div>
   </div>
+
+  <!-- planner -->
+  <section class="desk" id="planner">
+    <div class="desk-head"><span class="idx">★</span><h2>Buy / sell planner</h2></div>
+    <p class="lede">Type a ticker, choose Buy or Sell and how many entries, then tap <b>Calculate</b>. <b>Buy</b> splits the Support-to-Mid-BB range into equal steps (your ladder). <b>Sell</b> splits the Resistance-to-target-price range. Levels use the latest close data. Share counts are rounded down to whole board lots of 100.</p>
+    <form class="panel" id="planForm" autocomplete="off">
+      <div class="toolbar" style="margin-bottom:0">
+        <div class="ctl"><label class="lbl" for="planTk">Ticker</label>
+          <input type="search" id="planTk" placeholder="e.g. 1155 or MAYBANK" list="tickerList" style="width:130px"></div>
+        <div class="ctl"><span class="lbl">Side</span>
+          <div class="seg" id="planSide"><button type="button" data-v="buy" aria-pressed="true">Buy</button><button type="button" data-v="sell" aria-pressed="false">Sell</button></div></div>
+        <div class="ctl"><span class="lbl">Entries</span>
+          <div class="seg" id="planN"><button type="button" data-v="2" aria-pressed="true">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+        <div class="ctl" id="planMktWrap"><span class="lbl">Market</span>
+          <div class="seg" id="planMkt"><button type="button" data-v="auto" aria-pressed="true">Auto</button><button type="button" data-v="down" aria-pressed="false">Down</button><button type="button" data-v="up" aria-pressed="false">Up / flat</button></div></div>
+        <div class="ctl"><label class="lbl" for="planBudget">Budget (RM)</label>
+          <input type="number" id="planBudget" min="0" step="100" value="3000" style="width:110px"></div>
+        <div class="ctl" id="planStopWrap"><label class="lbl" for="planStop">Stop below Support (%)</label>
+          <input type="number" id="planStop" min="0" max="20" step="0.5" value="3" style="width:90px"></div>
+        <div class="ctl" id="planEntryWrap" hidden><label class="lbl" for="planEntry">My entry price (RM)</label>
+          <input type="number" id="planEntry" min="0" step="0.005" placeholder="optional" style="width:120px"></div>
+        <div class="ctl"><span class="lbl">&nbsp;</span><button type="submit" class="btn calc" id="planGo">Calculate</button></div>
+      </div>
+    </form>
+    <div id="planOut"></div>
+  </section>
 
   <!-- 1 leaderboard -->
   <section class="desk" id="board">
@@ -191,6 +237,10 @@
       <div class="toolbar">
         <label class="lbl" for="boardSearch" style="font:500 10px var(--font-data);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)">Find a stock</label>
         <input type="search" id="boardSearch" placeholder="Ticker or name" autocomplete="off">
+        <div class="seg" id="boardRows" role="group" aria-label="Rows shown">
+          <button type="button" data-v="20" aria-pressed="true">Top 20 rows</button>
+          <button type="button" data-v="all" aria-pressed="false">All stocks</button>
+        </div>
         <span class="muted" id="boardCount" style="font-size:12px"></span>
       </div>
       <div class="scroll"><table id="boardTable"></table></div>
@@ -207,15 +257,24 @@
         <div class="seg" id="watchSet">
           <button type="button" data-v="top20" aria-pressed="true">Today's Top 20</button>
           <button type="button" data-v="buy" aria-pressed="false">Today's BUY signals</button>
+          <button type="button" data-v="trigger" aria-pressed="false">Buy triggers (last 5 days)</button>
         </div></div>
       <div class="ctl"><span class="lbl">Look-back</span>
         <div class="seg" id="lookback">
           <button type="button" data-v="5" aria-pressed="false">1 wk</button>
           <button type="button" data-v="10" aria-pressed="true">2 wk</button>
           <button type="button" data-v="20" aria-pressed="false">4 wk</button>
+          <button type="button" data-v="40" aria-pressed="false">8 wk</button>
         </div></div>
       <div class="ctl"><label class="lbl" for="watchSearch">Add any ticker</label>
         <input type="search" id="watchSearch" placeholder="e.g. 1155 or MAYBANK" autocomplete="off" list="tickerList"></div>
+      <div class="ctl"><span class="lbl">Bid near close</span>
+        <div class="seg" id="nearBid" role="group" aria-label="Only show stocks whose Bid now is near the close">
+          <button type="button" data-v="0" aria-pressed="true">All</button>
+          <button type="button" data-v="2" aria-pressed="false">≤ 2%</button>
+          <button type="button" data-v="3" aria-pressed="false">≤ 3%</button>
+          <button type="button" data-v="5" aria-pressed="false">≤ 5%</button>
+        </div></div>
       <datalist id="tickerList"></datalist>
     </div>
     <div class="tiles" id="watchTiles"></div>
@@ -266,9 +325,9 @@
 (function(){
 const TIERS=[{k:0,label:"Above rec price",short:">0%",tok:"--t1"},{k:.05,label:"≥ 5%",short:"≥5%",tok:"--t2"},{k:.10,label:"≥ 10%",short:"≥10%",tok:"--t3"},{k:.15,label:"≥ 15%",short:"≥15%",tok:"--t4"},{k:.20,label:"≥ 20%",short:"≥20%",tok:"--t5"}];
 const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
-const S={src:"top20",win:3,ref:"se",measure:"close",week:4,look:10,watchSet:"top20",rankBy:"pct",sortKey:"pct",sortDir:-1};
+const S={src:"top20",win:3,ref:"se",measure:"close",week:4,look:10,watchSet:"top20",near:0,rankBy:"pct",sortKey:"pct",sortDir:-1};
 try{Object.assign(S,JSON.parse(localStorage.getItem("klsePickTrackerPrefs")||"{}"))}catch(e){}
-const extra=new Set(); let boardShow=25;
+const extra=new Set(); let boardShow=20;
 let D=null,hitChart=null,usdChart=null;
 const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -284,6 +343,8 @@ const dshort=iso=>new Date(iso+"T00:00:00").toLocaleDateString("en-US",{month:"s
 const dlong=iso=>new Date(iso+"T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/864e5);
+function resolveTk(raw,pool){const v=String(raw||"").trim().toUpperCase();if(!v)return null;
+  return pool[v]?v:pool[v+".KL"]?v+".KL":Object.keys(pool).find(k=>(D.tickers[k]?.co||"").toUpperCase()===v)||null}
 function save(){try{localStorage.setItem("klsePickTrackerPrefs",JSON.stringify(S))}catch(e){}}
 function tile(k,v,s,sw){return `<div class="tile"><div class="k">${sw?`<i class="sw" style="background:var(${sw})"></i>`:""}${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`}
 function bindSeg(id,key,num,after){
@@ -292,7 +353,9 @@ function bindSeg(id,key,num,after){
   el.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S[key]=num?+b.dataset.v:b.dataset.v;if(after)after();sync();save();render();});
   sync();
 }
-const srcName=()=>S.src==="top20"?"Top-20 picks":"BUY-signal picks";
+const srcName=()=>({top20:"Top-20 picks",buy:"BUY-signal picks",trigger:"buy-trigger picks"})[S.src]||"picks";
+const srcVerb=()=>({top20:"entered the Top 20, i.e. the dashboard's Buy tab",buy:"got a BUY signal",trigger:"fired a buy trigger"})[S.src];
+const srcNew=()=>({top20:"newly enters the daily Top 20",buy:"gets a new BUY signal",trigger:"fires a new buy trigger (see section 2)"})[S.src];
 const winTxt=()=>S.win?`the last ${S.win} month${S.win>1?"s":""}`:"all logged history";
 function cutoff(){if(!S.win)return "0000";const a=new Date(D.as_of_session+"T00:00:00");a.setMonth(a.getMonth()-S.win);return a.toISOString().slice(0,10)}
 const windowEvents=()=>{const c=cutoff();return D.events.filter(e=>e.src===S.src&&e.d>=c)};
@@ -316,13 +379,13 @@ function boardRows(){
 function renderBoard(){
   const rows=boardRows(), k=S.rankBy;
   const unit=k==="pct"?"%":k==="usd"?"RM per share":"RM on RM1,000";
-  $("boardLede").innerHTML=`Each stock is measured from <b>day 1</b>, the first day it was recommended (${S.src==="top20"?"entered the Top 20, i.e. the dashboard's Buy tab":"got a BUY signal"}) in ${winTxt()}, to the latest close on ${dlong(D.last_price_date)}. The day-1 price is that day's close. <b>RM per share</b> favours high-priced stocks. <b>RM on RM1,000</b> shows what a RM1,000 position bought on day 1 has made or lost, which ranks the same as %. <b>⚠ jump</b> marks a one-day move of 50% or more, which is usually a bonus issue, share split or consolidation in the raw prices rather than a real loss.`;
+  $("boardLede").innerHTML=`Each stock is measured from <b>day 1</b>, the first day it was recommended (${srcVerb()}) in ${winTxt()}, to the latest close on ${dlong(D.last_price_date)}. The day-1 price is that day's close. <b>RM per share</b> favours high-priced stocks. <b>RM on RM1,000</b> shows what a RM1,000 position bought on day 1 has made or lost, which ranks the same as %. <b>⚠ jump</b> marks a one-day move of 50% or more, which is usually a bonus issue, share split or consolidation in the raw prices rather than a real loss.`;
   const fmt=r=>k==="pct"?fmtS(r.pct):k==="usd"?spx(r.usd):smoney(r.pos,0);
   const sub=r=>k==="pct"?`${spx(r.usd)}/sh · ${smoney(r.pos)} on RM1k`:k==="usd"?`${fmtS(r.pct)} · ${px(r.rp)} → ${px(r.lc)}`:`${fmtS(r.pct)} · ${spx(r.usd)}/sh`;
   const sorted=[...rows].sort((a,b)=>b[k]-a[k]);
   const best=sorted.slice(0,10), worst=sorted.slice(-10).reverse();
   const maxAbs=Math.max(1e-9,...best.concat(worst).map(r=>Math.abs(r[k])));
-  const li=(r,i,col)=>`<li><span class="no">${i+1}</span><span class="who"><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<small>day 1 ${dshort(r.d)} · ${esc(r.co||"")}</small></span><span class="val"><b class="${cls(r[k])}">${fmt(r)}</b><small>${sub(r)}</small></span><span class="barline"><span style="width:${Math.max(2,Math.round(100*Math.abs(r[k])/maxAbs))}%;background:var(${col})"></span></span></li>`;
+  const li=(r,i,col)=>`<li><span class="no">${i+1}</span><span class="who"><span class="tk">${esc(tkd(r.t))}</span>${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.t20?'<span class="t20tag">TOP 20</span>':""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<small>day 1 ${dshort(r.d)} · ${esc(r.co||"")}</small></span><span class="val"><b class="${cls(r[k])}">${fmt(r)}</b><small>${sub(r)}</small></span><span class="barline"><span style="width:${Math.max(2,Math.round(100*Math.abs(r[k])/maxAbs))}%;background:var(${col})"></span></span></li>`;
   $("best").innerHTML=best.length?best.map((r,i)=>li(r,i,"--green")).join(""):`<li class="muted">No picks in this window yet.</li>`;
   $("worst").innerHTML=worst.length?worst.map((r,i)=>li(r,i,"--red")).join(""):"";
   const up=rows.filter(r=>r.pct>0).length, tot=rows.reduce((a,r)=>a+r.pos,0);
@@ -337,19 +400,27 @@ function renderBoard(){
   let list=rows.filter(r=>!q||r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q));
   const sk=S.sortKey, dir=S.sortDir;
   list.sort((a,b)=>{const x=a[sk],y=b[sk];if(typeof x==="string")return dir*x.localeCompare(y);return dir*((x??-1e9)-(y??-1e9))});
-  $("boardCount").textContent=`${list.length} stock${list.length===1?"":"s"}`;
   const cols=[["t","Stock"],["d","Day 1"],["rp","Day-1 price"],["lc","Now"],["days","Days"],["pct","% to date"],["usd","RM / share"],["pos","RM on RM1k"],["hi","Best since"],["lo","Worst since"],["n","Times picked"],["sig","Signal now"]];
   let h=`<thead><tr>${cols.map(([c,l])=>`<th class="sort" data-k="${c}" ${sk===c?`aria-sort="${dir<0?"descending":"ascending"}"`:""} tabindex="0">${l}</th>`).join("")}</tr></thead><tbody>`;
   for(const r of list.slice(0,boardShow)){
-    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
+    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
   }
   $("boardTable").innerHTML=h+"</tbody>";
-  const more=$("boardMore"); more.hidden=list.length<=25;
-  more.textContent=boardShow<list.length?`Show all ${list.length}`:"Show top 25 only";
+  const all=boardShow>20;
+  $("boardRows").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="all")===all)));
+  $("boardCount").textContent=all||list.length<=20?`${list.length} stock${list.length===1?"":"s"}`:`showing 20 of ${list.length} stocks`;
+  const more=$("boardMore"); more.hidden=list.length<=20;
+  more.textContent=all?"Show top 20 rows only":`Show all ${list.length} stocks`;
 }
 function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2}
 
 /* ---------- 2. entry watch ---------- */
+function ladder(info,last){
+  const lb=info.lb,mb=info.mb;
+  if(lb==null||mb==null) return `<td class="muted">–</td><td class="muted">–</td><td class="muted">–</td>`;
+  const half=lb+(mb-lb)/2, c=v=>last!=null&&last<=v?"pos":"";
+  return `<td class="${c(mb)}">${px(mb)}</td><td class="${c(half)}">${px(half)}</td><td class="${c(lb)}">${px(lb)}</td>`;
+}
 function weeklyAvg(w,i,mode){
   const lo=Math.max(0,i-5); const vals=[];
   for(let j=lo;j<i;j++){
@@ -359,14 +430,14 @@ function weeklyAvg(w,i,mode){
   return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
 }
 function watchTickers(){
-  const T=D.tickers; let list=Object.keys(D.watch).filter(t=>S.watchSet==="top20"?T[t]?.t20:T[t]?.sig==="B");
+  const T=D.tickers; let list=Object.keys(D.watch).filter(t=>S.watchSet==="top20"?T[t]?.t20:S.watchSet==="trigger"?!!T[t]?.trg:T[t]?.sig==="B");
   for(const t of extra) if(D.watch[t]&&!list.includes(t)) list.unshift(t);
   return list;
 }
 function renderWatch(){
-  const L=S.look, dates=D.watch_dates, n=dates.length, start=n-L, rows=[]; let withHits=0,totalHits=0,totalDays=0;
+  const dates=D.watch_dates, n=dates.length, start=Math.max(0,n-S.look), L=n-start; let rows=[]; let withHits=0,totalHits=0,totalDays=0;
   const refName=S.ref==="se"?"5-session average of the daily Entry EMA20":S.ref==="bb"?"5-session average of the daily Entry BB Zone (midpoint of the lower and middle Bollinger Bands)":"average close on the days (within the prior 5 sessions) the stock was in the Top 20";
-  $("watchLede").innerHTML=`A green box means the stock <b>closed below</b> its weekly average price that day. Here the weekly average is the ${refName}, taken over the 5 sessions before each day so it was known in advance. A buy order at that price would have filled on every green day. <b>Bid now</b> is the weekly average to use for the next session.`;
+  $("watchLede").innerHTML=`A green box means the stock <b>closed below</b> its weekly average price that day. Here the weekly average is the ${refName}, taken over the 5 sessions before each day so it was known in advance. A buy order at that price would have filled on every green day. <b>Bid now</b> is the weekly average to use for the next session. Tap a column heading to sort, tap again to reverse. <b>Bid near close</b> keeps only stocks whose Bid now is within 2, 3 or 5% of the close (or above it), so the order is likely to fill soon. <b>Mid BB / Ladder ½ / Support</b> are your two-entry ladder: Ladder ½ is Support plus half the distance up to the Mid BB, and a level turns green once the close is at or below it. A green <b>TRIGGER</b> tag means the buy-trigger rule fired in the last 5 sessions.`;
   for(const t of watchTickers()){
     const w=D.watch[t], info=D.tickers[t]||{}; const cells=[]; let hits=0,valid=0; const hitDays=[];
     for(let i=start;i<n;i++){
@@ -377,24 +448,36 @@ function renderWatch(){
     }
     const bid=weeklyAvg(w,n,S.ref), last=w.c[n-1], gap=bid!=null&&last?bid/last-1:null;
     if(hits>0)withHits++; totalHits+=hits; totalDays+=valid;
-    rows.push({t,info,cells,hits,valid,hitDays,bid,last,gap,pinned:extra.has(t)});
+    rows.push({t,info,cells,hits,valid,hitDays,bid,last,gap,pinned:extra.has(t),
+      ratio:valid?hits/valid:-1,ms:info.ms??null,mb:info.mb??null,lb:info.lb??null,half:info.lb!=null&&info.mb!=null?info.lb+(info.mb-info.lb)/2:null});
   }
-  rows.sort((a,b)=>(b.pinned-a.pinned)||(b.hits/(b.valid||1))-(a.hits/(a.valid||1))||b.hits-a.hits);
-  const near=rows.filter(r=>r.gap!=null&&r.gap>-0.02).length;
+  const wk=S.wSortKey||"ratio", wd=S.wSortDir||-1;
+  rows.sort((a,b)=>{
+    if(b.pinned!==a.pinned) return b.pinned-a.pinned;
+    if(wk==="t") return wd*a.t.localeCompare(b.t);
+    const x=a[wk],y=b[wk];
+    if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;   // blanks always last
+    return wd*(x-y)||(b.hits-a.hits);
+  });
+  const near=rows.filter(r=>r.gap!=null&&r.gap>=-0.02).length;
+  const nb=S.near||0, allRows=rows.length;
+  if(nb) rows=rows.filter(r=>r.pinned||(r.gap!=null&&r.gap>=-nb/100));
   $("watchTiles").innerHTML=[
-    tile("Stocks with ≥1 green day",`${withHits}<span class="muted" style="font-size:14px"> / ${rows.length}</span>`,`last ${L} sessions`),
+    tile("Stocks with ≥1 green day",`${withHits}<span class="muted" style="font-size:14px"> / ${allRows}</span>`,`last ${L} sessions`),
     tile("Green days, all stocks",`${totalDays?Math.round(totalHits/totalDays*100):0}%`,`${totalHits} of ${totalDays} stock-days`),
-    tile("Bid within 2% of close",`${near}`,`stocks where the weekly avg is close to the last price`),
+    `<button type="button" class="tile tile-btn" id="nearTile" aria-pressed="${nb===2}" title="Show only these stocks"><div class="k">Bid within 2% of close</div><div class="v">${near}</div><div class="s">${nb===2?"Filter on: tap to show all":"Tap to show only these"}</div></button>`,
   ].join("");
-  let h=`<thead><tr><th>Stock</th><th>Green days</th><th style="text-align:left">Last ${L} sessions <span class="muted">(${dshort(dates[start])} → ${dshort(dates[n-1])})</span></th><th>Close</th><th>Bid now</th><th>vs close</th><th>Score</th><th style="text-align:left">Which days</th></tr></thead><tbody>`;
+  if(nb) $("watchTiles").insertAdjacentHTML("beforeend",`<p class="note" style="grid-column:1/-1;margin:0">Showing <b>${rows.length}</b> of ${allRows} stocks whose Bid now is within ${nb}% below the close or above it (already trading under its weekly average).</p>`);
+  const sh=(k,label,extra="")=>`<th class="sort" data-wk="${k}" tabindex="0" ${wk===k?`aria-sort="${wd<0?"descending":"ascending"}"`:""} ${extra}>${label}</th>`;
+  let h=`<thead><tr>${sh("t","Stock")}${sh("ratio","Green days")}<th style="text-align:left">Last ${L} sessions <span class="muted">(${dshort(dates[start])} → ${dshort(dates[n-1])})</span></th>${sh("last","Close")}${sh("bid","Bid now")}${sh("gap","vs close")}${sh("mb","Mid BB",'title="Middle Bollinger Band"')}${sh("half","Ladder ½",'title="Support + (Mid BB - Support) / 2"')}${sh("lb","Support",'title="Support = lower Bollinger Band"')}${sh("ms","Score",'title="Final Blended Score"')}<th style="text-align:left">Which days</th></tr></thead><tbody>`;
   for(const r of rows){
     const ratio=r.valid?r.hits/r.valid:0;
     const pill=r.valid===0?`<span class="pill cold">no data</span>`:ratio>=.5?`<span class="pill hot">${r.hits}/${r.valid}</span>`:r.hits>0?`<span class="pill warm">${r.hits}/${r.valid}</span>`:`<span class="pill cold">0/${r.valid}</span>`;
     const strip=r.cells.map(c=>`<i class="${c.st}${c.in20?" in20":""}${c.newWeek?" wk":""}" data-t="${esc(r.t)}" data-d="${c.d}" data-c="${c.c??""}" data-a="${c.avg??""}" data-in="${c.in20?1:0}"></i>`).join("");
-    const daysTxt=r.hitDays.length?r.hitDays.map(dlong).join(", "):`<span class="muted">none</span>`;
-    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.info.t20?'<span class="t20tag">TOP 20</span>':""}${r.pinned?' <button type="button" class="btn" data-unpin="'+esc(r.t)+'" style="padding:0 6px;font-size:11px" aria-label="Remove '+esc(r.t)+'">×</button>':""}<span class="co">${esc(r.info.co||"")}</span></td><td>${pill}</td><td style="text-align:left"><span class="strip">${strip}</span></td><td>${r.last!=null?px(r.last):"–"}</td><td>${r.bid!=null?px(r.bid):"<span class='muted'>–</span>"}</td><td class="${r.gap==null?"muted":r.gap>=0?"pos":"neg"}">${r.gap==null?"–":fmtS(r.gap)}</td><td>${r.info.ms??"–"}</td><td class="days-list">${daysTxt}</td></tr>`;
+    const hd=r.hitDays, daysTxt=!hd.length?`<span class="muted">none</span>`:hd.length<=6?hd.map(dlong).join(", "):`<span title="${esc(hd.map(dlong).join(", "))}">${hd.slice(-6).map(dshort).join(", ")} <span class="muted">+${hd.length-6} earlier</span></span>`;
+    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.info.t20?'<span class="t20tag">TOP 20</span>':""}${r.pinned?' <button type="button" class="btn" data-unpin="'+esc(r.t)+'" style="padding:0 6px;font-size:11px" aria-label="Remove '+esc(tkd(r.t))+'">×</button>':""}${r.info.trg?`<span class="trgtag" title="Buy trigger fired on ${dlong(r.info.trg)}">TRIGGER ${dshort(r.info.trg)}</span>`:""}<span class="co">${esc(r.info.co||"")}</span></td><td>${pill}</td><td style="text-align:left"><span class="strip${L>20?" dense":""}">${strip}</span></td><td>${r.last!=null?px(r.last):"–"}</td><td>${r.bid!=null?px(r.bid):"<span class='muted'>–</span>"}</td><td class="${r.gap==null?"muted":r.gap>=0?"pos":"neg"}">${r.gap==null?"–":fmtS(r.gap)}</td>${ladder(r.info,r.last)}<td>${r.info.ms??"–"}</td><td class="days-list">${daysTxt}</td></tr>`;
   }
-  $("watchTable").innerHTML=h+(rows.length?"":`<tr><td colspan="8" class="muted">No stocks in this list today.</td></tr>`)+"</tbody>";
+  $("watchTable").innerHTML=h+(rows.length?"":`<tr><td colspan="11" class="muted">No stocks in this list today.</td></tr>`)+"</tbody>";
 }
 
 /* ---------- 3 & 4 stats ---------- */
@@ -414,8 +497,12 @@ function stats(evs){
 const base=()=>D.baseline[S.measure];
 function renderHits(st,evs){
   const mtxt=S.measure==="peak"?"its best close at any point up to the end of that week":"its close at the end of that week (every 5 trading sessions)";
-  $("hitLede").innerHTML=`A <b>pick</b> is each time a stock ${S.src==="top20"?"newly enters the daily Top 20":"gets a new BUY signal"} (a return after ${D.settings.reentry_gap}+ sessions away counts again). The recommendation price is that day's close. A pick is a hit when ${mtxt} is above the recommendation price, or at least 5/10/15/20% above it. Covers <b>${evs.length}</b> ${srcName()} from ${winTxt()}, so the totals are cumulative.`;
+  $("hitLede").innerHTML=`A <b>pick</b> is each time a stock ${srcNew()} (a return after ${D.settings.reentry_gap}+ sessions away counts again). The recommendation price is that day's close. A pick is a hit when ${mtxt} is above the recommendation price, or at least 5/10/15/20% above it. Covers <b>${evs.length}</b> ${srcName()} from ${winTxt()}, so the totals are cumulative.`;
   const s=st[S.week-1], b=base()[S.week-1];
+  if(S.src==="trigger"){
+    const w4=st[3],b4=base()[3],ok=w4.n>=20&&w4.tiers[0].rate>b4.rates[0]&&w4.avg1k>b4.avg1k;
+    $("hitLede").innerHTML+=` <br><b>Buy-trigger rule, on trial until ${dlong(D.trigger_review||"2027-01-05")}.</b> It fires when a stock that had a green day in the last 7 sessions closes above its own 5-day average close, is still below its Mid BB, is on BUY, and has at least 2× more room up to the upper BB than down to its 7-day low. Keep it only if, by the review date, its week-4 hit rate <i>and</i> average RM per pick beat the Market row. Today at week 4: <span class="${w4.n<20?"muted":ok?"pos":"neg"}">${w4.n<20?`too few picks yet (n=${w4.n})`:ok?"ahead of the market":"not ahead of the market"}</span>.`;
+  }
   $("hitTiles").innerHTML=`<div class="tile"><div class="k">Horizon</div><div class="v">Week ${S.week}</div><div class="s">${s.n} picks matured</div></div>`+TIERS.map((t,i)=>{const diff=s.n&&b.n?s.tiers[i].rate-b.rates[i]:null;return tile(t.label,s.n?fmtP(s.tiers[i].rate):"–",s.n?`${s.tiers[i].n} of ${s.n} · market ${fmtP(b.rates[i])} <span class="${cls(diff)}">(${diff==null?"–":(diff>=0?"+":"−")+Math.abs(diff*100).toFixed(1)+" pts"})</span>`:"not enough history yet",t.tok)}).join("");
   $("hitLegend").innerHTML=TIERS.map(t=>`<span><i class="sw" style="background:var(${t.tok})"></i>${t.label}</span>`).join("")+`<span><i class="sw" style="height:2px;background:var(--ink-dim)"></i>Market, above rec price</span>`;
   let h=`<thead><tr><th>Week</th><th>n</th>${TIERS.map(t=>`<th>${t.short}</th>`).join("")}</tr></thead><tbody>`;
@@ -461,6 +548,41 @@ function baseOpts(tickFmt,tipFmt,yr){
 }
 function drawChart(old,id,cfg){if(old)old.destroy();if(!window.Chart)return null;return new Chart($(id),cfg)}
 
+/* ---------- planner ---------- */
+const P={side:"buy",n:2,mkt:"auto"};
+const LOT=100;   // Bursa board lot
+function planSeg(id,key,num){const el=$(id);el.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P[key]=num?+b.dataset.v:b.dataset.v;
+  el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  $("planMktWrap").hidden=$("planStopWrap").hidden=P.side!=="buy";$("planEntryWrap").hidden=P.side!=="sell";
+  if($("planOut").innerHTML)runPlan();});}
+function runPlan(){
+  const raw=$("planTk").value.trim(), out=$("planOut"), t=resolveTk(raw,D.tickers), info=t?D.tickers[t]:null;
+  if(!raw){out.innerHTML=`<p class="note">Type a ticker first.</p>`;return}
+  if(!info){out.innerHTML=`<p class="note">${esc(raw)} isn't in the screener's universe. Check the code or name, or pick one from the list.</p>`;return}
+  const T=esc(tkd(t)), cl=info.px,lb=info.lb,mb=info.mb,ub=info.ub,tgt=info.tgt,n=P.n,budget=Math.max(0,+$("planBudget").value||0);
+  if([cl,lb,mb,ub].some(v=>v==null)){out.innerHTML=`<p class="note">${T} has no Bollinger Band data yet, so levels can't be calculated.</p>`;return}
+  const head=`<div class="tiles" style="margin:12px 0 0">${tile(`${T} close`,px(cl),`${esc(info.co||"")}${info.sig?` · ${SIGN[info.sig]}`:""}${info.ms!=null?` · score ${info.ms}`:""}`)}${tile("Support (lower BB)",px(lb),fmtS(lb/cl-1)+" from close")}${tile("Mid BB",px(mb),fmtS(mb/cl-1)+" from close")}${tile("Resistance (upper BB)",px(ub),fmtS(ub/cl-1)+" from close")}${tile("Target price",tgt?px(tgt):"–",tgt?fmtS(tgt/cl-1)+" from close":"no target price")}</div>`;
+  let levels=[],note="";
+  if(P.side==="buy"){
+    const r=mb-lb, hasE=info.e20!=null&&info.e40!=null, autoDown=hasE?info.e20<info.e40:cl<mb, mkt=P.mkt==="auto"?(autoDown?"down":"up"):P.mkt;
+    for(let i=0;i<n;i++) levels.push(mkt==="down"?lb+r*(n-1-i)/n:mb-r*i/n);
+    const per=budget/n, rows=levels.map((v,i)=>{const sh=per>0?Math.floor(per/v/LOT)*LOT:0;return{i,v,sh,cost:sh*v}});
+    const tsh=rows.reduce((a,x)=>a+x.sh,0),tc=rows.reduce((a,x)=>a+x.cost,0),avg=tsh?tc/tsh:levels.reduce((a,v)=>a+v,0)/n;
+    const stop=lb*(1-(+$("planStop").value||0)/100), rr=(ub-avg)/Math.max(avg-stop,1e-9);
+    const tooSmall=budget>0&&rows.some(x=>x.sh===0);
+    note=`Market: <b>${mkt==="down"?"Down":"Up / flat"}</b>${P.mkt==="auto"?(hasE?` (auto: EMA20 ${px(info.e20)} is ${autoDown?"below":"above"} EMA40 ${px(info.e40)})`:` (auto: close is ${cl<mb?"below":"above"} the Mid BB)`):""}. ${mkt==="down"?`Levels step from the Mid BB down to Support; the first entry is ${n===2?"halfway":"two-thirds of the way"} up from Support.`:"Levels step down from the Mid BB towards Support."}${tooSmall?` <span class="neg">The budget per entry is less than one board lot (${LOT} shares) at some levels.</span>`:""}`;
+    out.innerHTML=head+`<div class="panel"><p class="note" style="margin-top:0">${note}</p><div class="scroll"><table><thead><tr><th>Entry</th><th>Buy limit</th><th>vs close</th><th>Shares</th><th>Cost</th><th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr><td>Entry ${x.i+1}</td><td>${px(x.v)}</td><td class="${cls(x.v/cl-1)}">${fmtS(x.v/cl-1)}</td><td>${budget?`${x.sh.toLocaleString("en-US")} <span class="muted">(${x.sh/LOT} lot${x.sh/LOT===1?"":"s"})</span>`:"–"}</td><td>${budget?money(x.cost,0):"–"}</td><td>${cl<=x.v?'<span class="pill hot">would fill now</span>':'<span class="pill cold">waiting</span>'}</td></tr>`).join("")}</tbody></table></div>
+      <div class="plan-sum"><span>Average entry if all fill: <b>${px(avg)}</b></span>${budget?`<span>Total: <b>${tsh.toLocaleString("en-US")} shares · ${money(tc,0)}</b></span>`:""}<span>Stop: <b>${px(stop)}</b> (${fmtS(stop/avg-1)} from average)</span><span>First take-profit (upper BB): <b>${px(ub)}</b> (${fmtS(ub/avg-1)})</span><span>Reward / risk: <b class="${rr>=2?"pos":"neg"}">${rr.toFixed(1)}×</b> ${rr>=2?"passes the 2× check":"below 2×, so think twice"}</span></div></div>`;
+  } else {
+    const hi=tgt&&tgt>ub?tgt:ub*1.10, r=hi-ub, entry=+$("planEntry").value||0;
+    for(let i=0;i<n;i++) levels.push(ub+r*i/n);
+    const rows=levels.map((v,i)=>({i,v}));
+    note=`Levels step up from Resistance (upper BB) towards ${tgt&&tgt>ub?"the target price":"Resistance + 10% (no target price above Resistance)"}. Sell an equal part at each level, then trail a stop under the last high for anything left.`;
+    out.innerHTML=head+`<div class="panel"><p class="note" style="margin-top:0">${note}</p><div class="scroll"><table><thead><tr><th>Exit</th><th>Sell limit</th><th>vs close</th>${entry?"<th>Gain vs your entry</th>":""}<th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr><td>Exit ${x.i+1} (${Math.round(100/n)}%)</td><td>${px(x.v)}</td><td class="${cls(x.v/cl-1)}">${fmtS(x.v/cl-1)}</td>${entry?`<td class="${cls(x.v/entry-1)}">${fmtS(x.v/entry-1)}</td>`:""}<td>${cl>=x.v?'<span class="pill hot">would fill now</span>':'<span class="pill cold">waiting</span>'}</td></tr>`).join("")}</tbody></table></div>
+      <div class="plan-sum">${entry?`<span>Your entry: <b>${px(entry)}</b> · now <b class="${cls(cl/entry-1)}">${fmtS(cl/entry-1)}</b></span>`:""}<span>Protective stop: <b>${px(lb*(1-(+$("planStop").value||3)/100))}</b> (just under Support)</span>${entry&&cl/entry-1>=0.05?`<span class="pos"><b>Already +5% or more: consider taking at least part of the profit now.</b></span>`:""}</div></div>`;
+  }
+}
+
 function render(){
   if(!D)return;
   renderBoard(); renderWatch();
@@ -474,18 +596,28 @@ function boot(data){
   $("meta").innerHTML=`<span>Session <b>${dlong(D.as_of_session)}</b> close</span><span>History from <b>${dshort(D.first_logged_session)}</b> · ${D.logged_sessions} sessions</span><span><b>${nTop}</b> Top-20 picks · <b>${D.events.length-nTop}</b> BUY signals · ${Object.keys(D.tickers).length} tickers</span>`;
   $("foot").innerHTML=`Built by generate_pick_tracker.py from top20_daily_log.json and chart-history.json. <b>Top 20</b> = the ${D.settings.top_n||20} highest-scoring stocks that pass the Buy rule (the dashboard's Buy tab). A <b>BUY signal</b> = any stock passing the Buy rule (Final Blended Score ≥ ${D.settings.buy_min??42} and MACD Bullish). Sessions are dated to the last completed Bursa close (5 PM Malaysia time); a run before 5 PM or on a weekend counts as the previous trading day. Weeks are 5 trading sessions after the recommendation day; week 13 needs a pick to be about 3 months old. Market comparison: ${esc(D.baseline_note)}. Generated ${esc(D.generated_at)} (Malaysia time). Not investment advice.`;
   $("tickerList").innerHTML=Object.keys(D.watch).sort().map(t=>`<option value="${esc(t)}">${esc(D.tickers[t]?.co||"")}</option>`).join("")+Object.keys(D.watch).filter(t=>D.tickers[t]?.co).sort((a,b)=>D.tickers[a].co.localeCompare(D.tickers[b].co)).map(t=>`<option value="${esc(D.tickers[t].co)}">${esc(t)}</option>`).join("");
-  bindSeg("src","src",false,()=>{boardShow=25}); bindSeg("win","win",true); bindSeg("refMode","ref"); bindSeg("measure","measure");
-  bindSeg("rankBy","rankBy",false,()=>{S.sortKey=S.rankBy;S.sortDir=-1}); bindSeg("lookback","look",true); bindSeg("watchSet","watchSet");
+  planSeg("planSide","side");planSeg("planN","n",true);planSeg("planMkt","mkt");
+  $("planForm").addEventListener("submit",e=>{e.preventDefault();runPlan()});
+  bindSeg("src","src",false,()=>{boardShow=20}); bindSeg("win","win",true); bindSeg("refMode","ref"); bindSeg("measure","measure");
+  bindSeg("rankBy","rankBy",false,()=>{S.sortKey=S.rankBy;S.sortDir=-1}); bindSeg("lookback","look",true); bindSeg("nearBid","near",true);
+  $("watchTiles").addEventListener("click",e=>{if(!e.target.closest("#nearTile"))return;S.near=S.near===2?0:2;save();
+    $("nearBid").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===S.near)));renderWatch()}); bindSeg("watchSet","watchSet");
   $("boardSearch").addEventListener("input",()=>renderBoard());
-  $("boardMore").addEventListener("click",()=>{boardShow=boardShow>25?25:1e9;renderBoard()});
+  $("boardMore").addEventListener("click",()=>{const wasAll=boardShow>20;boardShow=wasAll?20:1e9;renderBoard();if(wasAll)$("boardTable").scrollIntoView({block:"nearest"})});
+  $("boardRows").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;boardShow=b.dataset.v==="all"?1e9:20;renderBoard()});
   const sortBy=th=>{const k=th.dataset.k;if(S.sortKey===k)S.sortDir*=-1;else{S.sortKey=k;S.sortDir=(k==="t"||k==="d")?1:-1}save();renderBoard()};
   $("boardTable").addEventListener("click",e=>{const th=e.target.closest("th.sort");if(th)sortBy(th)});
   $("boardTable").addEventListener("keydown",e=>{const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sortBy(th)}});
-  const addTk=()=>{const v=$("watchSearch").value.trim().toUpperCase();if(!v)return;
-    let t=D.watch[v]?v:D.watch[v+".KL"]?v+".KL":Object.keys(D.watch).find(k=>(D.tickers[k]?.co||"").toUpperCase()===v);
+  const addTk=()=>{const t=resolveTk($("watchSearch").value,D.watch);
     if(t){extra.add(t);$("watchSearch").value="";renderWatch()}};
   $("watchSearch").addEventListener("change",addTk); $("watchSearch").addEventListener("keydown",e=>{if(e.key==="Enter")addTk()});
-  $("watchTable").addEventListener("click",e=>{const b=e.target.closest("[data-unpin]");if(b){extra.delete(b.dataset.unpin);renderWatch()}});
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(!b)return;e.stopPropagation();const t=b.dataset.add;extra.add(t);renderWatch();
+    const row=[...$("watchTable").querySelectorAll("tbody tr")].find(tr=>tr.querySelector(".tk")?.textContent===tkd(t));
+    $("watch").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+    if(row){row.classList.add("flash");setTimeout(()=>row.classList.remove("flash"),1700)}},true);
+  const wSort=th=>{const k=th.dataset.wk;if((S.wSortKey||"ratio")===k)S.wSortDir=-(S.wSortDir||-1);else{S.wSortKey=k;S.wSortDir=k==="t"?1:-1}save();renderWatch()};
+  $("watchTable").addEventListener("keydown",e=>{const th=e.target.closest("th[data-wk]");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();wSort(th)}});
+  $("watchTable").addEventListener("click",e=>{const th=e.target.closest("th[data-wk]");if(th){wSort(th);return}const b=e.target.closest("[data-unpin]");if(b){extra.delete(b.dataset.unpin);renderWatch()}});
   document.addEventListener("click",e=>{const tr=e.target.closest("tr.clickable");if(tr){S.week=+tr.dataset.w;save();render()}});
   const tip=$("tip");
   const show=e=>{const i=e.target.closest(".strip i");if(!i){tip.hidden=true;return}
