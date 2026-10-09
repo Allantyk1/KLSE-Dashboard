@@ -70,6 +70,20 @@
   @media (max-width:600px){.controls{position:static}.co{max-width:110px}}
   .chart-box{position:relative;height:280px}
   .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  /* frozen header row + Stock column: table scrolls inside its own box so the header and the horizontal scrollbar stay in view */
+  .scroll.freeze{overflow:auto;max-height:max(320px,calc(100vh - var(--ctl-h,0px) - var(--dh,48px) - 36px))}
+  /* section title stays pinned under the filter bar while you are inside sections 1 and 2 */
+  #board .desk-head,#watch .desk-head{position:sticky;top:var(--ctl-h,0px);z-index:4;background:var(--bg);padding-block:8px;margin-bottom:0}
+  /* second horizontal scrollbar on top of the table, synced with the one at the bottom */
+  .hbar{overflow-x:auto;overflow-y:hidden;height:16px;margin:0 0 4px;position:sticky;top:calc(var(--ctl-h,0px) + var(--dh,48px));z-index:4;background:var(--panel)}
+  .hbar>div{height:1px}
+  .hbar[hidden]{display:none}
+  .scroll-hint{font-size:11px;color:var(--ink-faint);margin:0 0 4px}
+  .scroll.freeze thead th{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:0;box-shadow:inset 0 -1px 0 var(--line)}
+  .scroll.freeze th:first-child,.scroll.freeze td:first-child{position:sticky;left:0;z-index:1;background:var(--panel);box-shadow:inset -1px 0 0 var(--line)}
+  .scroll.freeze thead th:first-child{z-index:3}
+  .scroll.freeze tr.sel td:first-child{background:var(--amber-soft)}
+  @media (max-width:600px){.scroll.freeze{max-height:75vh}}
   table{border-collapse:collapse;width:100%;font-size:12.5px}
   th{font-family:var(--font-data);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
   td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-family:var(--font-data);font-variant-numeric:tabular-nums}
@@ -243,7 +257,7 @@
         </div>
         <span class="muted" id="boardCount" style="font-size:12px"></span>
       </div>
-      <div class="scroll"><table id="boardTable"></table></div>
+      <p class="scroll-hint">Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="boardTable"><div></div></div><div class="scroll freeze"><table id="boardTable"></table></div>
       <div style="margin-top:10px"><button type="button" class="btn" id="boardMore"></button></div>
     </div>
   </section>
@@ -285,7 +299,7 @@
         <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)"></i>No weekly avg available</span>
         <span><i class="sw" style="height:3px;background:var(--amber)"></i>In Top 20 that day</span>
       </div>
-      <div class="scroll"><table id="watchTable"></table></div>
+      <p class="scroll-hint">Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="watchTable"><div></div></div><div class="scroll freeze"><table id="watchTable"></table></div>
     </div>
   </section>
 
@@ -625,8 +639,20 @@ function boot(data){
     tip.innerHTML=`<b>${esc(tkd(i.dataset.t))}</b> · ${dlong(i.dataset.d)}<br>Close ${c!=null?px(c):"–"}<br>Weekly avg ${a!=null?px(a):"n/a"}${c!=null&&a!=null?`<br><span class="${a>c?"pos":"neg"}">${a>c?"Below avg: fill":"Above avg"}</span>`:""}${i.dataset.in==="1"?"<br>In Top 20":""}`;
     tip.hidden=false;tip.style.left=Math.min(e.clientX+12,innerWidth-250)+"px";tip.style.top=(e.clientY+14)+"px"};
   document.addEventListener("mousemove",show);document.addEventListener("click",e=>{if(e.target.closest(".strip i"))show(e)});
-  document.addEventListener("scroll",()=>tip.hidden=true,{passive:true});
+  document.addEventListener("scroll",()=>tip.hidden=true,{passive:true,capture:true});
   render();
+  /* sticky offsets + top scrollbars for the frozen tables */
+  const ctl=document.querySelector(".controls");
+  const setCtl=()=>{const st=getComputedStyle(ctl).position==="sticky";document.documentElement.style.setProperty("--ctl-h",(st?ctl.offsetHeight:0)+"px");document.documentElement.style.setProperty("--dh",document.querySelector("#watch .desk-head").offsetHeight+"px")};
+  const bars=[...document.querySelectorAll(".hbar")].map(bar=>{
+    const box=$(bar.dataset.for).closest(".scroll"),inner=bar.firstElementChild;
+    const sync=()=>{inner.style.width=box.scrollWidth+"px";bar.hidden=box.scrollWidth<=box.clientWidth+1;bar.scrollLeft=box.scrollLeft};
+    bar.addEventListener("scroll",()=>{if(Math.abs(box.scrollLeft-bar.scrollLeft)>1)box.scrollLeft=bar.scrollLeft},{passive:true});
+    box.addEventListener("scroll",()=>{if(Math.abs(box.scrollLeft-bar.scrollLeft)>1)bar.scrollLeft=box.scrollLeft},{passive:true});
+    if(window.ResizeObserver){const ro=new ResizeObserver(sync);ro.observe(box);ro.observe($(bar.dataset.for))}
+    return sync});
+  const relayout=()=>{setCtl();bars.forEach(f=>f())};
+  relayout();addEventListener("resize",relayout);if(window.ResizeObserver)new ResizeObserver(setCtl).observe(ctl);
   new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
   matchMedia("(prefers-color-scheme: light)").addEventListener?.("change",render);
 }
