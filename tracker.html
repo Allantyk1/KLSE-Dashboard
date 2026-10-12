@@ -144,6 +144,34 @@
   th.sort[aria-sort="ascending"]::after{content:" ▲";color:var(--amber)}
   .btn{font:500 12px var(--font-body);color:var(--amber);background:none;border:1px solid var(--line);border-radius:9px;padding:6px 12px;cursor:pointer}
   .btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .setup{display:inline-block;font:600 10px var(--font-data);letter-spacing:.03em;border-radius:5px;padding:1px 6px;margin:1px 0;white-space:nowrap}
+  .setup.sr{background:var(--amber);color:var(--bg);border:1px solid var(--amber)}
+  .setup.nd{background:var(--red-soft);color:var(--red);border:1px solid var(--red)}
+  .t30tag{font:600 9.5px var(--font-data);color:var(--ink-dim);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px;white-space:nowrap}
+  .score-tbl td.lbl{text-align:left;white-space:normal;font-family:var(--font-body);min-width:200px}
+  .score-tbl .sub{display:block;font:400 11px var(--font-body);color:var(--ink-faint)}
+  .setup.disc{background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+  .streak{font:400 11px var(--font-data);color:var(--ink-dim);white-space:nowrap}
+  .streak b{font-weight:600}
+  /* row numbers + Excel-style column filters (section 1 table) */
+  .stk{display:flex;align-items:flex-start;gap:6px}
+  .rn{font:500 11px var(--font-data);color:var(--ink-faint);min-width:2.4em;text-align:right;padding-top:2px;flex-shrink:0}
+  .fbtn{font:600 10px var(--font-data);color:var(--ink-faint);background:none;border:1px solid transparent;border-radius:5px;padding:0 3px;margin-left:4px;cursor:pointer;line-height:15px;vertical-align:1px}
+  .fbtn:hover{color:var(--ink);border-color:var(--line)}
+  .fbtn.on{color:var(--bg);background:var(--amber);border-color:var(--amber)}
+  .fbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .fpop{position:fixed;z-index:30;width:260px;max-width:calc(100vw - 24px);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);font:13px var(--font-body);color:var(--ink)}
+  .fpop h4{margin:0 0 8px;font:600 10px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .fpop .row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+  .fpop input[type=text],.fpop input[type=number],.fpop input[type=date],.fpop select{font:500 13px var(--font-body);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0;width:100%}
+  .fpop .unit{font:500 12px var(--font-data);color:var(--ink-dim)}
+  .fpop .chk{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow:auto;margin-bottom:8px}
+  .fpop .chk label{display:flex;gap:8px;align-items:center;cursor:pointer}
+  .fpop .acts{display:flex;gap:6px;justify-content:flex-end;margin-top:4px}
+  .btn.pri,.fpop .acts .btn.pri{background:var(--amber);color:var(--bg);border-color:var(--amber)}
+  .fchips{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 8px}
+  .fchip{font:500 11px var(--font-data);color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber);border-radius:999px;padding:2px 4px 2px 8px;display:inline-flex;align-items:center;gap:4px}
+  .fchip button{font:600 11px var(--font-data);color:var(--amber);background:none;border:0;cursor:pointer;padding:0 4px}
   .sig{font:600 10px var(--font-data);padding:1px 6px;border-radius:999px}
   .sig.B{background:var(--green-soft);color:var(--green)} .sig.W{background:var(--amber-soft);color:var(--amber)} .sig.S{background:var(--red-soft);color:var(--red)}
   .t20tag{white-space:nowrap;font:600 9.5px var(--font-data);color:var(--amber);border:1px solid var(--amber);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:1px}
@@ -256,8 +284,10 @@
           <button type="button" data-v="all" aria-pressed="false">All stocks</button>
         </div>
         <span class="muted" id="boardCount" style="font-size:12px"></span>
+        <button type="button" class="btn" id="boardReset" title="Clear every column filter and the search box, and go back to the default sort and Top 20 rows">Reset to default</button>
       </div>
-      <p class="scroll-hint">Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="boardTable"><div></div></div><div class="scroll freeze"><table id="boardTable"></table></div>
+      <div class="fchips" id="boardChips"></div>
+      <p class="scroll-hint">Tap a heading to sort. Tap ⏷ next to a heading to filter that column. Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="boardTable"><div></div></div><div class="scroll freeze"><table id="boardTable"></table></div>
       <div style="margin-top:10px"><button type="button" class="btn" id="boardMore"></button></div>
     </div>
   </section>
@@ -272,6 +302,7 @@
           <button type="button" data-v="top20" aria-pressed="true">Today's Top 20</button>
           <button type="button" data-v="buy" aria-pressed="false">Today's BUY signals</button>
           <button type="button" data-v="trigger" aria-pressed="false">Buy triggers (last 5 days)</button>
+          <button type="button" data-v="top30" aria-pressed="false" title="Top 30 rows of section 1: Top 20 picks, last 3 months, ranked by % to date">Top 30 strong stocks</button>
         </div></div>
       <div class="ctl"><span class="lbl">Look-back</span>
         <div class="seg" id="lookback">
@@ -299,7 +330,15 @@
         <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)"></i>No weekly avg available</span>
         <span><i class="sw" style="height:3px;background:var(--amber)"></i>In Top 20 that day</span>
       </div>
-      <p class="scroll-hint">Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="watchTable"><div></div></div><div class="scroll freeze"><table id="watchTable"></table></div>
+      <div class="toolbar"><span class="muted" id="watchCount" style="font-size:12px"></span>
+        <button type="button" class="btn" id="watchReset" title="Clear every column filter and Bid near close, and go back to the default sort">Reset to default</button></div>
+      <div class="fchips" id="watchChips"></div>
+      <p class="scroll-hint">Tap a heading to sort. Tap ⏷ next to a heading to filter that column. Scroll sideways with the bar just below, Shift + mouse wheel, or a trackpad swipe.</p><div class="hbar" data-for="watchTable"><div></div></div><div class="scroll freeze"><table id="watchTable"></table></div>
+    </div>
+    <div class="panel" style="margin-top:12px" id="rulePanel">
+      <h3 style="margin:0 0 4px;font:600 15px var(--font-display)">Rule scorecard: are the tags working?</h3>
+      <p class="note" id="ruleLede" style="margin:0 0 10px"></p>
+      <div class="scroll"><table id="ruleTable" class="score-tbl"></table></div>
     </div>
   </section>
 
@@ -342,6 +381,68 @@ const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
 const S={src:"top20",win:3,ref:"se",measure:"close",week:4,look:10,watchSet:"top20",near:0,rankBy:"pct",sortKey:"pct",sortDir:-1};
 try{Object.assign(S,JSON.parse(localStorage.getItem("klsePickTrackerPrefs")||"{}"))}catch(e){}
 const extra=new Set(); let boardShow=20;
+/* Excel-style column filters, shared by the section 1 and section 2 tables */
+const BCOLS=[["t","Stock","text"],["d","Day 1","date"],["rp","Day-1 price","money"],["lc","Now","money"],["days","Days","int"],["pct","% to date","pct"],["usd","RM / share","money"],["pos","RM on RM1k","money"],["hi","Best since","pct"],["lo","Worst since","pct"],["n","Times picked","int"],["sig","Signal now","list"]];
+/* REBOUND tag removed 2026-10-12: a 3-year backtest (backtest_box_momentum.py) found no reliable edge. Streak now still shows the pattern. */
+/* KLSE 2026-10-12: STRONG REBOUND and NO DIP tags removed after the Bursa backtest (backtest_box_momentum.py, 335 stocks, ~5y):
+   2–6 white after 2+ green did WORSE than normal (top-30 momentum stocks −0.36% over 10 sessions, t −2.0, negative every year),
+   and "no dip" was not a reliable warning (−0.03%, t −1.6). The rules below are kept only so the scorecard can keep testing them live. */
+const SETUPS={D:"Discount","-":"No setup"};
+/* Box rules, carried over from the US Market tracker (its 3-year US backtest, backtest_box_momentum.py, 2026-10-12).
+   NOT yet backtested on Bursa stocks: the rule scorecard below is the KLSE test.
+   STRONG REBOUND = stock is in the top 30 rows of section 1 (Top 20 picks, 3 months, ranked by % to date)
+                    AND its newest boxes are 2-6 white days in a row right after 2+ green days. ~2-week idea.
+   NO DIP         = newest box is white and there was no real dip before it (fewer than 2 green days in a row).
+   Forward test counts from RULES_LIVE_FROM; earlier sessions are shown separately as history. */
+const SR_TOP=30, SR_MONTHS=3, SR_MIN_WHITE=2, SR_MAX_WHITE=6, SR_MIN_GREEN=2, ND_MAX_GREEN=1, RULE_HORIZON=10, RULES_LIVE_FROM="2026-10-12";
+function cutoffFor(dateStr,months){const a=new Date(dateStr+"T00:00:00");a.setMonth(a.getMonth()-months);return a.toISOString().slice(0,10)}
+/* top N rows of section 1 as they stood on session index i (Top 20 picks, 3-month window, % to date) */
+function topRowsAt(i,n=SR_TOP){
+  const d=D.watch_dates[i], cut=cutoffFor(d,SR_MONTHS), first={};
+  for(const e of D.events){ if(e.src!=="top20"||e.d<cut||e.d>d) continue; if(!first[e.t]||e.d<first[e.t].d) first[e.t]=e; }
+  const ranked=[]; for(const t in first){const w=D.watch[t]; const c=w?w.c[i]:null; if(c!=null&&first[t].rp>0) ranked.push([t,c/first[t].rp-1]);}
+  ranked.sort((a,b)=>b[1]-a[1]); const m=new Map(); ranked.slice(0,n).forEach(([t],k)=>m.set(t,k+1)); return m;
+}
+/* box state per session for one stock: 1 green, 0 white, null no data */
+function boxStates(w,mode){const n=D.watch_dates.length,out=new Array(n).fill(null);for(let i=0;i<n;i++){const a=weeklyAvg(w,i,mode),c=w.c[i];if(a!=null&&c!=null)out[i]=a>c?1:0}return out}
+/* newest run at session i, read backwards over the full history */
+/* wCut / gCut = that run reaches the start of the data, so its true length (and what came before) is unknown */
+function streakAt(st,i){let k=i,wRun=null,gRun=0,curG=0,wCut=false,gCut=false;const run=v=>{let m=0;while(k>=0&&st[k]===v){m++;k--}return m};
+  const atStart=()=>k<0||st[k]==null;
+  if(st[i]===0){wRun=run(0);wCut=atStart();if(!wCut){gRun=run(1);gCut=atStart()}} else if(st[i]===1){curG=run(1);wRun=0} return {wRun,gRun,curG,wCut,gCut}}
+const isSR=(s,inTop)=>inTop&&!s.wCut&&s.wRun>=SR_MIN_WHITE&&s.wRun<=SR_MAX_WHITE&&s.gRun>=SR_MIN_GREEN;
+const isND=s=>!s.wCut&&!s.gCut&&s.wRun>=1&&s.gRun<=ND_MAX_GREEN;   // only when the dip (or lack of one) is actually visible
+const WCOLS=[["t","Stock","text"],["hits","Green days","int"],["setup","Setup","setup"],["wRun","White days since green","int"],["last","Close","money"],["bid","Bid now","money"],["gap","vs close","pct"],["mb","Mid BB","money"],["half","Ladder ½","money"],["lb","Support","money"],["ms","Score","int"],["hitDays","Which days","days"]];
+const TBL={board:{cols:BCOLS,key:"klsePickTrackerBoardFilters",F:{}},watch:{cols:WCOLS,key:"klsePickTrackerWatchFilters",F:{}}};
+for(const id in TBL){try{TBL[id].F=JSON.parse(localStorage.getItem(TBL[id].key)||"{}")||{}}catch(e){}}
+{const f=TBL.watch.F.setup;if(f&&f.sel){f.sel=f.sel.filter(x=>x in SETUPS);if(!f.sel.length||f.sel.length>=Object.keys(SETUPS).length)delete TBL.watch.F.setup}}  /* drop options that no longer exist (e.g. Rebound) */
+const saveF=id=>{try{localStorage.setItem(TBL[id].key,JSON.stringify(TBL[id].F))}catch(e){}};
+const OPS={gt:">",ge:"≥",lt:"<",le:"≤",eq:"=",bt:"between"};
+function fPass(id,r){
+  const F=TBL[id].F;
+  for(const k in F){const f=F[k],v=r[k],ty=(TBL[id].cols.find(c=>c[0]===k)||[])[2];
+    if(ty==="text"){const q=(f.q||"").toLowerCase();if(q&&!(r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q)))return false}
+    else if(ty==="date"){if(f.from&&v<f.from)return false;if(f.to&&v>f.to)return false}
+    else if(ty==="days"){if(!(v||[]).some(d=>(!f.from||d>=f.from)&&(!f.to||d<=f.to)))return false}
+    else if(ty==="list"){if(!f.sel.includes(v||"-"))return false}
+    else if(ty==="setup"){const have=v&&v.length?v:["-"];if(!have.some(x=>f.sel.includes(x)))return false}
+    else{ if(v==null||isNaN(v))return false;
+      const m=ty==="pct"?100:1, x=v*m, a=+f.a, b=+f.b, tol=ty==="pct"?.05:ty==="money"?.0005:0;
+      if(f.op==="gt"&&!(x>a))return false; if(f.op==="ge"&&!(x>=a-tol))return false;
+      if(f.op==="lt"&&!(x<a))return false; if(f.op==="le"&&!(x<=a+tol))return false;
+      if(f.op==="eq"&&!(Math.abs(x-a)<=tol))return false;
+      if(f.op==="bt"&&!(x>=Math.min(a,b)-tol&&x<=Math.max(a,b)+tol))return false;}
+  }
+  return true;
+}
+function fLabel(id,k){const f=TBL[id].F[k],c=TBL[id].cols.find(c=>c[0]===k);if(!f||!c)return"";const ty=c[2],u=ty==="pct"?"%":"",pre=ty==="money"?"RM":"";
+  if(ty==="text")return`${c[1]} contains "${f.q}"`;
+  if(ty==="date"||ty==="days"){const rng=f.from&&f.to?`${dshort(f.from)} → ${dshort(f.to)}`:f.from?`from ${dshort(f.from)}`:`up to ${dshort(f.to)}`;return ty==="days"?`Green day ${rng}`:`${c[1]} ${rng}`}
+  if(ty==="list")return`${c[1]}: ${f.sel.map(x=>SIGN[x]||"none").join(", ")}`;
+  if(ty==="setup")return`Setup: ${f.sel.map(x=>SETUPS[x]).join(" or ")}`;
+  return f.op==="bt"?`${c[1]} ${pre}${f.a}${u} to ${pre}${f.b}${u}`:`${c[1]} ${OPS[f.op]} ${pre}${f.a}${u}`;}
+const fBtn=(id,k,label)=>`<button type="button" class="fbtn${TBL[id].F[k]?" on":""}" data-tbl="${id}" data-f="${k}" aria-label="Filter ${label}" title="Filter ${label}">⏷</button>`;
+const fChips=id=>Object.keys(TBL[id].F).map(k=>`<span class="fchip">${esc(fLabel(id,k))}<button type="button" data-tbl="${id}" data-clr="${k}" aria-label="Remove filter">×</button></span>`).join("");
 let D=null,hitChart=null,usdChart=null;
 const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -411,18 +512,22 @@ function renderBoard(){
   ].join("");
   // full table
   const q=$("boardSearch").value.trim().toLowerCase();
-  let list=rows.filter(r=>!q||r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q));
+  const base=rows.filter(r=>!q||r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q));
+  let list=base.filter(r=>fPass("board",r));
   const sk=S.sortKey, dir=S.sortDir;
   list.sort((a,b)=>{const x=a[sk],y=b[sk];if(typeof x==="string")return dir*x.localeCompare(y);return dir*((x??-1e9)-(y??-1e9))});
-  const cols=[["t","Stock"],["d","Day 1"],["rp","Day-1 price"],["lc","Now"],["days","Days"],["pct","% to date"],["usd","RM / share"],["pos","RM on RM1k"],["hi","Best since"],["lo","Worst since"],["n","Times picked"],["sig","Signal now"]];
-  let h=`<thead><tr>${cols.map(([c,l])=>`<th class="sort" data-k="${c}" ${sk===c?`aria-sort="${dir<0?"descending":"ascending"}"`:""} tabindex="0">${l}</th>`).join("")}</tr></thead><tbody>`;
-  for(const r of list.slice(0,boardShow)){
-    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
+  let h=`<thead><tr>${BCOLS.map(([c,l])=>`<th class="sort" data-k="${c}" ${sk===c?`aria-sort="${dir<0?"descending":"ascending"}"`:""} tabindex="0">${c==="t"?'<span class="rn" style="display:inline-block">#</span> ':""}${l}${fBtn("board",c,l)}</th>`).join("")}</tr></thead><tbody>`;
+  for(const [i,r] of list.slice(0,boardShow).entries()){
+    h+=`<tr><td><div class="stk"><span class="rn">${i+1}</span><div><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></div></div></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
   }
-  $("boardTable").innerHTML=h+"</tbody>";
+  $("boardTable").innerHTML=h+(list.length?"":`<tr><td colspan="12" class="muted" style="text-align:left">No stocks match these filters. Use Reset to default to clear them.</td></tr>`)+"</tbody>";
+  const nf=Object.keys(TBL.board.F).length;
+  $("boardChips").innerHTML=fChips("board");
+  $("boardReset").classList.toggle("pri",nf>0||!!q);
   const all=boardShow>20;
   $("boardRows").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="all")===all)));
-  $("boardCount").textContent=all||list.length<=20?`${list.length} stock${list.length===1?"":"s"}`:`showing 20 of ${list.length} stocks`;
+  const ofTxt=list.length<base.length?` (filtered from ${base.length})`:"";
+  $("boardCount").textContent=(all||list.length<=20?`${list.length} stock${list.length===1?"":"s"}`:`showing 20 of ${list.length} stocks`)+ofTxt;
   const more=$("boardMore"); more.hidden=list.length<=20;
   more.textContent=all?"Show top 20 rows only":`Show all ${list.length} stocks`;
 }
@@ -444,14 +549,16 @@ function weeklyAvg(w,i,mode){
   return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
 }
 function watchTickers(){
-  const T=D.tickers; let list=Object.keys(D.watch).filter(t=>S.watchSet==="top20"?T[t]?.t20:S.watchSet==="trigger"?!!T[t]?.trg:T[t]?.sig==="B");
+  const T=D.tickers; const top=S.watchSet==="top30"?topRowsAt(D.watch_dates.length-1):null;
+  let list=Object.keys(D.watch).filter(t=>top?top.has(t):S.watchSet==="top20"?T[t]?.t20:S.watchSet==="trigger"?!!T[t]?.trg:T[t]?.sig==="B");
   for(const t of extra) if(D.watch[t]&&!list.includes(t)) list.unshift(t);
   return list;
 }
 function renderWatch(){
   const dates=D.watch_dates, n=dates.length, start=Math.max(0,n-S.look), L=n-start; let rows=[]; let withHits=0,totalHits=0,totalDays=0;
   const refName=S.ref==="se"?"5-session average of the daily Entry EMA20":S.ref==="bb"?"5-session average of the daily Entry BB Zone (midpoint of the lower and middle Bollinger Bands)":"average close on the days (within the prior 5 sessions) the stock was in the Top 20";
-  $("watchLede").innerHTML=`A green box means the stock <b>closed below</b> its weekly average price that day. Here the weekly average is the ${refName}, taken over the 5 sessions before each day so it was known in advance. A buy order at that price would have filled on every green day. <b>Bid now</b> is the weekly average to use for the next session. Tap a column heading to sort, tap again to reverse. <b>Bid near close</b> keeps only stocks whose Bid now is within 2, 3 or 5% of the close (or above it), so the order is likely to fill soon. <b>Mid BB / Ladder ½ / Support</b> are your two-entry ladder: Ladder ½ is Support plus half the distance up to the Mid BB, and a level turns green once the close is at or below it. A green <b>TRIGGER</b> tag means the buy-trigger rule fired in the last 5 sessions.`;
+  $("watchLede").innerHTML=`A green box means the stock <b>closed below</b> its weekly average price that day. Here the weekly average is the ${refName}, taken over the 5 sessions before each day so it was known in advance. A buy order at that price would have filled on every green day. <b>Bid now</b> is the weekly average to use for the next session. Tap a column heading to sort, tap again to reverse. <b>Bid near close</b> keeps only stocks whose Bid now is within 2, 3 or 5% of the close (or above it), so the order is likely to fill soon. <b>Mid BB / Ladder ½ / Support</b> are your two-entry ladder: Ladder ½ is Support plus half the distance up to the Mid BB, and a level turns green once the close is at or below it. A green <b>TRIGGER</b> tag means the buy-trigger rule fired in the last 5 sessions. <b>Setup</b>: <b>DISCOUNT</b> = more green boxes than white. <b>Streak now</b> shows the newest run over the full history, e.g. “3 white ← 4 green”. On Bursa, the US <b>STRONG REBOUND</b> and <b>NO DIP</b> tags are not shown. A 5-year backtest of 335 Bursa stocks found that buying after 2–6 white days did <i>worse</i> than normal, and “no dip” was not a reliable warning. The pattern that did hold is a <b>green box</b> (closing below the weekly average): slightly better than normal over the next 2 weeks, every year. The scorecard below keeps testing all three live. <b>Top 30 strong stocks</b> lists the top 30 rows of section 1.`;
+  const top30Now=topRowsAt(n-1);
   for(const t of watchTickers()){
     const w=D.watch[t], info=D.tickers[t]||{}; const cells=[]; let hits=0,valid=0; const hitDays=[];
     for(let i=start;i<n;i++){
@@ -461,8 +568,11 @@ function renderWatch(){
       cells.push({d:dates[i],c,avg,st,newWeek,in20:w.t20[i]==="1"});
     }
     const bid=weeklyAvg(w,n,S.ref), last=w.c[n-1], gap=bid!=null&&last?bid/last-1:null;
+    // streaks over the full history (not just the look-back), newest box backwards
+    const sk=streakAt(boxStates(w,S.ref),n-1), {wRun,gRun,curG,wCut,gCut}=sk, rank30=top30Now.get(t)||0;
+    const setup=[]; if(valid&&hits/valid>0.5)setup.push("D");   // STRONG REBOUND / NO DIP tags removed on KLSE (failed the Bursa backtest)
     if(hits>0)withHits++; totalHits+=hits; totalDays+=valid;
-    rows.push({t,info,cells,hits,valid,hitDays,bid,last,gap,pinned:extra.has(t),
+    rows.push({t,co:info.co,info,cells,hits,valid,hitDays,bid,last,gap,pinned:extra.has(t),setup,wRun,gRun,curG,wCut,gCut,setupN:setup.includes("D")?1:0,rank30,
       ratio:valid?hits/valid:-1,ms:info.ms??null,mb:info.mb??null,lb:info.lb??null,half:info.lb!=null&&info.mb!=null?info.lb+(info.mb-info.lb)/2:null});
   }
   const wk=S.wSortKey||"ratio", wd=S.wSortDir||-1;
@@ -476,22 +586,27 @@ function renderWatch(){
   const near=rows.filter(r=>r.gap!=null&&r.gap>=-0.02).length;
   const nb=S.near||0, allRows=rows.length;
   if(nb) rows=rows.filter(r=>r.pinned||(r.gap!=null&&r.gap>=-nb/100));
+  const preF=rows.length; rows=rows.filter(r=>r.pinned||fPass("watch",r));
+  const nwf=Object.keys(TBL.watch.F).length;
+  $("watchChips").innerHTML=fChips("watch");
+  $("watchCount").textContent=`${rows.length} stock${rows.length===1?"":"s"}`+(rows.length<allRows?` (filtered from ${allRows})`:"");
+  $("watchReset").classList.toggle("pri",nwf>0||nb>0);
   $("watchTiles").innerHTML=[
     tile("Stocks with ≥1 green day",`${withHits}<span class="muted" style="font-size:14px"> / ${allRows}</span>`,`last ${L} sessions`),
     tile("Green days, all stocks",`${totalDays?Math.round(totalHits/totalDays*100):0}%`,`${totalHits} of ${totalDays} stock-days`),
     `<button type="button" class="tile tile-btn" id="nearTile" aria-pressed="${nb===2}" title="Show only these stocks"><div class="k">Bid within 2% of close</div><div class="v">${near}</div><div class="s">${nb===2?"Filter on: tap to show all":"Tap to show only these"}</div></button>`,
   ].join("");
   if(nb) $("watchTiles").insertAdjacentHTML("beforeend",`<p class="note" style="grid-column:1/-1;margin:0">Showing <b>${rows.length}</b> of ${allRows} stocks whose Bid now is within ${nb}% below the close or above it (already trading under its weekly average).</p>`);
-  const sh=(k,label,extra="")=>`<th class="sort" data-wk="${k}" tabindex="0" ${wk===k?`aria-sort="${wd<0?"descending":"ascending"}"`:""} ${extra}>${label}</th>`;
-  let h=`<thead><tr>${sh("t","Stock")}${sh("ratio","Green days")}<th style="text-align:left">Last ${L} sessions <span class="muted">(${dshort(dates[start])} → ${dshort(dates[n-1])})</span></th>${sh("last","Close")}${sh("bid","Bid now")}${sh("gap","vs close")}${sh("mb","Mid BB",'title="Middle Bollinger Band"')}${sh("half","Ladder ½",'title="Support + (Mid BB - Support) / 2"')}${sh("lb","Support",'title="Support = lower Bollinger Band"')}${sh("ms","Score",'title="Final Blended Score"')}<th style="text-align:left">Which days</th></tr></thead><tbody>`;
-  for(const r of rows){
+  const sh=(k,label,extra="",fk=k)=>`<th class="sort" data-wk="${k}" tabindex="0" ${wk===k?`aria-sort="${wd<0?"descending":"ascending"}"`:""} ${extra}>${k==="t"?'<span class="rn" style="display:inline-block">#</span> ':""}${label}${fBtn("watch",fk,label)}</th>`;
+  let h=`<thead><tr>${sh("t","Stock")}${sh("ratio","Green days","","hits")}${sh("setupN","Setup",'title="DISCOUNT = more green boxes than white in the look-back."',"setup")}${sh("wRun","Streak now",'title="Newest run of boxes, and the run before it"',"wRun")}<th style="text-align:left">Last ${L} sessions <span class="muted">(${dshort(dates[start])} → ${dshort(dates[n-1])})</span></th>${sh("last","Close")}${sh("bid","Bid now")}${sh("gap","vs close")}${sh("mb","Mid BB",'title="Middle Bollinger Band"')}${sh("half","Ladder ½",'title="Support + (Mid BB - Support) / 2"')}${sh("lb","Support",'title="Support = lower Bollinger Band"')}${sh("ms","Score",'title="Matrix Score"')}<th style="text-align:left">Which days${fBtn("watch","hitDays","Which days")}</th></tr></thead><tbody>`;
+  for(const [ri,r] of rows.entries()){
     const ratio=r.valid?r.hits/r.valid:0;
     const pill=r.valid===0?`<span class="pill cold">no data</span>`:ratio>=.5?`<span class="pill hot">${r.hits}/${r.valid}</span>`:r.hits>0?`<span class="pill warm">${r.hits}/${r.valid}</span>`:`<span class="pill cold">0/${r.valid}</span>`;
     const strip=r.cells.map(c=>`<i class="${c.st}${c.in20?" in20":""}${c.newWeek?" wk":""}" data-t="${esc(r.t)}" data-d="${c.d}" data-c="${c.c??""}" data-a="${c.avg??""}" data-in="${c.in20?1:0}"></i>`).join("");
     const hd=r.hitDays, daysTxt=!hd.length?`<span class="muted">none</span>`:hd.length<=6?hd.map(dlong).join(", "):`<span title="${esc(hd.map(dlong).join(", "))}">${hd.slice(-6).map(dshort).join(", ")} <span class="muted">+${hd.length-6} earlier</span></span>`;
-    h+=`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.info.t20?'<span class="t20tag">TOP 20</span>':""}${r.pinned?' <button type="button" class="btn" data-unpin="'+esc(r.t)+'" style="padding:0 6px;font-size:11px" aria-label="Remove '+esc(tkd(r.t))+'">×</button>':""}${r.info.trg?`<span class="trgtag" title="Buy trigger fired on ${dlong(r.info.trg)}">TRIGGER ${dshort(r.info.trg)}</span>`:""}<span class="co">${esc(r.info.co||"")}</span></td><td>${pill}</td><td style="text-align:left"><span class="strip${L>20?" dense":""}">${strip}</span></td><td>${r.last!=null?px(r.last):"–"}</td><td>${r.bid!=null?px(r.bid):"<span class='muted'>–</span>"}</td><td class="${r.gap==null?"muted":r.gap>=0?"pos":"neg"}">${r.gap==null?"–":fmtS(r.gap)}</td>${ladder(r.info,r.last)}<td>${r.info.ms??"–"}</td><td class="days-list">${daysTxt}</td></tr>`;
+    h+=`<tr><td><div class="stk"><span class="rn">${ri+1}</span><div><span class="tk">${esc(tkd(r.t))}</span>${r.info.t20?'<span class="t20tag">TOP 20</span>':""}${r.rank30?`<span class="t30tag" title="Row ${r.rank30} of the top 30 in section 1">TOP 30 #${r.rank30}</span>`:""}${r.pinned?' <button type="button" class="btn" data-unpin="'+esc(r.t)+'" style="padding:0 6px;font-size:11px" aria-label="Remove '+esc(tkd(r.t))+'">×</button>':""}${r.info.trg?`<span class="trgtag" title="Buy trigger fired on ${dlong(r.info.trg)}">TRIGGER ${dshort(r.info.trg)}</span>`:""}<span class="co">${esc(r.info.co||"")}</span></div></div></td><td>${pill}</td><td style="text-align:left">${r.setup.map(x=>x==="SR"?'<span class="setup sr" title="Top-30 stock, 2–6 white days right after 2+ green: ~2-week idea (US-tested)">STRONG REBOUND</span>':x==="D"?'<span class="setup disc">DISCOUNT</span>':'<span class="setup nd" title="Above its weekly average without a real dip first: tested worse than average on US stocks">NO DIP – DON\'T CHASE</span>').join("<br>")||'<span class="muted">–</span>'}</td><td style="text-align:left" class="streak" ${r.wCut||r.gCut?'title="This run goes back to the start of the tracker data, so what came before it is unknown"':""}>${r.wRun==null?"–":r.wRun>0?`<b>${r.wRun}${r.wCut?"+":""}</b> white${r.gRun?` ← <span class="pos"><b>${r.gRun}${r.gCut?"+":""}</b> green</span>`:""}`:`<span class="pos"><b>${r.curG}</b> green</span> now`}</td><td style="text-align:left"><span class="strip${L>20?" dense":""}">${strip}</span></td><td>${r.last!=null?px(r.last):"–"}</td><td>${r.bid!=null?px(r.bid):"<span class='muted'>–</span>"}</td><td class="${r.gap==null?"muted":r.gap>=0?"pos":"neg"}">${r.gap==null?"–":fmtS(r.gap)}</td>${ladder(r.info,r.last)}<td>${r.info.ms??"–"}</td><td class="days-list">${daysTxt}</td></tr>`;
   }
-  $("watchTable").innerHTML=h+(rows.length?"":`<tr><td colspan="11" class="muted">No stocks in this list today.</td></tr>`)+"</tbody>";
+  $("watchTable").innerHTML=h+(rows.length?"":`<tr><td colspan="13" class="muted" style="text-align:left">${preF?"No stocks match these filters. Use Reset to default to clear them.":"No stocks in this list today."}</td></tr>`)+"</tbody>";
 }
 
 /* ---------- 3 & 4 stats ---------- */
@@ -597,9 +712,49 @@ function runPlan(){
   }
 }
 
+/* ---------- rule scorecard: replay every past session as if the tags were shown that day ---------- */
+let ruleCache=null;
+function ruleStats(){
+  if(ruleCache&&ruleCache.ref===S.ref) return ruleCache;
+  const dates=D.watch_dates, n=dates.length, H=RULE_HORIZON;
+  const states={}; for(const t in D.watch) states[t]=boxStates(D.watch[t],S.ref);
+  const mk=()=>({n:0,up:0,sum:0,days:new Set(),stocks:new Set()});
+  const G={}; for(const per of ["live","hist"]) for(const g of ["SR","T30","ND","OTH","GN","NG"]) G[per+g]=mk();
+  let lastScored=null;
+  for(let i=0;i+H<n;i++){
+    const per=dates[i]>=RULES_LIVE_FROM?"live":"hist", top=topRowsAt(i); lastScored=dates[i];
+    for(const t in D.watch){
+      const c=D.watch[t].c, c0=c[i], c1=c[i+H]; if(c0==null||c1==null||!(c0>0)) continue;
+      const st=states[t]; if(st[i]==null) continue;
+      const k=streakAt(st,i), r=c1/c0-1;
+      const add=g=>{const x=G[per+g];x.n++;x.sum+=r;if(r>0)x.up++;x.days.add(dates[i]);x.stocks.add(t)};
+      if(top.has(t)) add(isSR(k,true)?"SR":"T30");
+      add(isND(k)?"ND":"OTH");
+      add(st[i]===1?"GN":"NG");
+    }
+  }
+  ruleCache={ref:S.ref,G,lastScored,firstLiveDue:(()=>{const i=dates.findIndex(d=>d>=RULES_LIVE_FROM);return i<0?null:i})()};
+  return ruleCache;
+}
+function renderRules(){
+  const {G,lastScored}=ruleStats(), H=RULE_HORIZON;
+  const fmtG=x=>x.n?`${x.n.toLocaleString()} <span class="muted">(${x.stocks.size} stocks, ${x.days.size} days)</span>`:'<span class="muted">none yet</span>';
+  const up=x=>x.n?`${Math.round(100*x.up/x.n)}%`:"–", avg=x=>x.n?`<span class="${cls(x.sum)}">${fmtS(x.sum/x.n)}</span>`:"–";
+  const diff=(a,b,good)=>{if(!a.n||!b.n)return"–";const d=a.sum/a.n-b.sum/b.n;return `<b class="${(good?d>0:d<0)?"pos":"neg"}">${fmtS(d)}</b>`};   // green = supports the rule
+  const verdict=(a,b,good)=>{if(a.n<30||b.n<30)return'<span class="muted">too few cases yet</span>';const d=a.sum/a.n-b.sum/b.n;return (good?d>0:d<0)?'<span class="pos">rule holding</span>':'<span class="neg">not holding</span>'};
+  const row=(label,sub,a,b,good)=>`<tr><td class="lbl"><b>${label}</b><span class="sub">${sub}</span></td><td>${fmtG(a)}</td><td>${up(a)}</td><td>${avg(a)}</td><td>${up(b)}</td><td>${avg(b)}</td><td>${diff(a,b,good)}</td><td style="text-align:left">${verdict(a,b,good)}</td></tr>`;
+  const head=`<thead><tr><th>Tag</th><th>Tagged stock-days</th><th>% up after ${H}</th><th>Avg after ${H}</th><th>Comparison % up</th><th>Comparison avg</th><th>Difference</th><th>Verdict</th></tr></thead>`;
+  const block=(per,title)=>`<tr><td colspan="8" style="text-align:left;padding-top:14px"><b>${title}</b></td></tr>`
+    +row("GREEN NOW","closed below its weekly average, vs all other stock-days (higher is what we expect). Held in the Bursa backtest.",G[per+"GN"],G[per+"NG"],true)
+    +row("STRONG REBOUND (retired)","US rule, not shown on KLSE; failed the Bursa backtest. vs the same top-30 stocks on their other days",G[per+"SR"],G[per+"T30"],true)
+    +row("NO DIP (retired)","US rule, not shown on KLSE; failed the Bursa backtest. vs all other stock-days (lower is what the US rule expects)",G[per+"ND"],G[per+"OTH"],false);
+  const live=G.liveGN.n+G.liveNG.n;
+  $("ruleLede").innerHTML=`Each past session is replayed as if the tags had been on the dashboard that day, then scored on the close <b>${H} sessions (about 2 weeks) later</b>, using the same weekly average as the boxes above. <b>Live</b> counts only sessions from ${dlong(RULES_LIVE_FROM)}, when the rules were set, so it is a true forward test; <b>history</b> is the tracker's earlier data, shown for reference. A session can only be scored once ${H} more sessions have closed${live?`; the latest scored session is ${dlong(lastScored)}`:`, so the first live results appear about 2 weeks after ${dlong(RULES_LIVE_FROM)}`}. STRONG REBOUND and NO DIP are no longer shown as tags on KLSE (they failed the 5-year Bursa backtest, see box_momentum_report.md); they stay here so the live column can confirm or overturn that. Treat “rule holding” as meaningful only after a few hundred tagged stock-days.`;
+  $("ruleTable").innerHTML=head+"<tbody>"+block("live",`Live, since ${dshort(RULES_LIVE_FROM)}`)+block("hist",`History, ${dshort(D.watch_dates[0])} – before ${dshort(RULES_LIVE_FROM)} (reference only)`)+"</tbody>";
+}
 function render(){
   if(!D)return;
-  renderBoard(); renderWatch();
+  renderBoard(); renderWatch(); renderRules();
   const evs=windowEvents(), st=stats(evs);
   renderHits(st,evs); renderUsd(st,evs);
 }
@@ -620,8 +775,53 @@ function boot(data){
   $("boardMore").addEventListener("click",()=>{const wasAll=boardShow>20;boardShow=wasAll?20:1e9;renderBoard();if(wasAll)$("boardTable").scrollIntoView({block:"nearest"})});
   $("boardRows").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;boardShow=b.dataset.v==="all"?1e9:20;renderBoard()});
   const sortBy=th=>{const k=th.dataset.k;if(S.sortKey===k)S.sortDir*=-1;else{S.sortKey=k;S.sortDir=(k==="t"||k==="d")?1:-1}save();renderBoard()};
-  $("boardTable").addEventListener("click",e=>{const th=e.target.closest("th.sort");if(th)sortBy(th)});
-  $("boardTable").addEventListener("keydown",e=>{const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sortBy(th)}});
+  $("boardTable").addEventListener("click",e=>{const fb=e.target.closest(".fbtn");if(fb){e.stopPropagation();openFilter(fb);return}const th=e.target.closest("th.sort");if(th)sortBy(th)});
+  $("boardTable").addEventListener("keydown",e=>{if(e.target.closest(".fbtn"))return;const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sortBy(th)}});
+  /* Excel-style filter popup */
+  const pop=document.createElement("div");pop.className="fpop";pop.hidden=true;pop.setAttribute("role","dialog");document.body.appendChild(pop);
+  let popKey=null,popBtn=null,popTbl=null;
+  const closePop=()=>{pop.hidden=true;popKey=null;popBtn=null;popTbl=null};
+  const rerender=id=>id==="watch"?renderWatch():renderBoard();
+  const placePop=()=>{if(!popBtn)return;const rc=popBtn.getBoundingClientRect(),w=pop.offsetWidth,hgt=pop.offsetHeight;
+    if(rc.bottom<0||rc.top>innerHeight||rc.right<0||rc.left>innerWidth){closePop();return}
+    pop.style.left=Math.max(12,Math.min(rc.right-w,innerWidth-w-12))+"px";
+    pop.style.top=(rc.bottom+6+hgt>innerHeight?Math.max(12,rc.top-hgt-6):rc.bottom+6)+"px"};
+  function openFilter(btn){
+    const k=btn.dataset.f,id=btn.dataset.tbl;if(popKey===k&&popTbl===id&&!pop.hidden){closePop();return}
+    popKey=k;popTbl=id;const [,label,ty]=TBL[id].cols.find(c=>c[0]===k),f=TBL[id].F[k]||{};let body="";
+    if(ty==="text")body=`<div class="row"><input type="text" id="fq" placeholder="Ticker or company contains…" value="${esc(f.q||"")}"></div>`;
+    else if(ty==="date"||ty==="days"){const ds=ty==="days"?[...D.watch_dates]:boardRows().map(r=>r.d).sort();body=(ty==="days"?'<p class="muted" style="font-size:11px;margin:0 0 8px">Keep stocks with at least one green day in this date range.</p>':"")+`<div class="row"><span class="unit" style="width:38px">From</span><input type="date" id="ffrom" value="${f.from||""}" min="${ds[0]||""}" max="${ds[ds.length-1]||""}"></div><div class="row"><span class="unit" style="width:38px">To</span><input type="date" id="fto" value="${f.to||""}" min="${ds[0]||""}" max="${ds[ds.length-1]||""}"></div>`}
+    else if(ty==="setup"){const all=Object.keys(SETUPS),sel=f.sel||all;body=`<div class="chk">${all.map(v=>`<label><input type="checkbox" value="${v}" ${sel.includes(v)?"checked":""}> ${SETUPS[v]}</label>`).join("")}</div>`}
+    else if(ty==="list"){const sel=f.sel||["B","W","S","-"];body=`<div class="chk">${[["B","BUY"],["W","WATCH"],["S","SELL"],["-","No signal"]].map(([v,l])=>`<label><input type="checkbox" value="${v}" ${sel.includes(v)?"checked":""}> ${l}</label>`).join("")}</div>`}
+    else{const u=ty==="pct"?"%":ty==="money"?"RM":"",op=f.op||"ge";
+      body=`<div class="row"><select id="fop">${Object.entries(OPS).map(([o,l])=>`<option value="${o}" ${o===op?"selected":""}>${l==="between"?"between":"is "+l}</option>`).join("")}</select></div>
+      <div class="row"><input type="number" step="any" id="fa" value="${f.a??""}" placeholder="value"><span class="unit">${u}</span></div>
+      <div class="row" id="fbrow" ${op==="bt"?"":"hidden"}><span class="unit">and</span><input type="number" step="any" id="fb" value="${f.b??""}" placeholder="value"><span class="unit">${u}</span></div>
+      ${ty==="pct"?'<p class="muted" style="font-size:11px;margin:0 0 6px">Type percent numbers, e.g. 10 for +10%, -5 for −5%.</p>':""}`}
+    pop.innerHTML=`<h4>Filter: ${esc(label)}</h4>${body}<div class="acts"><button type="button" class="btn" data-act="clear">Clear</button><button type="button" class="btn pri" data-act="apply">Apply</button></div>`;
+    pop.hidden=false;popBtn=btn;placePop();
+    const sel=pop.querySelector("#fop");if(sel)sel.addEventListener("change",()=>{pop.querySelector("#fbrow").hidden=sel.value!=="bt"});
+    (pop.querySelector("input:not([type=checkbox]),select")||pop.querySelector("button")).focus({preventScroll:true});
+  }
+  function applyPop(){
+    const k=popKey,id=popTbl,ty=TBL[id].cols.find(c=>c[0]===k)[2];let f=null;
+    if(ty==="text"){const q=pop.querySelector("#fq").value.trim();if(q)f={q}}
+    else if(ty==="date"||ty==="days"){const a=pop.querySelector("#ffrom").value,b=pop.querySelector("#fto").value;if(a||b)f={from:a,to:b}}
+    else if(ty==="list"){const sel=[...pop.querySelectorAll("input:checked")].map(i=>i.value);if(sel.length<4)f={sel}}
+    else if(ty==="setup"){const sel=[...pop.querySelectorAll("input:checked")].map(i=>i.value);if(sel.length<Object.keys(SETUPS).length)f={sel}}
+    else{const op=pop.querySelector("#fop").value,a=pop.querySelector("#fa").value,b=pop.querySelector("#fb").value;if(a!==""&&(op!=="bt"||b!==""))f={op,a:+a,b:b===""?null:+b}}
+    if(f)TBL[id].F[k]=f;else delete TBL[id].F[k];saveF(id);closePop();rerender(id);
+  }
+  pop.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;if(b.dataset.act==="clear"){const id=popTbl;delete TBL[id].F[popKey];saveF(id);closePop();rerender(id)}else applyPop()});
+  pop.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.tagName!=="BUTTON"){e.preventDefault();applyPop()}if(e.key==="Escape")closePop()});
+  document.addEventListener("mousedown",e=>{if(!pop.hidden&&!pop.contains(e.target)&&!e.target.closest(".fbtn"))closePop()});
+  document.addEventListener("scroll",e=>{if(!pop.hidden&&!pop.contains(e.target))placePop()},{passive:true,capture:true});
+  addEventListener("resize",closePop);
+  const chipClr=e=>{const b=e.target.closest("[data-clr]");if(!b)return;const id=b.dataset.tbl;delete TBL[id].F[b.dataset.clr];saveF(id);rerender(id)};
+  $("boardChips").addEventListener("click",chipClr);$("watchChips").addEventListener("click",chipClr);
+  $("watchReset").addEventListener("click",()=>{TBL.watch.F={};saveF("watch");closePop();S.near=0;S.wSortKey="ratio";S.wSortDir=-1;save();
+    $("nearBid").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v==="0")));renderWatch()});
+  $("boardReset").addEventListener("click",()=>{TBL.board.F={};saveF("board");closePop();$("boardSearch").value="";boardShow=20;S.sortKey=S.rankBy;S.sortDir=-1;save();renderBoard()});
   const addTk=()=>{const t=resolveTk($("watchSearch").value,D.watch);
     if(t){extra.add(t);$("watchSearch").value="";renderWatch()}};
   $("watchSearch").addEventListener("change",addTk); $("watchSearch").addEventListener("keydown",e=>{if(e.key==="Enter")addTk()});
@@ -630,8 +830,8 @@ function boot(data){
     $("watch").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
     if(row){row.classList.add("flash");setTimeout(()=>row.classList.remove("flash"),1700)}},true);
   const wSort=th=>{const k=th.dataset.wk;if((S.wSortKey||"ratio")===k)S.wSortDir=-(S.wSortDir||-1);else{S.wSortKey=k;S.wSortDir=k==="t"?1:-1}save();renderWatch()};
-  $("watchTable").addEventListener("keydown",e=>{const th=e.target.closest("th[data-wk]");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();wSort(th)}});
-  $("watchTable").addEventListener("click",e=>{const th=e.target.closest("th[data-wk]");if(th){wSort(th);return}const b=e.target.closest("[data-unpin]");if(b){extra.delete(b.dataset.unpin);renderWatch()}});
+  $("watchTable").addEventListener("keydown",e=>{if(e.target.closest(".fbtn"))return;const th=e.target.closest("th[data-wk]");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();wSort(th)}});
+  $("watchTable").addEventListener("click",e=>{const fb=e.target.closest(".fbtn");if(fb){e.stopPropagation();openFilter(fb);return}const th=e.target.closest("th[data-wk]");if(th){wSort(th);return}const b=e.target.closest("[data-unpin]");if(b){extra.delete(b.dataset.unpin);renderWatch()}});
   document.addEventListener("click",e=>{const tr=e.target.closest("tr.clickable");if(tr){S.week=+tr.dataset.w;save();render()}});
   const tip=$("tip");
   const show=e=>{const i=e.target.closest(".strip i");if(!i){tip.hidden=true;return}
