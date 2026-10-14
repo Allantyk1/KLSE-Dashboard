@@ -379,6 +379,24 @@
   .tag.neg{ background:var(--sell-dim); color:var(--sell); }
   .tag.neu{ background:var(--watch-dim); color:var(--watch); }
 
+  /* Earnings badge + 3 x ATR risk line strip (2026-10-14, ported from the US
+     dashboard). Badge colour by proximity: red <= 7 days, amber <= 14, grey
+     later; dashed outline for a few days after a report. Risk line = a
+     position-sizing guide, not a sell signal. */
+  .tag.earn{ background:var(--surface-raised); color:var(--text-muted); border:1px solid var(--border); }
+  .tag.earn.soon{ background:var(--watch-dim); color:var(--watch); border-color:transparent; }
+  .tag.earn.urgent{ background:var(--sell-dim); color:var(--sell); border-color:transparent; }
+  .tag.earn.reported{ background:transparent; color:var(--watch); border:1px dashed currentColor; }
+  .risk-line{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:0.2rem 0.6rem; margin-top:0.5rem;
+    padding:0.35rem 0.6rem; border-radius:8px; border-left:3px solid var(--text-muted);
+    background:var(--surface-raised); font-size:0.72rem; color:var(--text-muted);
+  }
+  .risk-line .rl-label{ font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.04em; text-transform:uppercase; }
+  .risk-line .rl-val{ font-family:'IBM Plex Mono', monospace; font-weight:600; color:var(--text); }
+  .risk-line.breached{ border-left-color:var(--sell); background:var(--sell-dim); color:var(--sell); }
+  .risk-line.breached .rl-val, .risk-line.breached .rl-label{ color:var(--sell); }
+
   /* KDJ Action badge -- reuses the same pos/neg/neu color language as .tag
      above (so it reads as part of the same system) with a thin outline
      instead of a filled background, marking it as a distinct layer: the
@@ -860,6 +878,8 @@ function detailPanelHTML(s) {
     detailRow('Volume vs 20d Avg', d.volumeRatio != null ? `${d.volumeRatio}\u00d7` : null),
     detailRow('ATR (14-day)', d.atr14 != null ? `RM ${d.atr14.toFixed(3)}${s.price ? ` (${(d.atr14 / s.price * 100).toFixed(1)}%)` : ''}` : null),
     detailRow('Risk Line (3 \u00d7 ATR)', d.riskLine != null ? `RM ${d.riskLine.toFixed(3)}${s.entryBbZone ? ` (${((d.riskLine / s.entryBbZone - 1) * 100).toFixed(1).replace('-', '\u2212')}% from entry)` : ''}` : null),
+    detailRow('Next Results', nextEarningsDetail(s)),
+    detailRow('Last Results', s.lastEarningsDate || null),
     detailRow('Dividend Yield (T4Q)', d.dividendYield != null ? `${d.dividendYield}%` : null),
     detailRow('Analyst Count', d.analystCount != null ? d.analystCount : null),
     detailRow('vs SMA50 / SMA200', (d.pctVsSma50 != null && d.pctVsSma200 != null) ? `${d.pctVsSma50 >= 0 ? '+' : ''}${d.pctVsSma50}% / ${d.pctVsSma200 >= 0 ? '+' : ''}${d.pctVsSma200}%` : null),
@@ -922,6 +942,71 @@ function priceStatRowHTML(s) {
   return entries;
 }
 
+// --- Earnings badge (2026-10-14, port of the US earningsBadge()) ---
+// Data: klse_earnings_calendar.py -> klse_earnings_cache.json -> each stock
+// row's earningsDate / earningsDays / earningsSource / daysSinceEarnings.
+// earningsSource "yahoo" = a date from Yahoo; "bursa_deadline" = no Yahoo
+// date, so it shows the Bursa deadline (quarter end + 2 months): the company
+// must report BY then, possibly earlier.
+function fmtEarnDate(iso) {
+  if (!iso) return '\u2014';
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+function earningsTagHTML(s) {
+  if (s.daysSinceEarnings != null) {
+    const ago = s.daysSinceEarnings === 0 ? 'today' : `${s.daysSinceEarnings}d ago`;
+    return `<span class="tag earn reported" title="Last results ${s.lastEarningsDate} - watch for a post-results move">&#128197; Reported ${ago}</span>`;
+  }
+  if (!s.earningsDate || s.earningsDays == null) return '';
+  const n = s.earningsDays;
+  const cls = n <= 7 ? 'urgent' : (n <= 14 ? 'soon' : '');
+  const when = n === 0 ? 'today' : (n === 1 ? 'tmrw' : `${n}d`);
+  if (s.earningsSource === 'bursa_deadline') {
+    return `<span class="tag earn ${cls}" title="No announced date yet. Bursa rules: results for the quarter ending ${s.earningsQuarterEnd || '?'} must be out by ${s.earningsDate} (quarter end + 2 months) - could come any day before.">&#128197; Results due by ${fmtEarnDate(s.earningsDate)} \u00b7 ${when}</span>`;
+  }
+  const est = s.earningsEstimate ? ' (est.)' : '';
+  return `<span class="tag earn ${cls}" title="Next results ${s.earningsDate}${s.earningsEstimate ? ' - estimated, not yet confirmed' : ''}. Stocks can gap sharply after a report.">&#128197; Results ${fmtEarnDate(s.earningsDate)}${est} \u00b7 ${when}</span>`;
+}
+function nextEarningsDetail(s) {
+  if (!s.earningsDate) return null;
+  const when = s.earningsDays === 0 ? 'today' : `in ${s.earningsDays}d`;
+  return s.earningsSource === 'bursa_deadline'
+    ? `due by ${s.earningsDate} \u00b7 ${when}`
+    : `${s.earningsDate}${s.earningsEstimate ? ' (est.)' : ''} \u00b7 ${when}`;
+}
+
+// --- 3 x ATR risk line strip on the card (2026-10-14, port of the US
+// riskLineRow()). A RISK GUIDE for position sizing, not a sell signal; it
+// can't protect against overnight gaps such as results. Measured from the
+// Entry BB Zone (same as the detail view's Risk Line row), or from YOUR
+// average cost on Portfolio cards.
+const RISK_ATR_MULT = 3;
+function riskInfo(s, isHolding) {
+  const d = s.detail || {};
+  if (isHolding && s.avgCost && d.atr14) {
+    const line = s.avgCost - RISK_ATR_MULT * d.atr14;
+    if (line <= 0) return null;
+    return { line, pct: (s.avgCost - line) / s.avgCost, from: 'avg cost',
+             breached: s.price != null && s.price < line };
+  }
+  if (d.riskLine != null && s.entryBbZone && d.riskLine > 0)
+    return { line: d.riskLine, pct: (s.entryBbZone - d.riskLine) / s.entryBbZone, from: 'entry', breached: false };
+  return null;
+}
+function riskLineHTML(s, isHolding) {
+  const r = riskInfo(s, isHolding);
+  if (!r) return '';
+  return `
+      <div class="risk-line${r.breached ? ' breached' : ''}" title="3 x ATR below ${r.from}. Risk guide for position sizing - not a sell signal. Does not protect against overnight gaps (results).">
+        <span class="rl-label">Risk line</span>
+        <span class="rl-val">RM ${r.line.toFixed(3)}</span>
+        <span>\u2212${(r.pct * 100).toFixed(1)}% from ${r.from}</span>
+        <span>risk RM${Math.round(r.pct * 1000)} per RM1,000</span>
+        ${r.breached ? '<span class="rl-val">\u00b7 price is below risk line</span>' : ''}
+      </div>`;
+}
+
 function cardHTML(s, cat) {
   const trendClass = histogramTrendClass(s.histogramTrend);
   const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
@@ -959,9 +1044,10 @@ function cardHTML(s, cat) {
       <div class="card-details">
         <span>RSI <b>${s.rsi ?? '\u2014'}</b></span>
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
-        ${trendTag}${kdjTag}
+        ${trendTag}${kdjTag}${earningsTagHTML(s)}
       </div>
       ${priceRow}
+      ${riskLineHTML(s, isHolding)}
       <span class="detail-cta">Tap for full technical detail \u25be</span>
     </div>`;
 }
