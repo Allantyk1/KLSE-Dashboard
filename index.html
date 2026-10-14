@@ -433,6 +433,27 @@
   }
   .pf-stat .label{ font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;}
   .pf-stat .value{ font-family:'IBM Plex Mono', monospace; font-size:1.1rem; font-weight:600; margin-top:0.15rem; }
+  /* Realized P&L (2026-10-14): third summary box + "Sold" list from
+     KLSE_Trade_Journal.xlsx. Sold rows use .sold-card, NOT .card, so KDJ
+     chip counts / search / tap-to-expand never pick them up. */
+  .pf-summary{ flex-wrap:wrap; }
+  .pf-stat{ min-width:8.5rem; }
+  .pf-stat .sub{ font-size:0.7rem; color:var(--text-muted); margin-top:0.15rem; }
+  .sold-title{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:0.95rem;
+    margin:1.2rem 0 0.3rem; color:var(--text); }
+  .sold-sum{ display:flex; flex-wrap:wrap; gap:0.25rem 0.6rem; font-size:0.78rem; color:var(--text-muted);
+    margin-bottom:0.6rem; }
+  .sold-sum b{ font-family:'IBM Plex Mono', monospace; font-weight:600; }
+  .sold-card{ background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--border);
+    border-radius:var(--radius); padding:0.7rem 1rem; margin-bottom:0.5rem; }
+  .sold-card.win{ border-left-color:var(--buy); }
+  .sold-card.loss{ border-left-color:var(--sell); }
+  .sold-card .row{ display:flex; justify-content:space-between; align-items:baseline; gap:0.5rem; }
+  .sold-card .row + .row{ margin-top:0.3rem; font-size:0.78rem; color:var(--text-muted); }
+  .sold-card .tk{ font-family:'Space Grotesk', sans-serif; font-weight:600; }
+  .sold-card .amt{ font-family:'IBM Plex Mono', monospace; font-weight:600; }
+  .sold-tag{ font-size:0.65rem; letter-spacing:0.04em; text-transform:uppercase; padding:0.1rem 0.4rem;
+    border-radius:4px; border:1px solid var(--border); color:var(--text-muted); margin-left:0.4rem; }
 
   .empty{
     text-align:center;
@@ -945,9 +966,44 @@ function cardHTML(s, cat) {
     </div>`;
 }
 
-function portfolioHTML(rows) {
+// --- Realized P&L (2026-10-14): from SELL rows in KLSE_Trade_Journal.xlsx > My Trades ---
+function fmtRM(v) {
+  if (v == null) return '\u2014';
+  const n = Number(v);
+  return (n < 0 ? '-' : '') + 'RM ' + Math.abs(n).toLocaleString('en-MY', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+function pnlColor(v) { return (v ?? 0) >= 0 ? 'var(--buy)' : 'var(--sell)'; }
+function soldCardHTML(x) {
+  const esc = s => String(s).replace(/[<>&"]/g, '');
+  const d = x.date ? new Date(x.date + 'T00:00:00').toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: '2-digit'}) : 'no date';
+  const pct = x.realizedPct != null ? `${x.realizedPct >= 0 ? '+' : ''}${x.realizedPct.toFixed(2)}%` : '';
+  return `
+    <div class="sold-card ${(x.realized ?? 0) >= 0 ? 'win' : 'loss'}">
+      <div class="row">
+        <span><span class="tk">${esc(String(x.ticker).replace(/\.KL$/i, ''))}</span><span class="sold-tag">${x.closedPosition ? 'Sold all' : 'Trimmed'}</span></span>
+        <span class="amt" style="color:${pnlColor(x.realized)}">${fmtRM(x.realized)} <small>${pct}</small></span>
+      </div>
+      <div class="row">
+        <span>${d} \u00b7 sold ${Number(x.shares).toLocaleString('en-MY')} @ ${Number(x.price).toFixed(3)}</span>
+        <span>avg cost ${Number(x.avgCost).toFixed(3)}</span>
+      </div>
+      ${x.notes ? `<div class="row"><span>${esc(x.notes)}</span></div>` : ''}
+    </div>`;
+}
+function soldSectionHTML(realized) {
+  if (!realized || !(realized.sells || []).length) return '';
+  return `
+    <div class="sold-title">Sold (${realized.sells.length})</div>
+    <div class="sold-sum">
+      <span>This month <b style="color:${pnlColor(realized.thisMonth)}">${fmtRM(realized.thisMonth)}</b></span>
+      <span>\u00b7 This year <b style="color:${pnlColor(realized.thisYear)}">${fmtRM(realized.thisYear)}</b></span>
+      <span>\u00b7 ${realized.nWins}/${realized.nSells} sells at a profit</span>
+    </div>` + realized.sells.map(soldCardHTML).join('');
+}
+
+function portfolioHTML(rows, realized) {
   if (!rows || !rows.length) {
-    return `<div class="empty"><h2>No holdings yet</h2><p>Type your Ticker / Shares / Avg Cost into <code>My Portfolio</code> in <code>KLSE_Portfolio_Tracker.xlsx</code>, then re-export the dashboard data.</p></div>`;
+    return `<div class="empty"><h2>No holdings yet</h2><p>Record your trades in <code>My Trades</code> in <code>KLSE_Trade_Journal.xlsx</code>, then run <code>refresh_portfolio_and_publish.bat</code>.</p></div>` + soldSectionHTML(realized);
   }
   const totalValue = rows.reduce((s, r) => s + (r.marketValue || 0), 0);
   const totalPnl = rows.reduce((s, r) => s + (r.pnl || 0), 0);
@@ -955,12 +1011,13 @@ function portfolioHTML(rows) {
     <div class="pf-summary">
       <div class="pf-stat"><div class="label">Market Value</div><div class="value">RM ${totalValue.toFixed(2)}</div></div>
       <div class="pf-stat"><div class="label">Unrealized P&amp;L</div><div class="value" style="color:${totalPnl>=0?'var(--buy)':'var(--sell)'}">RM ${totalPnl.toFixed(2)}</div></div>
+      ${realized ? `<div class="pf-stat"><div class="label">Realized P&amp;L (${new Date().getFullYear()})</div><div class="value" style="color:${pnlColor(realized.thisYear)}">RM ${Number(realized.thisYear).toFixed(2)}</div><div class="sub">${realized.nSells} sell${realized.nSells === 1 ? '' : 's'} \u00b7 all-time ${fmtRM(realized.total)}</div></div>` : ''}
     </div>`;
   // Portfolio holdings are merged (in generate_dashboard_data.py) with the
   // same technical fields the other tabs use, so they share cardHTML() --
   // same RSI/Trend/KDJ Action labelling and tap-to-expand technical detail
   // as every other tab, via wireCardExpansion()/openDetailModal() below.
-  return summary + rows.map(r => cardHTML(r, 'portfolio')).join('');
+  return summary + rows.map(r => cardHTML(r, 'portfolio')).join('') + soldSectionHTML(realized);
 }
 
 const stocksByTicker = new Map();
@@ -1002,7 +1059,7 @@ function render(data) {
     panel.className = 'panel' + (cat.key === DEFAULT_TAB ? ' active' : '');
     panel.id = `panel-${cat.key}`;
     if (cat.key === 'portfolio') {
-      panel.innerHTML = portfolioHTML(data.portfolio);
+      panel.innerHTML = portfolioHTML(data.portfolio, data.realized);
     } else {
       let rows = data[cat.key] || [];
       if (cat.key === 'all') {

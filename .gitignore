@@ -10,3 +10,6 @@ KLSE_Portfolio_Tracker.xlsx
 run_log.txt
 __pycache__/
 *.pyc
+
+# Local backups made before edits (2026-10-14)
+*.bak
