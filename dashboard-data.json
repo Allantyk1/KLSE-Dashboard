@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-16T11:12:27",
+  "generatedAt": "2026-10-16T22:09:28",
   "universeCount": 350,
   "buy": [
     {
@@ -18657,12 +18657,12 @@
         "atr14": 0.0157,
         "riskLine": 0.188
       },
-      "shares": 3000,
-      "avgCost": 0.2533,
+      "shares": 4000,
+      "avgCost": 0.2487,
       "currentPrice": 0.23,
-      "marketValue": 690.0,
-      "pnl": -69.9,
-      "pnlPct": -9.2
+      "marketValue": 920.0,
+      "pnl": -74.8,
+      "pnlPct": -7.52
     },
     {
       "ticker": "0339.KL",
@@ -18759,11 +18759,11 @@
         "atr14": 0.1494,
         "riskLine": 6.962
       },
-      "shares": 2500,
+      "shares": 1500,
       "avgCost": 6.885,
       "currentPrice": 7.48,
-      "marketValue": 18700.0,
-      "pnl": 1487.5,
+      "marketValue": 11220.0,
+      "pnl": 892.5,
       "pnlPct": 8.64
     },
     {
@@ -19277,6 +19277,57 @@
       "pnlPct": -1.8
     },
     {
+      "ticker": "5277.KL",
+      "name": "FPGROUP",
+      "price": 0.375,
+      "score": 40.4,
+      "rsi": 36.9,
+      "emaTrend": "Turning Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Turned Negative",
+      "ema20": 0.41,
+      "entryEma20": 0.41,
+      "entryBbZone": 0.394,
+      "targetPrice": null,
+      "pctUpsideToTarget": null,
+      "pctOffHigh": -20.2,
+      "kdjK": 37.6,
+      "kdjD": 57.1,
+      "kdjJ": -1.4,
+      "kdjCross": "NONE",
+      "kdjAction": "Waiting",
+      "earningsDate": "2026-11-30",
+      "earningsDays": 45,
+      "earningsEstimate": true,
+      "earningsSource": "bursa_deadline",
+      "earningsQuarterEnd": "2026-09-30",
+      "lastEarningsDate": null,
+      "daysSinceEarnings": null,
+      "detail": {
+        "ema40": 0.41,
+        "bbLower": 0.379,
+        "bbMid": 0.41,
+        "bbUpper": 0.44,
+        "high52wk": 0.47,
+        "macdLine": -0.00113,
+        "macdSignalLine": 0.00126,
+        "macdHistogram": -0.00238,
+        "volumeRatio": 1.64,
+        "dividendYield": 3.75,
+        "analystCount": null,
+        "pctVsSma50": -10.8,
+        "pctVsSma200": 5.07,
+        "atr14": 0.019,
+        "riskLine": 0.337
+      },
+      "shares": 2000,
+      "avgCost": 0.385,
+      "currentPrice": 0.375,
+      "marketValue": 750.0,
+      "pnl": -20.0,
+      "pnlPct": -2.6
+    },
+    {
       "ticker": "5306.KL",
       "name": "FFB",
       "price": 1.76,
@@ -19490,12 +19541,24 @@
     "targetPct": 8.0
   },
   "realized": {
-    "total": -1414.0,
-    "thisMonth": -1414.0,
-    "thisYear": -1414.0,
-    "nSells": 2,
-    "nWins": 0,
+    "total": -1109.0,
+    "thisMonth": -1109.0,
+    "thisYear": -1109.0,
+    "nSells": 3,
+    "nWins": 1,
     "sells": [
+      {
+        "date": "2026-10-16",
+        "ticker": "1023.KL",
+        "shares": 1000.0,
+        "price": 7.19,
+        "avgCost": 6.885,
+        "fees": 0.0,
+        "realized": 305.0,
+        "realizedPct": 4.43,
+        "closedPosition": false,
+        "notes": "Sell at a profit"
+      },
       {
         "date": "2026-10-13",
         "ticker": "5301.KL",
