@@ -808,6 +808,7 @@
   </div>
 </div>
 
+<script src="valuation.js"></script>
 <script>
 const CATEGORIES = [
   { key: 'buy', label: 'Buy' },
@@ -1032,7 +1033,7 @@ function cardHTML(s, cat) {
     <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" data-kdj="${s.kdjAction || 'Waiting'}" data-cat="${cat}" tabindex="0" role="button" aria-expanded="false"${borderStyle}>
       <div class="card-top">
         <div>
-          <span class="ticker">${s.ticker.replace('.KL','')}</span>
+          <span class="ticker">${s.ticker.replace('.KL','')}</span>${window.Valuation ? Valuation.bestTag(s.ticker) + Valuation.button(s.ticker) : ''}
           <span class="name">${s.name || ''}</span>
         </div>
         <div>
@@ -2019,6 +2020,19 @@ function applyFilters() {
 
 document.getElementById('searchBox').addEventListener('input', applyFilters);
 
+// --- Valuation (2026-10-16): search-box shortcut for tickers that have a
+// valuation but no card here (your extras in valuation_extra.txt that are
+// outside the screener). See valuation.js / generate_valuation.py.
+function updateValHint() {
+  if (!window.Valuation) return;
+  const box = document.getElementById('searchBox');
+  let el = document.getElementById('valHint');
+  if (!el) { el = document.createElement('div'); el.id = 'valHint'; box.insertAdjacentElement('afterend', el); }
+  const q = (box.value || '').trim();
+  el.innerHTML = q ? Valuation.searchHint(q, [...stocksByTicker.keys()].map(k => k.toUpperCase())) : '';
+}
+document.getElementById('searchBox').addEventListener('input', updateValHint);
+
 document.getElementById('kdjFilterRow').addEventListener('click', e => {
   const btn = e.target.closest('.kdj-chip');
   if (!btn) return;
@@ -2046,7 +2060,10 @@ function showRenderErrorBanner(err) {
 
 fetch('dashboard-data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
-  .then(data => {
+  .then(async data => {
+    // Valuation dialog data (valuation.js, 2026-10-16) -- loaded first so the cards
+    // render with their Valuation buttons; a missing file just means no buttons.
+    if (window.Valuation) await Valuation.load();
     // Real data fetched and parsed successfully -- from here on, any error
     // is a genuine bug in render(), NOT a missing-file situation. Handling
     // it in its own try/catch (rather than letting it bubble into the
