@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Look-ahead Strategy · KLSE Screener</title>
+<meta name="theme-color" content="#0B0F14">
+<link rel="icon" href="icon-192.png" type="image/png">
+<script>(function(){try{var s=localStorage.getItem('klse-theme');var t=s||((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}})();</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* KLSE Look-ahead Strategy (added 2026-10-17, port of the US lookahead.html of the same day).
+     Sibling of tracker.html: same KLSE palette and type. Reads dashboard-data.json +
+     pick_tracker_data.json + valuation_data.json - no new pipeline step. Holds portfolio
+     figures, so it is linked from index.html only (not public.html). */
+  :root, :root[data-theme="dark"]{
+    --bg:#0B0F14; --panel:#131A22; --panel-2:#1A222C; --line:#232C36;
+    --ink:#E8EDF2; --ink-dim:#8A98A8; --ink-faint:#5E6B7A;
+    --amber:#C9A961; --amber-soft:#3A3120;
+    --green:#2FBF71; --green-soft:#1B4A32; --red:#E5484D; --red-soft:#4A1F21;
+    --blue:#6FA8FF; --blue-soft:#18294A;
+    --font-display:'Space Grotesk','Inter',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-data:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    color-scheme:dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#F7F8FA; --panel:#FFFFFF; --panel-2:#F1F3F6; --line:#DDE1E6;
+    --ink:#14181F; --ink-dim:#667085; --ink-faint:#98A2B3;
+    --amber:#9C7A25; --amber-soft:#F5EDD8;
+    --green:#1A8754; --green-soft:#E3F5EC; --red:#C4314B; --red-soft:#FBE7EA;
+    --blue:#2C62C9; --blue-soft:#E2EBFB;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:clip;max-width:100vw}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 16px 56px}
+  header.top{padding-block:22px 14px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:flex-end;justify-content:space-between}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:7px 12px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);font:500 12px var(--font-data);letter-spacing:.04em;text-decoration:none}
+  .back-btn:hover{border-color:var(--amber);color:var(--amber)}
+  .back-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .eyebrow{font-family:var(--font-data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:0 0 4px}
+  h1{font-family:var(--font-display);font-size:30px;line-height:1.05;margin:0;letter-spacing:-.01em}
+  .meta{font-size:12px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:4px 16px}
+  .meta b{color:var(--ink);font-weight:500}
+  .controls{border-block:1px solid var(--line);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:flex-end}
+  .ctl{display:flex;flex-direction:column;gap:4px}
+  .lbl{font-family:var(--font-data);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .ctl input[type=number]{font:500 14px var(--font-data);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px;width:150px}
+  .ctl input:focus-visible,.seg button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:2px;flex-wrap:wrap}
+  .seg button{font:500 12px var(--font-body);color:var(--ink-dim);background:none;border:0;border-radius:7px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+  .seg button[aria-pressed="true"]{background:var(--amber);color:var(--bg)}
+  .jump{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+  .jump a{font:500 11px var(--font-data);color:var(--ink-dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--panel-2)}
+  .jump a:hover{color:var(--amber);border-color:var(--amber)}
+  section.desk{margin-top:30px;scroll-margin-top:calc(var(--ctl-h,0px) + 8px)}
+  .desk-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:6px}
+  .desk-head .idx{font-family:var(--font-data);font-size:12px;color:var(--amber)}
+  h2{font-family:var(--font-display);font-size:21px;margin:0}
+  h3{font:600 13px var(--font-body);margin:0 0 8px}
+  .lede{color:var(--ink-dim);max-width:80ch;margin:0 0 14px;font-size:13px}
+  .lede b{color:var(--ink)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .tile .k{font-family:var(--font-data);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .tile .v{font-family:var(--font-data);font-size:24px;font-weight:600;margin-top:2px}
+  .tile .s{font-size:11px;color:var(--ink-dim)}
+  .verdict{border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;line-height:1.55}
+  .verdict.warn{background:var(--amber-soft);color:var(--ink)} .verdict.warn b{color:var(--amber)}
+  .verdict.ok{background:var(--green-soft)} .verdict.ok b{color:var(--green)}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px}
+  th{font-family:var(--font-data);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;font-family:var(--font-data);font-variant-numeric:tabular-nums;vertical-align:top}
+  th:first-child,td:first-child{text-align:left}
+  td.l,th.l{text-align:left}
+  td.why{white-space:normal;min-width:260px;max-width:420px;font:400 12px var(--font-body);color:var(--ink-dim);text-align:left}
+  .muted{color:var(--ink-faint)} .pos{color:var(--green)} .neg{color:var(--red)}
+  .tk{font-weight:600;font-family:var(--font-data)}
+  .co{display:block;font:400 11px var(--font-body);color:var(--ink-faint);max-width:190px;overflow:hidden;text-overflow:ellipsis}
+  .act{display:inline-block;font:700 10px var(--font-data);letter-spacing:.04em;border-radius:5px;padding:2px 7px;white-space:nowrap}
+  .act.buy{background:var(--green);color:var(--bg)}
+  .act.dip{background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+  .act.trim{background:var(--amber);color:var(--bg)}
+  .act.exit{background:var(--red-soft);color:var(--red);border:1px solid var(--red)}
+  .act.hold{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line)}
+  .act.wait{background:var(--panel-2);color:var(--ink-faint);border:1px dashed var(--line)}
+  .act.keep{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue)}
+  .tag{font:600 9.5px var(--font-data);color:var(--ink-dim);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px;white-space:nowrap}
+  .tag.earn{color:var(--amber);border-color:var(--amber)}
+  .tag.grn{color:var(--green);border-color:var(--green)}
+  .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .month{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .month h3{font:600 15px var(--font-display);letter-spacing:.01em}
+  .month h3 small{font:500 11px var(--font-data);color:var(--ink-faint);margin-left:6px}
+  .month ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--ink-dim)}
+  .month li{margin:5px 0}
+  .month li b{color:var(--ink);font-weight:600}
+  .bar{height:10px;border-radius:5px;background:var(--panel-2);overflow:hidden;display:flex}
+  .bar i{display:block;height:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--ink-dim);margin-top:6px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .note{font-size:11.5px;color:var(--ink-faint);line-height:1.6;margin-top:10px}
+  .note b{color:var(--ink-dim)}
+  footer{margin-top:34px;font-size:11px;color:var(--ink-faint);line-height:1.6}
+  @media (max-width:600px){h1{font-size:25px}.co{max-width:120px}.jump{margin-left:0}}
+
+  /* ---- Frozen headings ----
+     Laptop/desktop: the settings bar sticks to the top of the screen, each section's
+     title (1 Scoreboard, 2 Portfolio, 3 Buy list, 4 Month plan) sticks right under it,
+     and each table scrolls inside its own box so its column headings and the Stock
+     column never scroll away. --ctl-h / --dh are measured by the script at the bottom.
+     Phones: settings bar scrolls away to save space; section titles and table
+     headings still stick. */
+  .controls{position:sticky;top:0;z-index:8;background:var(--bg)}
+  .desk-head{position:sticky;top:var(--ctl-h,0px);z-index:7;background:var(--bg);padding-block:8px;margin-bottom:0;box-shadow:0 1px 0 var(--line)}
+  .scroll.freeze{overflow:auto;max-height:max(320px,calc(100vh - var(--ctl-h,0px) - var(--dh,44px) - 36px));overscroll-behavior:contain}
+  .scroll.freeze thead th{position:sticky;top:0;z-index:3;background:var(--panel);box-shadow:inset 0 -1px 0 var(--line);border-bottom:0}
+  .scroll.freeze td:first-child{position:sticky;left:0;z-index:2;background:var(--panel);box-shadow:inset -1px 0 0 var(--line)}
+  .scroll.freeze thead th:first-child{left:0;z-index:4;box-shadow:inset -1px -1px 0 var(--line)}
+  .scroll-hint{font:400 11px var(--font-body);color:var(--ink-faint);margin:0 0 6px}
+  @media (max-width:600px){.controls{position:static}.desk-head{top:0}.scroll.freeze{max-height:75vh}
+    .scroll.freeze td:first-child,.scroll.freeze th:first-child{white-space:normal;min-width:118px;max-width:132px}
+    .scroll.freeze td:first-child .tag{display:inline-block;margin:2px 4px 0 0}
+    .scroll.freeze td:first-child .val-btn{margin:3px 0 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <a class="back-btn" href="index.html" aria-label="Back to KLSE Screener">‹ KLSE Screener</a>
+      <p class="eyebrow">Look-ahead strategy · KLSE</p>
+      <h1 id="title">Next 3 months</h1>
+    </div>
+    <div class="meta" id="meta">Loading…</div>
+  </header>
+
+  <div class="controls">
+    <div class="ctl"><label class="lbl" for="cash">Cash you can deploy (RM)</label>
+      <input type="number" id="cash" min="0" step="500" inputmode="decimal"></div>
+    <div class="ctl"><span class="lbl">Fund buys with trims too</span>
+      <div class="seg" id="useTrim"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No, cash only</button></div></div>
+    <div class="ctl"><span class="lbl">Max per stock</span>
+      <div class="seg" id="cap"><button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button></div></div>
+    <div class="ctl"><span class="lbl">If no rule passes</span>
+      <div class="seg" id="prov"><button type="button" data-v="0">Hold cash</button><button type="button" data-v="1">Follow provisional leader</button></div></div>
+    <nav class="jump" aria-label="Jump to section"><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a></nav>
+  </div>
+
+  <section class="desk" id="s1">
+    <div class="desk-head"><span class="idx">1</span><h2>Which rule is working: the scoreboard</h2></div>
+    <p class="lede">Every past session in the Pick Tracker log is replayed. For each rule, take the stocks it would have picked that day and compare their move <b>2 and 4 weeks later</b> (10 and 20 sessions) with the average of every tracked Bursa stock (the "market"). The page then <b>recommends the rule that is leading</b>: if the Top 30 leads, the plan is a plain rotation into the Top 30; if another rule leads, the plan switches to it; if nothing beats the market, it says so. This re-runs every day as the log grows.</p>
+    <div id="verdict"></div>
+    <div class="panel"><div class="scroll freeze"><table id="ruleTbl"></table></div>
+      <p class="note" id="ruleNote"></p></div>
+  </section>
+
+  <section class="desk" id="s2">
+    <div class="desk-head"><span class="idx">2</span><h2>Your portfolio vs the plan</h2></div>
+    <p class="lede" id="pfLede"></p>
+    <div class="tiles" id="pfTiles"></div>
+    <div class="panel" style="margin-bottom:12px">
+      <h3>Where your money is</h3>
+      <div class="bar" id="mixBar"></div>
+      <div class="legend" id="mixLegend"></div>
+    </div>
+    <div class="panel"><div class="scroll freeze"><table id="holdTbl"></table></div>
+      <p class="note">Rules: <b>TRIM</b> = bigger than the max-per-stock setting (rounded up to whole board lots of 100). <b>REVIEW EXIT</b> = closed below the 3 × ATR risk line from your average cost, a SELL signal, or a KDJ Exit. <b>KEEP</b> = picked today by the recommended rule or the runner-up. <b>GREEN</b> = closed below its weekly average (Entry EMA20, 5 sessions), the one box pattern that held in your 5-year Bursa backtest. Holdings come from KLSE_Trade_Journal.xlsx via the dashboard.</p></div>
+  </section>
+
+  <section class="desk" id="s3">
+    <div class="desk-head"><span class="idx">3</span><h2 id="buyTitle">Buy list</h2></div>
+    <p class="lede" id="buyLede"></p>
+    <div class="tiles" id="buyTiles"></div>
+    <div class="panel"><div class="scroll freeze"><table id="buyTbl"></table></div>
+      <p class="note">Sizing splits the budget equally across the <b>BUY</b> rows from the recommended rule (most 6), capped at the max-per-stock setting, in two entries: the latest close and Support (lower BB), or one ATR lower if it is already under Support. Shares are rounded <b>down to board lots of 100</b>; if half the allocation is under one lot, it all goes in at Support. Runner-up rows are shown for reference and are not funded. Stocks with a SELL signal are not funded. Results inside the next 10 days are flagged: a gap can skip straight past your entry. Ringgit figures exclude brokerage, stamp duty and clearing fees.</p></div>
+  </section>
+
+  <section class="desk" id="s4">
+    <div class="desk-head"><span class="idx">4</span><h2>Month-by-month plan</h2></div>
+    <p class="lede">A checklist, not a forecast. Each month lists the results dates that matter for your holdings and buy list, and the checkpoints where this page should be re-read. The Top 30 changes every day, so re-check every two weeks.</p>
+    <div class="plan" id="plan"></div>
+  </section>
+
+  <footer>Built from dashboard-data.json, pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
+</div>
+
+<script src="valuation.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const money=(v,dp=0)=>v==null||isNaN(v)?"–":(v<0?"−RM":"RM")+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:dp,maximumFractionDigits:dp});
+const px=v=>money(v,3);   // Bursa prices move in RM0.005 steps, so prices use 3 dp
+const pct=(v,dp=1)=>v==null||isNaN(v)?"–":(v*100).toFixed(dp)+"%";
+const spct=(v,dp=1)=>v==null||isNaN(v)?"–":(v>=0?"+":"−")+Math.abs(v*100).toFixed(dp)+"%";
+const cls=v=>v==null?"muted":v>=0?"pos":"neg";
+const dshort=iso=>new Date(iso+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const tkd=t=>String(t||"").replace(/\.KL$/,"");   // show 1155 not 1155.KL, like the dashboard
+const tile=(k,v,s)=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
+
+/* ---- constants: same rules as tracker.html (keep in sync) ---- */
+const SR_TOP=30, SR_MONTHS=3, SR_MIN_WHITE=2, SR_MAX_WHITE=6, SR_MIN_GREEN=2;
+const RISK_ATR=3, MAX_BUYS=6, EARN_SOON_DAYS=10, LOT=100, JUMP=0.5;
+
+const P={cash:null,useTrim:"1",cap:15,prov:"0"};
+try{Object.assign(P,JSON.parse(localStorage.getItem("klseLookaheadPrefs")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("klseLookaheadPrefs",JSON.stringify(P))}catch(e){}};
+
+let D,T,V={}, ALL=new Map(), BOX={}, JMP={};
+
+/* ---- tracker helpers (copied from tracker.html) ---- */
+function isoLocal(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}  /* local date, not UTC (UTC+8) */
+function cutoffFor(dateStr,months){const a=new Date(dateStr+"T00:00:00");a.setMonth(a.getMonth()-months);return isoLocal(a)}
+function topRowsAt(i,n=SR_TOP){const m=new Map();RANK[i].slice(0,n).forEach((r,k)=>m.set(r.t,{rank:k+1,pct:r.p,d:r.d}));return m}
+function weeklyAvg(w,i){const lo=Math.max(0,i-5),v=[];for(let j=lo;j<i;j++)if(w.se[j]!=null)v.push(w.se[j]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
+function boxStates(t){if(BOX[t])return BOX[t];const w=D.watch[t],n=D.watch_dates.length,o=new Array(n).fill(null);for(let i=0;i<n;i++){const a=weeklyAvg(w,i),c=w.c[i];if(a!=null&&c!=null)o[i]=a>c?1:0}return BOX[t]=o}
+function streakAt(st,i){let k=i,wRun=null,gRun=0,curG=0,wCut=false,gCut=false;const run=v=>{let m=0;while(k>=0&&st[k]===v){m++;k--}return m};
+  const atStart=()=>k<0||st[k]==null;
+  if(st[i]===0){wRun=run(0);wCut=atStart();if(!wCut){gRun=run(1);gCut=atStart()}} else if(st[i]===1){curG=run(1);wRun=0} return {wRun,gRun,curG,wCut,gCut}}
+const isSR=(s,inTop)=>inTop&&!s.wCut&&s.wRun>=SR_MIN_WHITE&&s.wRun<=SR_MAX_WHITE&&s.gRun>=SR_MIN_GREEN;
+/* one-day moves of 50%+ are usually unadjusted bonus issues / splits / consolidations (the tracker's ⚠ jump):
+   any window that contains one is left out, the same as backtest_box_momentum.py */
+function jumps(t){if(JMP[t])return JMP[t];const c=D.watch[t].c,o=[0];for(let i=1;i<c.length;i++)o.push(o[i-1]+(c[i]&&c[i-1]&&Math.abs(c[i]/c[i-1]-1)>=JUMP?1:0));return JMP[t]=o}
+const fwd=(t,i,h)=>{const w=D.watch[t];if(!w)return null;const c=w.c,a=c[i],b=c[i+h];if(!a||!b)return null;const J=jumps(t);return J[i+h]-J[i]>0?null:b/a-1};
+const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const sigOf=t=>(D.tickers[t]||{}).sig||"";
+
+/* ---- 1. rule scoreboard ---- */
+/* Each rule returns the tickers it would pick on session i, using only data known that day. */
+let RANK=[], EVD={}, N=0;
+function prepRules(){
+  N=D.watch_dates.length; RANK=[];
+  for(let i=0;i<N;i++){const d=D.watch_dates[i],cut=cutoffFor(d,SR_MONTHS),first={};
+    for(const e of D.events){if(e.src!=="top20"||e.d<cut||e.d>d)continue;if(!first[e.t]||e.d<first[e.t].d)first[e.t]=e}
+    const r=[];for(const t in first){const c=D.watch[t]?.c[i];if(c!=null&&first[t].rp>0)r.push({t,p:c/first[t].rp-1,d:first[t].d})}
+    r.sort((a,b)=>b.p-a.p);RANK.push(r)}
+  EVD={}; for(const e of D.events){(EVD[e.src+"|"+e.d]=EVD[e.src+"|"+e.d]||[]).push(e.t)}
+}
+const recentEv=(src,i,k=5)=>{const s=new Set();for(let j=Math.max(0,i-k+1);j<=i;j++)for(const t of (EVD[src+"|"+D.watch_dates[j]]||[]))s.add(t);return [...s]};
+const ret5=(t,i)=>{const c=D.watch[t].c;return i>=5&&c[i]&&c[i-5]?c[i]/c[i-5]-1:null};
+const t20at=(t,i)=>(D.watch[t].t20||"")[i]==="1";
+const RULES=[
+  {k:"top30",name:"Top 30 strong stocks",desc:"Tracker section 1 top 30: Top 20 picks, 3 months, ranked by % to date",pick:i=>RANK[i].slice(0,30).map(r=>r.t)},
+  {k:"t30green",name:"Top 30, green now",desc:"Top 30 stock closing below its weekly average: the one box pattern that held in the 5-year Bursa backtest",pick:i=>RANK[i].slice(0,30).map(r=>r.t).filter(t=>D.watch[t]&&boxStates(t)[i]===1)},
+  {k:"trigger",name:"Buy trigger (last 5 days)",desc:"Tracker section 2 trigger: green day, recovery, under Mid BB, BUY signal, 2:1 reward/risk",pick:i=>recentEv("trigger",i)},
+  {k:"pullback",name:"Strong picks after a pullback",desc:"Top 20 picks (3 months) now 10–25% below their day-1 price",pick:i=>RANK[i].filter(r=>r.p<=-0.10&&r.p>=-0.25).map(r=>r.t)},
+  {k:"t20dip",name:"Top 20, weakest week",desc:"That day's Top 20, the 10 with the worst 5-day move",pick:i=>Object.keys(D.watch).filter(t=>t20at(t,i)&&ret5(t,i)!=null).sort((a,b)=>ret5(a,i)-ret5(b,i)).slice(0,10)},
+  {k:"laggards",name:"Worst 30 picks",desc:"Bottom 30 of tracker section 1 (Top 20 picks, 3 months)",pick:i=>RANK[i].slice(-30).map(r=>r.t)},
+  {k:"buy5",name:"New BUY signal (last 5 days)",desc:"Signal newly turned BUY (score ≥ 42 and MACD Bullish)",pick:i=>recentEv("buy",i)},
+  {k:"t20",name:"Today's Top 20",desc:"The dashboard's Buy tab that day",pick:i=>Object.keys(D.watch).filter(t=>t20at(t,i))},
+  {k:"movers",name:"Best 1-month movers",desc:"30 biggest 20-session gainers, all stocks",pick:i=>i<20?[]:Object.keys(D.watch).filter(t=>{const c=D.watch[t].c;return c[i]&&c[i-20]&&jumps(t)[i]-jumps(t)[i-20]===0}).sort((a,b)=>{const ca=D.watch[a].c,cb=D.watch[b].c;return cb[i]/cb[i-20]-ca[i]/ca[i-20]}).slice(0,30)},
+  {k:"deep",name:"Deep discount",desc:"7+ of the last 10 days below the weekly average",pick:i=>Object.keys(D.watch).filter(t=>{const st=boxStates(t);if(st[i]==null)return false;let g=0;for(let j=Math.max(0,i-9);j<=i;j++)if(st[j]===1)g++;return g>=7})},
+  {k:"sr",name:"STRONG REBOUND (retired)",desc:"Top 30 stock, 2–6 white days right after 2+ green. Retired on Bursa 2026-10-12: negative in the 5-year backtest. Still replayed, never recommended",retired:true,pick:i=>RANK[i].slice(0,30).map(r=>r.t).filter(t=>D.watch[t]&&isSR(streakAt(boxStates(t),i),true))},
+];
+const MIN_WINDOWS=10, MIN_WIN=0.6, MIN_STOCKS=3, MIN_PROV=5;
+function scoreRules(){
+  const tickers=Object.keys(D.watch), mk={};
+  for(const h of [10,20]){mk[h]=[];for(let i=0;i+h<N;i++){mk[h][i]=mean(tickers.map(t=>fwd(t,i,h)).filter(v=>v!=null))}}
+  for(const R of RULES){
+    R.s={}; R.today=R.pick(N-1);
+    for(const h of [10,20]){const diffs=[];
+      for(let i=0;i+h<N;i++){const v=R.pick(i).map(t=>fwd(t,i,h)).filter(x=>x!=null);if(v.length>=MIN_STOCKS&&mk[h][i]!=null)diffs.push(mean(v)-mk[h][i])}
+      R.s[h]={avg:mean(diffs),wins:diffs.filter(x=>x>0).length,n:diffs.length};
+    }
+    const a=R.s[20],b=R.s[10];
+    R.passes=a.n>=MIN_WINDOWS&&a.avg>0&&a.wins/a.n>=MIN_WIN&&(b.avg==null||b.avg>-0.01);
+    R.eligible=!R.retired&&R.passes;
+  }
+  const el=RULES.filter(r=>r.eligible).sort((x,y)=>y.s[20].avg-x.s[20].avg);
+  /* provisional = would pass, but on fewer than MIN_WINDOWS windows (a young rule or a long look-back) */
+  const pv=RULES.filter(r=>!r.retired&&!r.eligible&&r.s[20].n>=MIN_PROV&&r.s[20].avg>0&&r.s[20].wins/r.s[20].n>=MIN_WIN&&(r.s[10].avg==null||r.s[10].avg>-0.01)).sort((x,y)=>y.s[20].avg-x.s[20].avg);
+  return {leader:el[0]||null,runner:el[1]||null,prov:el.length?null:(pv[0]||null)};
+}
+function renderScoreboard(SB){
+  const L=SB.leader, top=RULES[0];
+  const why=r=>`it beat the market 4 weeks later in <b>${r.s[20].wins} of ${r.s[20].n}</b> windows, by <b>${spct(r.s[20].avg)}</b> on average (2 weeks: ${spct(r.s[10].avg)})`;
+  let v;
+  if(L&&L.k==="top30") v=`<div class="verdict ok"><b>Recommended strategy: rotate into the Top 30.</b> The Top 30 is the leading rule: ${why(L)}. Section 3 is the plain rotation plan.</div>`;
+  else if(L) v=`<div class="verdict warn"><b>Recommended strategy: switch to "${esc(L.name)}".</b> The Top 30 is not leading (4 weeks: ${spct(top.s[20].avg)}, better in ${top.s[20].wins} of ${top.s[20].n} windows). The leading rule is <b>${esc(L.name)}</b>: ${why(L)}.${SB.runner?` Runner-up: <b>${esc(SB.runner.name)}</b> (${spct(SB.runner.s[20].avg)}, ${SB.runner.s[20].wins} of ${SB.runner.s[20].n}).`:""} Section 3 is built from it. The page switches back to the Top 30 automatically once the Top 30 leads.</div>`;
+  else{
+    v=`<div class="verdict warn"><b>No rule is reliably beating the Bursa market right now.</b> None passed the test (at least ${MIN_WINDOWS} four-week windows, ahead in ${Math.round(MIN_WIN*100)}%+ of them, positive on average). The default plan is to <b>hold cash</b> (or a broad FBM KLCI index tracker) and wait, rather than forcing trades.`;
+    const pv=SB.prov;
+    if(pv) v+=` <br><b>Provisional leader: "${esc(pv.name)}"</b>: ahead in <b>${pv.s[20].wins} of ${pv.s[20].n}</b> four-week windows, by <b>${spct(pv.s[20].avg)}</b> (2 weeks: ${spct(pv.s[10].avg)}), but that is ${needMore(pv)} window${needMore(pv)===1?"":"s"} short of the test. It becomes the real leader automatically after about ${needMore(pv)} more session${needMore(pv)===1?"":"s"} if it holds up. ${P.prov==="1"?`<b>You chose to follow it</b>, so section 3 funds its picks. Treat it as a small, early bet.`:`Section 3 lists its picks as a watch list, not funded. Choose <b>Follow provisional leader</b> in the settings bar to fund them.`}`;
+    v+=`</div>`;
+  }
+  v+=`<p class="note" style="margin-top:-4px">Sample: ${N} sessions from ${dshort(D.watch_dates[0])} to ${dshort(D.watch_dates[N-1])}. Four-week windows overlap heavily, and one market regime can favour one rule, so treat a lead under ~20 windows as provisional.</p>`;
+  $("verdict").innerHTML=v;
+  const status=r=>r===SB.leader?'<span class="act buy">LEADING</span>':r===SB.prov?'<span class="act keep">PROVISIONAL</span>':r===SB.runner?'<span class="act dip">RUNNER-UP</span>':r.retired?'<span class="act exit">RETIRED</span>':r.eligible?'<span class="act hold">PASSES</span>':(r.s[20].n<MIN_WINDOWS?'<span class="act wait">TOO LITTLE DATA</span>':'<span class="act wait">NOT BEATING</span>');
+  const order=r=>r===SB.leader?0:r===SB.runner?1:r===SB.prov?1:r.retired?9:2;
+  const rows=[...RULES].sort((a,b)=>order(a)-order(b)||(b.s[20].avg??-9)-(a.s[20].avg??-9));
+  $("ruleTbl").innerHTML=`<thead><tr><th>Rule</th><th class="l">Status</th><th>2 wks vs market</th><th>4 wks vs market</th><th>Windows ahead (4 wks)</th><th>Picks today</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td><span class="tk">${esc(r.name)}</span><span class="co" style="max-width:360px;white-space:normal">${esc(r.desc)}</span></td><td class="l">${status(r)}</td>
+      <td class="${cls(r.s[10].avg)}">${spct(r.s[10].avg)}</td><td class="${cls(r.s[20].avg)}">${spct(r.s[20].avg)}</td>
+      <td>${r.s[20].n?`${r.s[20].wins} / ${r.s[20].n}`:"–"}</td><td>${r.today.length}</td></tr>`).join("")+`</tbody>`;
+  $("ruleNote").innerHTML=`<b>Pass test</b>: ${MIN_WINDOWS}+ four-week windows, ahead of the market in ${Math.round(MIN_WIN*100)}%+ of them, positive on average, and not below −1% at 2 weeks. The best passing rule is <b>LEADING</b>. When none passes, the best rule that would pass on ${MIN_PROV}–${MIN_WINDOWS-1} windows is <b>PROVISIONAL</b>. A window needs at least ${MIN_STOCKS} picks to count. "Market" = equal-weight average of every tracked Bursa stock. Windows containing a 50%+ one-day move (bonus issue / split) are left out. Unlike the US page, there is no 2-week STRONG REBOUND idea and no NO DIP warning: both were retired on Bursa after the 2026-10-12 backtest.`;
+}
+
+/* the rule set the plan follows: the leader, or (no leader + "Follow provisional leader") the provisional rule */
+function effective(SB){
+  if(SB.leader) return SB;
+  if(SB.prov&&P.prov==="1") return {leader:SB.prov,runner:null,provisional:true};
+  return {leader:null,runner:null,ref:SB.prov};
+}
+const needMore=r=>MIN_WINDOWS-r.s[20].n;
+
+/* ---- per-stock state today ---- */
+function stateToday(t,top){
+  const n=D.watch_dates.length, w=D.watch[t]; if(!w) return null;
+  const st=boxStates(t), tr=top.get(t), info=D.tickers[t]||{};
+  const last=w.c[n-1], bid=weeklyAvg(w,n), lb=info.lb, mb=info.mb, half=lb!=null&&mb!=null?lb+(mb-lb)/2:null;
+  return {t,info,last,bid,lb,mb,half,top:tr,green:st[n-1]===1};
+}
+const earnSoon=a=>a&&a.earningsDays!=null&&a.earningsDays>=0&&a.earningsDays<=EARN_SOON_DAYS;
+const earnTag=a=>a&&a.earningsDate?`<span class="tag${earnSoon(a)?" earn":""}" title="${a.earningsEstimate?"Bursa deadline: results due by this date (estimated)":"Next quarterly results (Yahoo date)"}">${a.earningsEstimate?"due by ":"results "}${dshort(a.earningsDate)}</span>`:"";
+const atrOf=a=>a&&a.detail?a.detail.atr14:null;
+const valWhy=v=>v&&v.fair&&!v.warn&&v.mos!=null?`Valuation ${v.mos>=0?pct(v.mos,0)+" under":pct(-v.mos,0)+" over"} fair value${v.quality&&v.quality.grade?`, ${v.quality.grade} quality`:""}.`:"";
+
+/* ---- 2. holdings ---- */
+function holdingPlan(pf,top,SB,total){
+  const cap=P.cap/100;
+  return pf.map(h=>{
+    const a=ALL.get(h.ticker)||h, st=stateToday(h.ticker,top), v=V[h.ticker], price=h.currentPrice??h.price, atr=atrOf(a);
+    const rl=atr?h.avgCost-RISK_ATR*atr:null, below=rl!=null&&price<rl, sig=sigOf(h.ticker);
+    const w=total?h.marketValue/total:0, why=[]; let act="hold", trimSh=0, trimRM=0;
+    if(w>cap){act="trim";trimSh=Math.min(h.shares,Math.ceil((h.marketValue-cap*total)/price/LOT)*LOT);trimRM=trimSh*price;
+      why.push(`${pct(w)} of the portfolio, above your ${P.cap}% max. Selling about ${trimSh.toLocaleString()} shares (${money(trimRM)}) brings it to ${pct((h.marketValue-trimRM)/total,0)}.`);}
+    const exitWhy=[];
+    if(below) exitWhy.push(`closed below its risk line ${px(rl)} (3 × ATR under your ${px(h.avgCost)} cost)`);
+    if(sig==="S") exitWhy.push("screener signal is SELL");
+    if(a.kdjAction==="Exit") exitWhy.push("KDJ Action says Exit");
+    if(exitWhy.length){ if(act!=="trim") act="exit"; why.push("Review: "+exitWhy.join("; ")+"."); }
+    const inRule=[SB.leader,SB.runner].filter(r=>r&&r.today.includes(h.ticker));
+    if(!inRule.length&&SB.ref&&SB.ref.today.includes(h.ticker)) why.push(`On today's list of the provisional leader "${SB.ref.name}".`);
+    if(inRule.length){ if(act==="hold") act="keep"; why.push(`Picked today by ${inRule.map(r=>`"${r.name}"`).join(" and ")}.`); }
+    else if(st&&st.top) why.push(`In today's Top 30 (#${st.top.rank}).`);
+    if(st&&st.green&&act!=="exit") why.push("Green now (below its weekly average): if you add, today is a better bid than a white day.");
+    const vw=valWhy(v); if(vw) why.push(vw);
+    if(earnSoon(a)) why.push(`Results ${a.earningsEstimate?"due within":"in"} ${a.earningsDays} days: decide before, not after.`);
+    if(!why.length) why.push("No rule fired: hold and let the next checkpoint decide.");
+    return {h,a,st,w,act,trimSh,trimRM,why,rl,below,sig,price};
+  });
+}
+const ACT={buy:["BUY","buy"],trim:["TRIM","trim"],exit:["REVIEW EXIT","exit"],hold:["HOLD","hold"],keep:["KEEP","keep"],wait:["WAIT","wait"]};
+const actTag=k=>`<span class="act ${ACT[k][1]}">${ACT[k][0]}</span>`;
+const isReview=p=>p.why.some(x=>x.startsWith("Review"));
+
+function renderHoldings(plan,total){
+  const inTop=plan.filter(p=>p.st&&p.st.top), inTopV=inTop.reduce((s,p)=>s+p.h.marketValue,0), big=plan.reduce((m,p)=>p.w>m.w?p:m,{w:0});
+  const nTrim=plan.filter(p=>p.act==="trim").length, nKeep=plan.filter(p=>p.why.some(x=>x.startsWith("Picked today"))).length;
+  const R=T.realized||{};
+  $("pfLede").innerHTML=`Each holding is checked against the recommended rule and your own risk rules. <b>${inTop.length} of ${plan.length}</b> holdings are in today's Top 30, and <b>${nKeep}</b> are picked today by the leading or runner-up rule. Over the next three months, <b>concentration</b> and <b>positions that have broken their risk line</b> matter as much as which rule is leading.`;
+  $("pfTiles").innerHTML=[
+    tile("In today's Top 30",pct(total?inTopV/total:0,0),`${money(inTopV)} in ${inTop.length} holdings`),
+    tile("Largest position",big.h?`${esc(tkd(big.h.ticker))} ${pct(big.w,0)}`:"–",big.h?`${esc(big.h.name||"")} · your max is ${P.cap}%`:`your max is ${P.cap}%`),
+    tile("To trim",String(nTrim),`over ${P.cap}% of the portfolio`),
+    tile("To review for exit",String(plan.filter(isReview).length),"risk line, SELL or KDJ Exit"),
+    tile("Realized P&L (year)",`<span class="${cls(R.thisYear)}">${money(R.thisYear)}</span>`,`${R.nSells||0} sells logged in the trade journal`),
+  ].join("");
+  const groups=[["Top 30",inTopV,"var(--green)"],["Other holdings",total-inTopV,"var(--blue)"]];
+  $("mixBar").innerHTML=groups.map(([l,v,c])=>`<i style="width:${total?100*v/total:0}%;background:${c}" title="${l} ${money(v)}"></i>`).join("");
+  $("mixLegend").innerHTML=groups.map(([l,v,c])=>`<span><i style="background:${c}"></i>${l} ${money(v)} (${pct(total?v/total:0,0)})</span>`).join("")+`<span>Stocks total ${money(total)}</span>`;
+  const order={exit:0,trim:1,keep:2,hold:3};
+  const rows=[...plan].sort((a,b)=>order[a.act]-order[b.act]||b.w-a.w);
+  $("holdTbl").innerHTML=`<thead><tr><th>Stock</th><th class="l">Action</th><th>Weight</th><th>Shares</th><th>Price</th><th>Your cost</th><th>P/L</th><th>Risk line</th><th>Signal</th><th class="l">Why</th></tr></thead><tbody>`+
+    rows.map(p=>`<tr><td><span class="tk">${esc(tkd(p.h.ticker))}</span>${p.st&&p.st.top?`<span class="tag">TOP 30 #${p.st.top.rank}</span>`:""}${p.st&&p.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(p.a)}${window.Valuation?Valuation.button(p.h.ticker):""}<span class="co">${esc(p.h.name||"")}</span></td>
+      <td class="l">${actTag(p.act)}${p.act==="trim"?`<div class="muted" style="margin-top:3px">sell ~${p.trimSh.toLocaleString()} sh</div>`:""}${p.act==="trim"&&isReview(p)?`<div style="margin-top:3px">${actTag("exit")}</div>`:""}</td>
+      <td>${pct(p.w)}</td><td>${(p.h.shares||0).toLocaleString()}</td><td>${px(p.price)}</td><td>${px(p.h.avgCost)}</td><td class="${cls(p.h.pnlPct)}">${spct(p.h.pnlPct==null?null:p.h.pnlPct/100)}</td>
+      <td class="${p.below?"neg":""}">${px(p.rl)}</td><td>${p.sig?SIGN[p.sig]:"–"}<span class="muted"> ${p.a.score??""}</span></td><td class="why">${p.why.join(" ")}</td></tr>`).join("")+`</tbody>`;
+}
+
+/* ---- 3. buy list (from the recommended rule) ---- */
+const SHOW_LEAD=20, SHOW_REF=8;
+function buyPlan(top,held,trimCash,SB,pfTotal){
+  const rows=[], seen=new Set(), more=[];
+  const add=(R,role)=>{ if(!R) return;
+    // Top 30 keeps its rank order; other rules are ordered by screener score, then valuation discount
+    const ms=t=>ALL.get(t)?.score??-9, mos=t=>(V[t]&&V[t].mos!=null&&!V[t].warn)?V[t].mos:-9;
+    const order=R.k==="top30"?R.today:[...R.today].sort((a,b)=>ms(b)-ms(a)||mos(b)-mos(a));
+    const limit=P.showAll?1e9:(role==="lead"?SHOW_LEAD:SHOW_REF); let shown=0, hidden=0;
+    for(const t of order){
+      if(held.has(t)||seen.has(t)) continue;
+      if(shown>=limit){ hidden++; continue; }
+      const st=stateToday(t,top); if(!st||st.last==null) continue; seen.add(t);
+      const a=ALL.get(t)||{}, v=V[t], why=[]; let act=role==="lead"?"buy":"wait";
+      if(role==="lead") why.push(R.k==="top30"?`Top 30 #${st.top?.rank}: plain rotation into the leading rule.`:`Picked by the ${SB.provisional?"provisional":"leading"} rule "${R.name}".`);
+      if(role==="runner") why.push(`Runner-up rule "${R.name}": reference only, not funded.`);
+      if(role==="ref") why.push(`Provisional leader "${R.name}": watch list only while you hold cash.`);
+      if(role==="lead"&&SB.provisional) why.push(`Provisional: only ${R.s[20].n} four-week windows so far.`);
+      if(sigOf(t)==="S"){ if(act==="buy") act="wait"; why.push("Screener signal is SELL, so not funded."); }
+      if(st.green) why.push("Green now: below its weekly average.");
+      const vw=valWhy(v); if(vw) why.push(vw);
+      if(st.last!=null&&st.last<0.5) why.push("Under RM0.50: check the day's volume and spread before sizing.");
+      if(earnSoon(a)) why.push(`Results ${a.earningsEstimate?"due within":"in"} ${a.earningsDays} days: a gap can skip your entry.`);
+      rows.push({t,st,a,v,act,why,role,rule:R}); shown++;
+    }
+    if(hidden) more.push(`${hidden} more from "${R.name}"`);
+  };
+  add(SB.leader,"lead"); add(SB.runner,"runner"); add(SB.ref,"ref");
+  const funded=rows.filter(r=>r.act==="buy").slice(0,MAX_BUYS);
+  const total=pfTotal+(+P.cash||0), budget=(+P.cash||0)+(P.useTrim==="1"?trimCash:0);
+  const each=funded.length?Math.min(budget/funded.length,(P.cap/100)*total):0;
+  const lots=(rm,p)=>p>0?Math.floor(rm/p/LOT)*LOT:0;
+  for(const r of funded){
+    const atr=atrOf(r.a), e1=r.st.last; const e2=r.st.lb!=null&&r.st.lb<e1*0.995?r.st.lb:(atr?e1-atr:e1*0.95);
+    r.e1=e1; r.e2=e2; r.alloc=each; r.sh1=lots(each/2,e1); r.sh2=lots(each/2,e2);
+    if(r.sh1===0||r.sh2===0){ r.sh1=0; r.sh2=lots(each,e2); if(r.sh2) r.why.push("Half the allocation is under one board lot, so it is one entry at Support."); }
+    if(r.sh1+r.sh2===0) r.why.push(`Allocation ${money(each)} is less than one board lot (100 shares ≈ ${money(e2*LOT)}).`);
+    r.cost=r.sh1*e1+r.sh2*e2;
+  }
+  for(const r of rows.filter(r=>r.act==="buy"&&!funded.includes(r))){r.act="wait";r.why.push(`Beyond the ${MAX_BUYS}-stock limit: next in line.`)}
+  return {list:rows,funded,budget,each,more};
+}
+function renderBuys(bp,trimCash,SB){
+  const {list,funded,budget,each}=bp, L=SB.leader;
+  $("buyTitle").textContent=!L?(SB.ref?`Watch list: ${SB.ref.name} (provisional)`:"Buy list: none recommended"):SB.provisional?`Buy list: ${L.name} (provisional)`:L.k==="top30"?"Buy list: rotate into the Top 30":`Buy list: ${L.name}`;
+  if(!L) $("buyLede").innerHTML=`No rule passed the test, so nothing is funded. The fallback is keeping the cash (or a broad FBM KLCI index tracker) until a rule leads.${SB.ref?` Below: today's picks from the provisional leader <b>${esc(SB.ref.name)}</b> that you don't hold, as a <b>watch list</b>. Choose <b>Follow provisional leader</b> in the settings bar to fund them.`:""}`;
+  else $("buyLede").innerHTML=`Stocks picked today by <b>${esc(L.name)}</b> that you don't hold${SB.runner?", then the runner-up rows for reference":""}${SB.provisional?" (provisional: you chose to follow it before it passed the test)":""}. Budget: <b>${money(+P.cash||0)}</b> cash${P.useTrim==="1"&&trimCash?` + <b>${money(trimCash)}</b> from trims`:""} = <b>${money(budget)}</b>, about <b>${money(each)}</b> each across ${funded.length} funded stock${funded.length===1?"":"s"}.${budget<=0?" Enter cash above, or turn on funding from trims, to size the buys.":""}`;
+  const cnt=k=>list.filter(r=>r.act===k).length;
+  $("buyTiles").innerHTML=[tile("Funded buys",String(funded.length),L?`from "${esc(L.name)}"`:"no rule leading: holding cash"),tile("Next in line / reference",String(cnt("wait")),"runner-up, SELL signal or over the limit"),
+    tile("Green now",String(list.filter(r=>r.st.green).length),"below their weekly average today"),tile("Budget",money(budget),`${money(each)} each`)].join("");
+  const roleTag=r=>r.role==="lead"?`<span class="tag">${SB.provisional?"PROVISIONAL":"LEADING RULE"}</span>`:r.role==="ref"?'<span class="tag">PROVISIONAL</span>':'<span class="tag">RUNNER-UP</span>';
+  const planCell=r=>{if(!r.alloc)return '<span class="muted">–</span>';const p=[];if(r.sh1)p.push(`${r.sh1.toLocaleString()} @ ${px(r.e1)}`);if(r.sh2)p.push(`${r.sh2.toLocaleString()} @ ${px(r.e2)}`);return (p.length?p.join("<br>"):'<span class="neg">under 1 lot</span>')+`<div class="muted">${money(r.cost||0)} of ${money(r.alloc)}</div>`};
+  $("buyTbl").innerHTML=`<thead><tr><th>Stock</th><th class="l">Action</th><th>Top 30</th><th>Close</th><th>Bid now</th><th>Ladder ½</th><th>Support</th><th>Plan (lots of 100)</th><th class="l">Why</th></tr></thead><tbody>`+
+    (list.length?list.map(r=>`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${roleTag(r)}${r.st.info.t20?'<span class="tag">TOP 20</span>':""}${r.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(r.a)}${window.Valuation?Valuation.button(r.t):""}<span class="co">${esc(r.st.info.co||r.a.name||"")}</span></td>
+      <td class="l">${actTag(r.act)}</td><td>${r.st.top?`#${r.st.top.rank} <span class="${cls(r.st.top.pct)}">${spct(r.st.top.pct,0)}</span>`:'<span class="muted">–</span>'}</td>
+      <td>${px(r.st.last)}</td><td>${px(r.st.bid)}</td><td>${px(r.st.half)}</td><td>${px(r.st.lb)}</td>
+      <td>${planCell(r)}</td>
+      <td class="why">${r.why.join(" ")}</td></tr>`).join(""):`<tr><td colspan="9" class="muted">Nothing to buy from the recommended rule today.</td></tr>`)+
+    (bp.more.length||P.showAll?`<tr><td colspan="9" class="muted" style="text-align:left">${P.showAll?"Showing every pick.":`Hidden to keep the list short: ${bp.more.map(esc).join(" · ")}. Lower score / valuation, so further down the queue.`} <button type="button" id="showAllBtn" class="act hold" style="cursor:pointer;margin-left:6px">${P.showAll?"Show fewer":"Show all"}</button></td></tr>`:"")+`</tbody>`;
+  const sa=$("showAllBtn"); if(sa) sa.onclick=()=>{P.showAll=!P.showAll;save();render()};
+}
+
+/* ---- 4. month plan ---- */
+function renderPlan(plan,bp,SB){
+  const asOf=new Date(D.as_of_session+"T00:00:00"), months=[0,1,2].map(k=>new Date(asOf.getFullYear(),asOf.getMonth()+k,1));
+  const ym=d=>isoLocal(d).slice(0,7), name=d=>d.toLocaleDateString("en-GB",{month:"long",year:"numeric"});
+  const earn=[]; const seen=new Set();
+  for(const p of plan) if(p.a.earningsDate&&!seen.has(p.h.ticker)){seen.add(p.h.ticker);earn.push({t:p.h.ticker,d:p.a.earningsDate,est:!!p.a.earningsEstimate,held:true})}
+  for(const r of bp.funded) if(r.a.earningsDate&&!seen.has(r.t)){seen.add(r.t);earn.push({t:r.t,d:r.a.earningsDate,est:!!r.a.earningsEstimate,held:false})}
+  earn.sort((a,b)=>a.d.localeCompare(b.d));
+  const checks=[]; for(let k=14;k<=92;k+=14){const d=new Date(asOf);d.setDate(d.getDate()+k);checks.push(d)}
+  const trims=plan.filter(p=>p.act==="trim"), exits=plan.filter(isReview), buys=bp.funded;
+  const nm=t=>{const a=ALL.get(t)||{};return `${esc(tkd(t))}${a.name?" "+esc(a.name):""}`};
+  const lbl=e=>`${nm(e.t)}${e.held?"":" (buy list)"}`;
+  $("plan").innerHTML=months.map((m,k)=>{
+    const key=ym(m), ev=earn.filter(e=>e.d.slice(0,7)===key&&e.d>=D.as_of_session), ck=checks.filter(d=>ym(d)===key);
+    const items=[];
+    if(k===0){
+      if(trims.length) items.push(`<b>Trim</b> ${trims.map(p=>`${nm(p.h.ticker)} (~${p.trimSh.toLocaleString()} sh)`).join(", ")}: sell into strength, ideally before its results.`);
+      if(exits.length) items.push(`<b>Decide on</b> ${exits.map(p=>nm(p.h.ticker)).join(", ")}: below risk line, SELL or KDJ Exit. Cut, or write down why you're holding.`);
+      if(buys.length) items.push(`<b>Buy</b> ${buys.map(r=>nm(r.t)).join(", ")} in two entries (section 3). Log each fill in KLSE_Trade_Journal.xlsx.`);
+      if(!buys.length&&SB.ref) items.push(`<b>Watch</b> the provisional leader "${esc(SB.ref.name)}" (section 3): it needs ~${needMore(SB.ref)} more sessions of results to count. If it becomes LEADING, buy its picks then.`);
+      items.push(`<b>Recommended rule now</b>: ${SB.leader?esc(SB.leader.name)+(SB.provisional?" (provisional, your choice)":""):"none (hold cash)"}. If section 1 shows a different leader at a checkpoint, switch new buys to it; let existing positions run to their 4-week mark.`);
+    } else if(k===1){
+      items.push(`<b>Quarterly results season</b>: Bursa listing rules give companies 2 months after quarter end, so most September-quarter results land by 30 Nov.`);
+      items.push(`<b>Post-results review</b>: re-run this page once the reports below are out. Holdings that dropped out of the Top 30 and lost their risk line go to the exit list.`);
+      items.push(`<b>Rotate again</b> only into stocks that dipped to their ladder or turned green; skip names that have run away from Support.`);
+    } else {
+      items.push(`<b>Quarter review</b>: compare your P/L since today with the "Market" line in the Pick Tracker.`);
+      items.push(`<b>Re-check the scoreboard</b> in section 1: with ~${(D.logged_sessions||0)+40} sessions logged the leader will be much more reliable.`);
+      items.push(`<b>Quarterly backtest</b>: re-run backtest_box_momentum.py in early January (last run 12 Oct 2026).${D.trigger_review?` Buy-trigger trial review due ${dshort(D.trigger_review)} ${D.trigger_review.slice(0,4)}.`:""}`);
+    }
+    if(ck.length) items.push(`<b>Checkpoints</b>: ${ck.map(d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short"})).join(", ")}`);
+    const conf=ev.filter(e=>!e.est), est=ev.filter(e=>e.est);
+    if(conf.length) items.push(`<b>Results</b>: ${conf.map(e=>`${lbl(e)} ${dshort(e.d)}`).join(" · ")}`);
+    if(est.length){const g={};for(const e of est)(g[e.d]=g[e.d]||[]).push(e);
+      items.push(`<b>Results due by</b> (Bursa deadline, estimated): ${Object.keys(g).sort().map(d=>`${dshort(d)}: ${g[d].map(lbl).join(", ")}`).join(" · ")}`);}
+    return `<div class="month"><h3>${name(m)}<small>${k===0?"now":k===1?"next month":"month 3"}</small></h3><ul>${items.map(i=>`<li>${i}</li>`).join("")}</ul></div>`;
+  }).join("");
+}
+
+/* ---- wiring ---- */
+let SB0=null;
+function render(){
+  const top=topRowsAt(D.watch_dates.length-1), pf=T.portfolio||[], held=new Set(pf.map(h=>h.ticker));
+  const total=pf.reduce((s,h)=>s+(h.marketValue||0),0);
+  renderScoreboard(SB0); const SB=effective(SB0);
+  const plan=holdingPlan(pf,top,SB,total), trimCash=plan.reduce((s,p)=>s+p.trimRM,0);
+  renderHoldings(plan,total);
+  const bp=buyPlan(top,held,trimCash,SB,total); renderBuys(bp,trimCash,SB); renderPlan(plan,bp,SB);
+  document.querySelectorAll("#useTrim button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.useTrim)));
+  document.querySelectorAll("#prov button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.prov)));
+  document.querySelectorAll("#cap button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===+P.cap)));
+  syncSticky();
+}
+function boot(pick,dash){
+  D=pick; T=dash;
+  ALL=new Map((dash.all||[]).map(t=>[t.ticker,t])); for(const h of dash.portfolio||[]) if(!ALL.has(h.ticker)) ALL.set(h.ticker,h);
+  const m0=new Date(D.as_of_session+"T00:00:00"), m2=new Date(m0.getFullYear(),m0.getMonth()+2,1);
+  $("title").textContent=`${m0.toLocaleDateString("en-GB",{month:"short"})} → ${m2.toLocaleDateString("en-GB",{month:"short",year:"numeric"})}`;
+  const pfTotal=(dash.portfolio||[]).reduce((s,h)=>s+(h.marketValue||0),0);
+  $("meta").innerHTML=`<span>Session <b>${dshort(D.as_of_session)}</b> close</span><span>Portfolio <b>${money(pfTotal)}</b></span><span>Tracker log <b>${D.logged_sessions}</b> sessions</span>`;
+  if(P.cash==null) P.cash=0;
+  $("cash").value=P.cash;
+  $("cash").addEventListener("input",e=>{P.cash=Math.max(0,+e.target.value||0);save();render()});
+  $("useTrim").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.useTrim=b.dataset.v;save();render()});
+  $("cap").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.cap=+b.dataset.v;save();render()});
+  $("prov").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.prov=b.dataset.v;save();render()});
+  prepRules(); SB0=scoreRules(); render();
+}
+// keep the sticky offsets in step with the real heights of the settings bar and a section title
+const root=document.documentElement, ctl=document.querySelector(".controls"), dh=document.querySelector(".desk-head");
+function syncSticky(){const phone=matchMedia("(max-width:600px)").matches;root.style.setProperty("--ctl-h",(phone?0:ctl.offsetHeight)+"px");root.style.setProperty("--dh",(dh?dh.offsetHeight:44)+"px")}
+syncSticky(); addEventListener("resize",syncSticky); if(window.ResizeObserver) new ResizeObserver(syncSticky).observe(ctl);
+const get=f=>fetch(f+"?v="+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(f+" "+r.status);return r.json()});
+const valP=window.Valuation?Valuation.load():Promise.resolve();  // for the Valuation buttons
+Promise.all([get("pick_tracker_data.json"),get("dashboard-data.json"),get("valuation_data.json").catch(()=>({tickers:{}})),valP])
+  .then(([pick,dash,val])=>{V=val.tickers||{};boot(pick,dash)})
+  .catch(err=>{$("meta").textContent="Could not load data: "+err.message+". Run the daily pipeline and push again.";console.error(err)});
+})();
+</script>
+</body>
+</html>
