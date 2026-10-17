@@ -282,6 +282,7 @@
         <div class="seg" id="boardRows" role="group" aria-label="Rows shown">
           <button type="button" data-v="20" aria-pressed="true">Top 20 rows</button>
           <button type="button" data-v="all" aria-pressed="false">All stocks</button>
+          <button type="button" data-v="top30" aria-pressed="false" title="Same list as section 2's Top 30 strong stocks: Top 20 picks, last 3 months, ranked by % to date">Top 30 strong stocks</button>
         </div>
         <span class="muted" id="boardCount" style="font-size:12px"></span>
         <button type="button" class="btn" id="boardReset" title="Clear every column filter and the search box, and go back to the default sort and Top 20 rows">Reset to default</button>
@@ -381,7 +382,7 @@ const TIERS=[{k:0,label:"Above rec price",short:">0%",tok:"--t1"},{k:.05,label:"
 const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
 const S={src:"top20",win:3,ref:"se",measure:"close",week:4,look:10,watchSet:"top20",near:0,rankBy:"pct",sortKey:"pct",sortDir:-1};
 try{Object.assign(S,JSON.parse(localStorage.getItem("klsePickTrackerPrefs")||"{}"))}catch(e){}
-const extra=new Set(); let boardShow=20;
+const extra=new Set(); let boardShow=20, boardTop30=false;
 /* Excel-style column filters, shared by the section 1 and section 2 tables */
 const BCOLS=[["t","Stock","text"],["d","Day 1","date"],["rp","Day-1 price","money"],["lc","Now","money"],["days","Days","int"],["pct","% to date","pct"],["usd","RM / share","money"],["pos","RM on RM1k","money"],["hi","Best since","pct"],["lo","Worst since","pct"],["n","Times picked","int"],["sig","Signal now","list"]];
 /* REBOUND tag removed 2026-10-12: a 3-year backtest (backtest_box_momentum.py) found no reliable edge. Streak now still shows the pattern. */
@@ -514,22 +515,23 @@ function renderBoard(){
   // full table
   const q=$("boardSearch").value.trim().toLowerCase();
   const base=rows.filter(r=>!q||r.t.toLowerCase().includes(q)||(r.co||"").toLowerCase().includes(q));
-  let list=base.filter(r=>fPass("board",r));
+  const top30=boardTop30?topRowsAt(D.watch_dates.length-1):null;
+  let list=base.filter(r=>fPass("board",r)&&(!top30||top30.has(r.t)));
   const sk=S.sortKey, dir=S.sortDir;
   list.sort((a,b)=>{const x=a[sk],y=b[sk];if(typeof x==="string")return dir*x.localeCompare(y);return dir*((x??-1e9)-(y??-1e9))});
   let h=`<thead><tr>${BCOLS.map(([c,l])=>`<th class="sort" data-k="${c}" ${sk===c?`aria-sort="${dir<0?"descending":"ascending"}"`:""} tabindex="0">${c==="t"?'<span class="rn" style="display:inline-block">#</span> ':""}${l}${fBtn("board",c,l)}</th>`).join("")}</tr></thead><tbody>`;
-  for(const [i,r] of list.slice(0,boardShow).entries()){
-    h+=`<tr><td><div class="stk"><span class="rn">${i+1}</span><div><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${window.Valuation?Valuation.button(r.t):""}${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></div></div></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
+  for(const [i,r] of list.slice(0,top30?1e9:boardShow).entries()){
+    h+=`<tr><td><div class="stk"><span class="rn">${i+1}</span><div><span class="tk">${esc(tkd(r.t))}</span>${r.t20?'<span class="t20tag">TOP 20</span>':""}${top30&&top30.get(r.t)?`<span class="t30tag" title="Row ${top30.get(r.t)} of the top 30 strong stocks">TOP 30 #${top30.get(r.t)}</span>`:""}${window.Valuation?Valuation.button(r.t):""}${D.watch[r.t]?`<button type="button" class="addw" data-add="${esc(r.t)}" title="Add ${esc(tkd(r.t))} to section 2" aria-label="Add ${esc(tkd(r.t))} to section 2">＋ boxes</button>`:""}${r.jump?`<span class="jumptag" title="One-day move of 50%+ on ${dshort(r.jump)}: check for a bonus issue, split or consolidation">⚠ jump ${dshort(r.jump)}</span>`:""}<span class="co">${esc(r.co||"")}</span></div></div></td><td>${dshort(r.d)}</td><td>${px(r.rp)}</td><td>${px(r.lc)}</td><td>${r.days}</td><td class="${cls(r.pct)}">${fmtS(r.pct)}</td><td class="${cls(r.usd)}">${spx(r.usd)}</td><td class="${cls(r.pos)}">${smoney(r.pos)}</td><td class="${cls(r.hi)}">${fmtS(r.hi)}</td><td class="${cls(r.lo)}">${fmtS(r.lo)}</td><td>${r.n}</td><td>${r.sig?`<span class="sig ${r.sig}">${SIGN[r.sig]}</span>`:"–"}</td></tr>`;
   }
   $("boardTable").innerHTML=h+(list.length?"":`<tr><td colspan="12" class="muted" style="text-align:left">No stocks match these filters. Use Reset to default to clear them.</td></tr>`)+"</tbody>";
   const nf=Object.keys(TBL.board.F).length;
   $("boardChips").innerHTML=fChips("board");
-  $("boardReset").classList.toggle("pri",nf>0||!!q);
+  $("boardReset").classList.toggle("pri",nf>0||!!q||boardTop30);
   const all=boardShow>20;
-  $("boardRows").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="all")===all)));
+  $("boardRows").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v==="top30"?boardTop30:!boardTop30&&(b.dataset.v==="all")===all)));
   const ofTxt=list.length<base.length?` (filtered from ${base.length})`:"";
-  $("boardCount").textContent=(all||list.length<=20?`${list.length} stock${list.length===1?"":"s"}`:`showing 20 of ${list.length} stocks`)+ofTxt;
-  const more=$("boardMore"); more.hidden=list.length<=20;
+  $("boardCount").textContent=top30?`${list.length} of the top ${top30.size} strong stocks`+(list.length<top30.size?" (others not in this window or filtered out)":""):(all||list.length<=20?`${list.length} stock${list.length===1?"":"s"}`:`showing 20 of ${list.length} stocks`)+ofTxt;
+  const more=$("boardMore"); more.hidden=!!top30||list.length<=20;
   more.textContent=all?"Show top 20 rows only":`Show all ${list.length} stocks`;
 }
 function median(a){if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2}
@@ -774,7 +776,7 @@ function boot(data){
     $("nearBid").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===S.near)));renderWatch()}); bindSeg("watchSet","watchSet");
   $("boardSearch").addEventListener("input",()=>renderBoard());
   $("boardMore").addEventListener("click",()=>{const wasAll=boardShow>20;boardShow=wasAll?20:1e9;renderBoard();if(wasAll)$("boardTable").scrollIntoView({block:"nearest"})});
-  $("boardRows").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;boardShow=b.dataset.v==="all"?1e9:20;renderBoard()});
+  $("boardRows").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;boardTop30=b.dataset.v==="top30";boardShow=b.dataset.v==="all"?1e9:20;renderBoard()});
   const sortBy=th=>{const k=th.dataset.k;if(S.sortKey===k)S.sortDir*=-1;else{S.sortKey=k;S.sortDir=(k==="t"||k==="d")?1:-1}save();renderBoard()};
   $("boardTable").addEventListener("click",e=>{const fb=e.target.closest(".fbtn");if(fb){e.stopPropagation();openFilter(fb);return}const th=e.target.closest("th.sort");if(th)sortBy(th)});
   $("boardTable").addEventListener("keydown",e=>{if(e.target.closest(".fbtn"))return;const th=e.target.closest("th.sort");if(th&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sortBy(th)}});
@@ -822,7 +824,7 @@ function boot(data){
   $("boardChips").addEventListener("click",chipClr);$("watchChips").addEventListener("click",chipClr);
   $("watchReset").addEventListener("click",()=>{TBL.watch.F={};saveF("watch");closePop();S.near=0;S.wSortKey="ratio";S.wSortDir=-1;save();
     $("nearBid").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v==="0")));renderWatch()});
-  $("boardReset").addEventListener("click",()=>{TBL.board.F={};saveF("board");closePop();$("boardSearch").value="";boardShow=20;S.sortKey=S.rankBy;S.sortDir=-1;save();renderBoard()});
+  $("boardReset").addEventListener("click",()=>{TBL.board.F={};saveF("board");closePop();$("boardSearch").value="";boardShow=20;boardTop30=false;S.sortKey=S.rankBy;S.sortDir=-1;save();renderBoard()});
   const addTk=()=>{const t=resolveTk($("watchSearch").value,D.watch);
     if(t){extra.add(t);$("watchSearch").value="";renderWatch()}};
   $("watchSearch").addEventListener("change",addTk); $("watchSearch").addEventListener("keydown",e=>{if(e.key==="Enter")addTk()});
