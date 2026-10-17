@@ -93,6 +93,14 @@
   .tag{font:600 9.5px var(--font-data);color:var(--ink-dim);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px;white-space:nowrap}
   .tag.earn{color:var(--amber);border-color:var(--amber)}
   .tag.grn{color:var(--green);border-color:var(--green)}
+  .tag.cb{color:var(--bg);background:var(--amber);border-color:var(--amber);cursor:help}
+  .tag.dn{color:var(--red);border-color:var(--red)}
+  .lasting{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+  .lasting h3{font:600 14px var(--font-display);margin:0 0 4px}
+  .lasting p{margin:0 0 8px;font-size:12.5px;color:var(--ink-dim);max-width:90ch}
+  .lasting p b{color:var(--ink)}
+  .lasting table td:first-child{white-space:normal;min-width:200px}
+  .lasting tr.hl td{background:var(--amber-soft)}
   .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
   .month{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
   .month h3{font:600 15px var(--font-display);letter-spacing:.01em}
@@ -147,8 +155,8 @@
       <div class="seg" id="useTrim"><button type="button" data-v="1">Yes</button><button type="button" data-v="0">No, cash only</button></div></div>
     <div class="ctl"><span class="lbl">Max per stock</span>
       <div class="seg" id="cap"><button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button></div></div>
-    <div class="ctl"><span class="lbl">If no rule passes</span>
-      <div class="seg" id="prov"><button type="button" data-v="0">Hold cash</button><button type="button" data-v="1">Follow provisional leader</button></div></div>
+    <div class="ctl"><span class="lbl">If no short-term rule passes</span>
+      <div class="seg" id="nr"><button type="button" data-v="combo">★ Combo (5-yr tested)</button><button type="button" data-v="prov">Provisional leader</button><button type="button" data-v="cash">Hold cash</button></div></div>
     <nav class="jump" aria-label="Jump to section"><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a></nav>
   </div>
 
@@ -156,6 +164,7 @@
     <div class="desk-head"><span class="idx">1</span><h2>Which rule is working: the scoreboard</h2></div>
     <p class="lede">Every past session in the Pick Tracker log is replayed. For each rule, take the stocks it would have picked that day and compare their move <b>2 and 4 weeks later</b> (10 and 20 sessions) with the average of every tracked Bursa stock (the "market"). The page then <b>recommends the rule that is leading</b>: if the Top 30 leads, the plan is a plain rotation into the Top 30; if another rule leads, the plan switches to it; if nothing beats the market, it says so. This re-runs every day as the log grows.</p>
     <div id="verdict"></div>
+    <div id="lasting"></div>
     <div class="panel"><div class="scroll freeze"><table id="ruleTbl"></table></div>
       <p class="note" id="ruleNote"></p></div>
   </section>
@@ -170,7 +179,7 @@
       <div class="legend" id="mixLegend"></div>
     </div>
     <div class="panel"><div class="scroll freeze"><table id="holdTbl"></table></div>
-      <p class="note">Rules: <b>TRIM</b> = bigger than the max-per-stock setting (rounded up to whole board lots of 100). <b>REVIEW EXIT</b> = closed below the 3 × ATR risk line from your average cost, a SELL signal, or a KDJ Exit. <b>KEEP</b> = picked today by the recommended rule or the runner-up. <b>GREEN</b> = closed below its weekly average (Entry EMA20, 5 sessions), the one box pattern that held in your 5-year Bursa backtest. Holdings come from KLSE_Trade_Journal.xlsx via the dashboard.</p></div>
+      <p class="note">Rules: <b>TRIM</b> = bigger than the max-per-stock setting (rounded up to whole board lots of 100). <b>REVIEW EXIT</b> = closed below the 3 × ATR risk line from your average cost, a SELL signal, a KDJ Exit, or a downtrend. <b>KEEP</b> = picked today by the recommended rule or the runner-up. <b>★ COMBO</b> = 12-month winner still in an uptrend near its high (the lasting strategy in section 1). <b>DOWNTREND</b> = below its 200-day average with the 50-day under the 200-day; it counts as a REVIEW EXIT reason. <b>GREEN</b> = closed below its weekly average (Entry EMA20, 5 sessions), the one box pattern that held in your 5-year Bursa backtest. Holdings come from KLSE_Trade_Journal.xlsx via the dashboard.</p></div>
   </section>
 
   <section class="desk" id="s3">
@@ -209,7 +218,7 @@ const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
 const SR_TOP=30, SR_MONTHS=3, SR_MIN_WHITE=2, SR_MAX_WHITE=6, SR_MIN_GREEN=2;
 const RISK_ATR=3, MAX_BUYS=6, EARN_SOON_DAYS=10, LOT=100, JUMP=0.5;
 
-const P={cash:null,useTrim:"1",cap:15,prov:"0"};
+const P={cash:null,useTrim:"1",cap:15,nr:"combo"};
 try{Object.assign(P,JSON.parse(localStorage.getItem("klseLookaheadPrefs")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("klseLookaheadPrefs",JSON.stringify(P))}catch(e){}};
 
@@ -285,9 +294,9 @@ function renderScoreboard(SB){
   if(L&&L.k==="top30") v=`<div class="verdict ok"><b>Recommended strategy: rotate into the Top 30.</b> The Top 30 is the leading rule: ${why(L)}. Section 3 is the plain rotation plan.</div>`;
   else if(L) v=`<div class="verdict warn"><b>Recommended strategy: switch to "${esc(L.name)}".</b> The Top 30 is not leading (4 weeks: ${spct(top.s[20].avg)}, better in ${top.s[20].wins} of ${top.s[20].n} windows). The leading rule is <b>${esc(L.name)}</b>: ${why(L)}.${SB.runner?` Runner-up: <b>${esc(SB.runner.name)}</b> (${spct(SB.runner.s[20].avg)}, ${SB.runner.s[20].wins} of ${SB.runner.s[20].n}).`:""} Section 3 is built from it. The page switches back to the Top 30 automatically once the Top 30 leads.</div>`;
   else{
-    v=`<div class="verdict warn"><b>No rule is reliably beating the Bursa market right now.</b> None passed the test (at least ${MIN_WINDOWS} four-week windows, ahead in ${Math.round(MIN_WIN*100)}%+ of them, positive on average). The default plan is to <b>hold cash</b> (or a broad FBM KLCI index tracker) and wait, rather than forcing trades.`;
+    v=`<div class="verdict warn"><b>No rule is reliably beating the Bursa market right now.</b> None passed the test (at least ${MIN_WINDOWS} four-week windows, ahead in ${Math.round(MIN_WIN*100)}%+ of them, positive on average). ${P.nr==="combo"&&CMETA&&CMETA.available&&COMBO_R.today.length?" Over the next 3 months, follow the <b>★ Combo</b> instead (see the box below): it is the rule with a 5-year record on Bursa.":P.nr==="prov"?"":" You chose to <b>hold cash</b> (or a broad FBM KLCI index tracker) until a rule leads."}`;
     const pv=SB.prov;
-    if(pv) v+=` <br><b>Provisional leader: "${esc(pv.name)}"</b>: ahead in <b>${pv.s[20].wins} of ${pv.s[20].n}</b> four-week windows, by <b>${spct(pv.s[20].avg)}</b> (2 weeks: ${spct(pv.s[10].avg)}), but that is ${needMore(pv)} window${needMore(pv)===1?"":"s"} short of the test. It becomes the real leader automatically after about ${needMore(pv)} more session${needMore(pv)===1?"":"s"} if it holds up. ${P.prov==="1"?`<b>You chose to follow it</b>, so section 3 funds its picks. Treat it as a small, early bet.`:`Section 3 lists its picks as a watch list, not funded. Choose <b>Follow provisional leader</b> in the settings bar to fund them.`}`;
+    if(pv) v+=` <br><b>Provisional leader: "${esc(pv.name)}"</b>: ahead in <b>${pv.s[20].wins} of ${pv.s[20].n}</b> four-week windows, by <b>${spct(pv.s[20].avg)}</b> (2 weeks: ${spct(pv.s[10].avg)}), but that is ${needMore(pv)} window${needMore(pv)===1?"":"s"} short of the test. It becomes the real leader automatically after about ${needMore(pv)} more session${needMore(pv)===1?"":"s"} if it holds up. ${P.nr==="prov"?`<b>You chose to follow it</b>, so section 3 funds its picks. Treat it as a small, early bet.`:`It is a 1-month idea on a short record; choose <b>Provisional leader</b> in the settings bar to fund it instead.`}`;
     v+=`</div>`;
   }
   v+=`<p class="note" style="margin-top:-4px">Sample: ${N} sessions from ${dshort(D.watch_dates[0])} to ${dshort(D.watch_dates[N-1])}. Four-week windows overlap heavily, and one market regime can favour one rule, so treat a lead under ~20 windows as provisional.</p>`;
@@ -305,10 +314,44 @@ function renderScoreboard(SB){
 /* the rule set the plan follows: the leader, or (no leader + "Follow provisional leader") the provisional rule */
 function effective(SB){
   if(SB.leader) return SB;
-  if(SB.prov&&P.prov==="1") return {leader:SB.prov,runner:null,provisional:true};
+  if(P.nr==="combo"&&CMETA&&CMETA.available&&COMBO_R&&COMBO_R.today.length) return {leader:COMBO_R,runner:null,combo:true,ref:null};
+  if(SB.prov&&P.nr==="prov") return {leader:SB.prov,runner:null,provisional:true};
   return {leader:null,runner:null,ref:SB.prov};
 }
 const needMore=r=>MIN_WINDOWS-r.s[20].n;
+
+/* ---- ★ Combo: the lasting strategy (added 2026-10-17) ----
+   Flag computed daily by generate_dashboard_data.py (comboMeta + each stock's "combo").
+   It can't be replayed on the 45-session log (needs 12 months), so its evidence is the
+   5-year Bursa backtest below: Oct 2022 - Oct 2026, a fresh pick every month, excess
+   return vs the average liquid Bursa stock, before costs. Re-run quarterly. */
+let COMBO_R=null, CMETA=null;
+const BT=[ // rule, 1 mo, 3 mo, 6 mo, ahead in 6-mo windows, years positive (3 mo)
+  ["★ Combo: 12-month winner + uptrend + within 10% of high", .011,.028,.064,.90,"4 of 5",true],
+  ["12-month winners only (top 30)", .011,.025,.050,.85,"4 of 5"],
+  ["Your Top 30 (ranked by 3-month gain)", .009,.012,.017,.52,"3 of 5"],
+  ["Stocks in a downtrend (below 200-day, 50-day under 200-day)", -.010,-.026,-.053,.10,"1 of 5"],
+];
+function buildCombo(dash){
+  CMETA=dash.comboMeta||null;
+  const list=(dash.all||[]).filter(r=>r.combo).sort((a,b)=>a.combo.rank-b.combo.rank).map(r=>r.ticker);
+  COMBO_R={k:"combo",name:"★ Combo",desc:"12-month winner, in an uptrend, within 10% of its 52-week high",today:list,combo:true};
+}
+const comboOf=t=>(ALL.get(t)||{}).combo||null;
+const cbTag=t=>{const c=comboOf(t);return c?`<span class="tag cb" title="★ Combo #${c.rank}: top 60 by 12-1 month gain (${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend, ${c.offHigh<0?Math.abs(c.offHigh)+"% below":"at"} its 52-week high">★ COMBO</span>`:""};
+const isDown=a=>{const d=a&&a.detail;if(!d||d.pctVsSma200==null||d.pctVsSma50==null)return false;return d.pctVsSma200<0&&d.pctVsSma200<d.pctVsSma50};
+function renderLasting(SB){
+  const avail=CMETA&&CMETA.available, n=COMBO_R?COMBO_R.today.length:0, top=RULES[0];
+  const following=!SB.leader&&P.nr==="combo"&&avail&&n>0;
+  let head;
+  if(!avail) head=`<p><b>The ★ Combo list isn't in today's data yet.</b> It needs the new 12-month column, which arrives with the next full screener run (the 7 PM weekday run, or double-click run_daily.bat). Until then this page falls back to ${P.nr==="prov"?"the provisional leader":"holding cash"}.</p>`;
+  else if(SB.leader) head=`<p>A short-term rule is leading in the replay above, so section 3 follows it. For holds of <b>3–6 months</b>, the ★ Combo is the rule with the longest record: <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).</p>`;
+  else head=`<p><b>${following?"Recommended: switch to the ★ Combo and hold 3–6 months.":"The ★ Combo is the strategy that has lasted."}</b> Your Top 30 ranks stocks by their <b>3-month</b> gain, and that is the weaker version: it ${top.s[20].avg!=null&&top.s[20].avg<0?`is behind the market in the replay above (${spct(top.s[20].avg)} after 4 weeks) and `:""}added only ${spct(BT[2][3])} over 6 months in the 5-year test. Ranking by the <b>12-month</b> gain, and keeping only stocks still in an uptrend near their high, did much better and kept working the longer it was held. <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).${following?" Section 3 is built from it.":` Choose <b>★ Combo</b> in the settings bar to build section 3 from it.`}</p>`;
+  $("lasting").innerHTML=`<div class="lasting"><h3>Strategy that lasts: 5-year Bursa test</h3>${head}
+    <div class="scroll"><table><thead><tr><th>Rule (picked fresh each month)</th><th>1 month</th><th>3 months</th><th>6 months</th><th>Ahead in 6-mo windows</th><th>Years ahead (3 mo)</th></tr></thead><tbody>`+
+    BT.map(r=>`<tr${r[6]?' class="hl"':""}><td>${esc(r[0])}</td><td class="${cls(r[1])}">${spct(r[1])}</td><td class="${cls(r[2])}">${spct(r[2])}</td><td class="${cls(r[3])}">${spct(r[3])}</td><td>${pct(r[4],0)}</td><td>${r[5]}</td></tr>`).join("")+
+    `</tbody></table></div><p class="note" style="margin:8px 0 0">vs the average liquid Bursa stock (price ≥ RM0.10, RM200k+ traded a day), Oct 2022 – Oct 2026, before brokerage and stamp duty. All momentum rules lost in 2022, a rebound year when last year's losers won, so expect bad years. The test re-picked monthly: review once a month and replace holdings that drop off the list. Stocks listed today only (delisted companies missing), which flatters every row a little.</p></div>`;
+}
 
 /* ---- per-stock state today ---- */
 function stateToday(t,top){
@@ -335,10 +378,12 @@ function holdingPlan(pf,top,SB,total){
     if(below) exitWhy.push(`closed below its risk line ${px(rl)} (3 × ATR under your ${px(h.avgCost)} cost)`);
     if(sig==="S") exitWhy.push("screener signal is SELL");
     if(a.kdjAction==="Exit") exitWhy.push("KDJ Action says Exit");
+    if(isDown(a)) exitWhy.push("in a downtrend (below its 200-day average, 50-day under 200-day), the group that lagged most in the 5-year test");
     if(exitWhy.length){ if(act!=="trim") act="exit"; why.push("Review: "+exitWhy.join("; ")+"."); }
     const inRule=[SB.leader,SB.runner].filter(r=>r&&r.today.includes(h.ticker));
+    const cbh=comboOf(h.ticker); if(cbh&&!(SB.leader&&SB.leader.combo)) why.push(`★ Combo #${cbh.rank}: 12-month winner still in an uptrend, a hold for the next 3–6 months.`);
     if(!inRule.length&&SB.ref&&SB.ref.today.includes(h.ticker)) why.push(`On today's list of the provisional leader "${SB.ref.name}".`);
-    if(inRule.length){ if(act==="hold") act="keep"; why.push(`Picked today by ${inRule.map(r=>`"${r.name}"`).join(" and ")}.`); }
+    if(inRule.length){ if(act==="hold") act="keep"; why.push(inRule[0].combo?`★ Combo #${cbh.rank}: on the lasting-strategy list, hold for 3–6 months.`:`Picked today by ${inRule.map(r=>`"${r.name}"`).join(" and ")}.`); }
     else if(st&&st.top) why.push(`In today's Top 30 (#${st.top.rank}).`);
     if(st&&st.green&&act!=="exit") why.push("Green now (below its weekly average): if you add, today is a better bid than a white day.");
     const vw=valWhy(v); if(vw) why.push(vw);
@@ -360,7 +405,7 @@ function renderHoldings(plan,total){
     tile("In today's Top 30",pct(total?inTopV/total:0,0),`${money(inTopV)} in ${inTop.length} holdings`),
     tile("Largest position",big.h?`${esc(tkd(big.h.ticker))} ${pct(big.w,0)}`:"–",big.h?`${esc(big.h.name||"")} · your max is ${P.cap}%`:`your max is ${P.cap}%`),
     tile("To trim",String(nTrim),`over ${P.cap}% of the portfolio`),
-    tile("To review for exit",String(plan.filter(isReview).length),"risk line, SELL or KDJ Exit"),
+    tile("To review for exit",String(plan.filter(isReview).length),"risk line, SELL, KDJ Exit or downtrend"),
     tile("Realized P&L (year)",`<span class="${cls(R.thisYear)}">${money(R.thisYear)}</span>`,`${R.nSells||0} sells logged in the trade journal`),
   ].join("");
   const groups=[["Top 30",inTopV,"var(--green)"],["Other holdings",total-inTopV,"var(--blue)"]];
@@ -369,7 +414,7 @@ function renderHoldings(plan,total){
   const order={exit:0,trim:1,keep:2,hold:3};
   const rows=[...plan].sort((a,b)=>order[a.act]-order[b.act]||b.w-a.w);
   $("holdTbl").innerHTML=`<thead><tr><th>Stock</th><th class="l">Action</th><th>Weight</th><th>Shares</th><th>Price</th><th>Your cost</th><th>P/L</th><th>Risk line</th><th>Signal</th><th class="l">Why</th></tr></thead><tbody>`+
-    rows.map(p=>`<tr><td><span class="tk">${esc(tkd(p.h.ticker))}</span>${p.st&&p.st.top?`<span class="tag">TOP 30 #${p.st.top.rank}</span>`:""}${p.st&&p.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(p.a)}${window.Valuation?Valuation.button(p.h.ticker):""}<span class="co">${esc(p.h.name||"")}</span></td>
+    rows.map(p=>`<tr><td><span class="tk">${esc(tkd(p.h.ticker))}</span>${cbTag(p.h.ticker)}${isDown(p.a)?'<span class="tag dn" title="Below its 200-day average, 50-day under 200-day">DOWNTREND</span>':""}${p.st&&p.st.top?`<span class="tag">TOP 30 #${p.st.top.rank}</span>`:""}${p.st&&p.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(p.a)}${window.Valuation?Valuation.button(p.h.ticker):""}<span class="co">${esc(p.h.name||"")}</span></td>
       <td class="l">${actTag(p.act)}${p.act==="trim"?`<div class="muted" style="margin-top:3px">sell ~${p.trimSh.toLocaleString()} sh</div>`:""}${p.act==="trim"&&isReview(p)?`<div style="margin-top:3px">${actTag("exit")}</div>`:""}</td>
       <td>${pct(p.w)}</td><td>${(p.h.shares||0).toLocaleString()}</td><td>${px(p.price)}</td><td>${px(p.h.avgCost)}</td><td class="${cls(p.h.pnlPct)}">${spct(p.h.pnlPct==null?null:p.h.pnlPct/100)}</td>
       <td class="${p.below?"neg":""}">${px(p.rl)}</td><td>${p.sig?SIGN[p.sig]:"–"}<span class="muted"> ${p.a.score??""}</span></td><td class="why">${p.why.join(" ")}</td></tr>`).join("")+`</tbody>`;
@@ -382,14 +427,15 @@ function buyPlan(top,held,trimCash,SB,pfTotal){
   const add=(R,role)=>{ if(!R) return;
     // Top 30 keeps its rank order; other rules are ordered by screener score, then valuation discount
     const ms=t=>ALL.get(t)?.score??-9, mos=t=>(V[t]&&V[t].mos!=null&&!V[t].warn)?V[t].mos:-9;
-    const order=R.k==="top30"?R.today:[...R.today].sort((a,b)=>ms(b)-ms(a)||mos(b)-mos(a));
+    const order=(R.k==="top30"||R.combo)?R.today:[...R.today].sort((a,b)=>ms(b)-ms(a)||mos(b)-mos(a));
     const limit=P.showAll?1e9:(role==="lead"?SHOW_LEAD:SHOW_REF); let shown=0, hidden=0;
     for(const t of order){
       if(held.has(t)||seen.has(t)) continue;
       if(shown>=limit){ hidden++; continue; }
       const st=stateToday(t,top); if(!st||st.last==null) continue; seen.add(t);
       const a=ALL.get(t)||{}, v=V[t], why=[]; let act=role==="lead"?"buy":"wait";
-      if(role==="lead") why.push(R.k==="top30"?`Top 30 #${st.top?.rank}: plain rotation into the leading rule.`:`Picked by the ${SB.provisional?"provisional":"leading"} rule "${R.name}".`);
+      const cbr=comboOf(t);
+      if(role==="lead") why.push(R.combo?`★ Combo #${cbr.rank}: up ${cbr.mom12}% over 12 months (to a month ago), in an uptrend, ${cbr.offHigh<0?Math.abs(cbr.offHigh)+"% below":"at"} its 52-week high. Plan to hold 3–6 months.`:R.k==="top30"?`Top 30 #${st.top?.rank}: plain rotation into the leading rule.`:`Picked by the ${SB.provisional?"provisional":"leading"} rule "${R.name}".`);
       if(role==="runner") why.push(`Runner-up rule "${R.name}": reference only, not funded.`);
       if(role==="ref") why.push(`Provisional leader "${R.name}": watch list only while you hold cash.`);
       if(role==="lead"&&SB.provisional) why.push(`Provisional: only ${R.s[20].n} four-week windows so far.`);
@@ -419,8 +465,9 @@ function buyPlan(top,held,trimCash,SB,pfTotal){
 }
 function renderBuys(bp,trimCash,SB){
   const {list,funded,budget,each}=bp, L=SB.leader;
-  $("buyTitle").textContent=!L?(SB.ref?`Watch list: ${SB.ref.name} (provisional)`:"Buy list: none recommended"):SB.provisional?`Buy list: ${L.name} (provisional)`:L.k==="top30"?"Buy list: rotate into the Top 30":`Buy list: ${L.name}`;
-  if(!L) $("buyLede").innerHTML=`No rule passed the test, so nothing is funded. The fallback is keeping the cash (or a broad FBM KLCI index tracker) until a rule leads.${SB.ref?` Below: today's picks from the provisional leader <b>${esc(SB.ref.name)}</b> that you don't hold, as a <b>watch list</b>. Choose <b>Follow provisional leader</b> in the settings bar to fund them.`:""}`;
+  $("buyTitle").textContent=SB.combo?"Buy list: ★ Combo (hold 3–6 months)":!L?(SB.ref?`Watch list: ${SB.ref.name} (provisional)`:"Buy list: none recommended"):SB.provisional?`Buy list: ${L.name} (provisional)`:L.k==="top30"?"Buy list: rotate into the Top 30":`Buy list: ${L.name}`;
+  if(!L) $("buyLede").innerHTML=`No rule passed the test, so nothing is funded. The fallback is keeping the cash (or a broad FBM KLCI index tracker) until a rule leads.${SB.ref?` Below: today's picks from the provisional leader <b>${esc(SB.ref.name)}</b> that you don't hold, as a <b>watch list</b>. Choose <b>Provisional leader</b> (or <b>★ Combo</b>) in the settings bar to fund a list.`:""}`;
+  else if(SB.combo) $("buyLede").innerHTML=`★ Combo stocks you don't hold, strongest 12-month gain first. This is the lasting strategy from section 1: <b>hold 3–6 months</b>, review once a month, and replace a holding when it drops off the list (or breaks its risk line). Budget: <b>${money(+P.cash||0)}</b> cash${P.useTrim==="1"&&trimCash?` + <b>${money(trimCash)}</b> from trims`:""} = <b>${money(budget)}</b>, about <b>${money(each)}</b> each across ${funded.length} funded stock${funded.length===1?"":"s"}.${budget<=0?" Enter cash above, or turn on funding from trims, to size the buys.":""} Many combo names are small caps that have already run hard: check volume and size modestly.`;
   else $("buyLede").innerHTML=`Stocks picked today by <b>${esc(L.name)}</b> that you don't hold${SB.runner?", then the runner-up rows for reference":""}${SB.provisional?" (provisional: you chose to follow it before it passed the test)":""}. Budget: <b>${money(+P.cash||0)}</b> cash${P.useTrim==="1"&&trimCash?` + <b>${money(trimCash)}</b> from trims`:""} = <b>${money(budget)}</b>, about <b>${money(each)}</b> each across ${funded.length} funded stock${funded.length===1?"":"s"}.${budget<=0?" Enter cash above, or turn on funding from trims, to size the buys.":""}`;
   const cnt=k=>list.filter(r=>r.act===k).length;
   $("buyTiles").innerHTML=[tile("Funded buys",String(funded.length),L?`from "${esc(L.name)}"`:"no rule leading: holding cash"),tile("Next in line / reference",String(cnt("wait")),"runner-up, SELL signal or over the limit"),
@@ -428,7 +475,7 @@ function renderBuys(bp,trimCash,SB){
   const roleTag=r=>r.role==="lead"?`<span class="tag">${SB.provisional?"PROVISIONAL":"LEADING RULE"}</span>`:r.role==="ref"?'<span class="tag">PROVISIONAL</span>':'<span class="tag">RUNNER-UP</span>';
   const planCell=r=>{if(!r.alloc)return '<span class="muted">–</span>';const p=[];if(r.sh1)p.push(`${r.sh1.toLocaleString()} @ ${px(r.e1)}`);if(r.sh2)p.push(`${r.sh2.toLocaleString()} @ ${px(r.e2)}`);return (p.length?p.join("<br>"):'<span class="neg">under 1 lot</span>')+`<div class="muted">${money(r.cost||0)} of ${money(r.alloc)}</div>`};
   $("buyTbl").innerHTML=`<thead><tr><th>Stock</th><th class="l">Action</th><th>Top 30</th><th>Close</th><th>Bid now</th><th>Ladder ½</th><th>Support</th><th>Plan (lots of 100)</th><th class="l">Why</th></tr></thead><tbody>`+
-    (list.length?list.map(r=>`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${roleTag(r)}${r.st.info.t20?'<span class="tag">TOP 20</span>':""}${r.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(r.a)}${window.Valuation?Valuation.button(r.t):""}<span class="co">${esc(r.st.info.co||r.a.name||"")}</span></td>
+    (list.length?list.map(r=>`<tr><td><span class="tk">${esc(tkd(r.t))}</span>${r.rule&&r.rule.combo?"":roleTag(r)}${cbTag(r.t)}${r.st.info.t20?'<span class="tag">TOP 20</span>':""}${r.st.green?'<span class="tag grn">GREEN</span>':""}${earnTag(r.a)}${window.Valuation?Valuation.button(r.t):""}<span class="co">${esc(r.st.info.co||r.a.name||"")}</span></td>
       <td class="l">${actTag(r.act)}</td><td>${r.st.top?`#${r.st.top.rank} <span class="${cls(r.st.top.pct)}">${spct(r.st.top.pct,0)}</span>`:'<span class="muted">–</span>'}</td>
       <td>${px(r.st.last)}</td><td>${px(r.st.bid)}</td><td>${px(r.st.half)}</td><td>${px(r.st.lb)}</td>
       <td>${planCell(r)}</td>
@@ -454,16 +501,18 @@ function renderPlan(plan,bp,SB){
     const items=[];
     if(k===0){
       if(trims.length) items.push(`<b>Trim</b> ${trims.map(p=>`${nm(p.h.ticker)} (~${p.trimSh.toLocaleString()} sh)`).join(", ")}: sell into strength, ideally before its results.`);
-      if(exits.length) items.push(`<b>Decide on</b> ${exits.map(p=>nm(p.h.ticker)).join(", ")}: below risk line, SELL or KDJ Exit. Cut, or write down why you're holding.`);
+      if(exits.length) items.push(`<b>Decide on</b> ${exits.map(p=>nm(p.h.ticker)).join(", ")}: below risk line, SELL, KDJ Exit or downtrend. Cut, or write down why you're holding.`);
       if(buys.length) items.push(`<b>Buy</b> ${buys.map(r=>nm(r.t)).join(", ")} in two entries (section 3). Log each fill in KLSE_Trade_Journal.xlsx.`);
       if(!buys.length&&SB.ref) items.push(`<b>Watch</b> the provisional leader "${esc(SB.ref.name)}" (section 3): it needs ~${needMore(SB.ref)} more sessions of results to count. If it becomes LEADING, buy its picks then.`);
-      items.push(`<b>Recommended rule now</b>: ${SB.leader?esc(SB.leader.name)+(SB.provisional?" (provisional, your choice)":""):"none (hold cash)"}. If section 1 shows a different leader at a checkpoint, switch new buys to it; let existing positions run to their 4-week mark.`);
+      if(SB.combo) items.push(`<b>Strategy now: ★ Combo, held 3–6 months.</b> If a short-term rule starts LEADING in section 1, new buys can follow it, but don't churn the combo holdings for it.`);
+      else items.push(`<b>Recommended rule now</b>: ${SB.leader?esc(SB.leader.name)+(SB.provisional?" (provisional, your choice)":""):"none (hold cash)"}. If section 1 shows a different leader at a checkpoint, switch new buys to it; let existing positions run to their 4-week mark.`);
     } else if(k===1){
       items.push(`<b>Quarterly results season</b>: Bursa listing rules give companies 2 months after quarter end, so most September-quarter results land by 30 Nov.`);
       items.push(`<b>Post-results review</b>: re-run this page once the reports below are out. Holdings that dropped out of the Top 30 and lost their risk line go to the exit list.`);
+      if(SB.combo) items.push(`<b>Monthly combo review</b> (around ${dshort(isoLocal(new Date(asOf.getFullYear(),asOf.getMonth()+1,asOf.getDate())))}): keep holdings still flagged ★ COMBO; replace ones that dropped off the list or broke their risk line with the next names in section 3.`);
       items.push(`<b>Rotate again</b> only into stocks that dipped to their ladder or turned green; skip names that have run away from Support.`);
     } else {
-      items.push(`<b>Quarter review</b>: compare your P/L since today with the "Market" line in the Pick Tracker.`);
+      items.push(`<b>Quarter review</b>: compare your P/L since today with the "Market" line in the Pick Tracker.${SB.combo?" The ★ Combo buys reach their 3-month mark in mid-January; the test's best results came at 6 months, so hold through unless a holding drops off the list.":""}`);
       items.push(`<b>Re-check the scoreboard</b> in section 1: with ~${(D.logged_sessions||0)+40} sessions logged the leader will be much more reliable.`);
       items.push(`<b>Quarterly backtest</b>: re-run backtest_box_momentum.py in early January (last run 12 Oct 2026).${D.trigger_review?` Buy-trigger trial review due ${dshort(D.trigger_review)} ${D.trigger_review.slice(0,4)}.`:""}`);
     }
@@ -481,18 +530,19 @@ let SB0=null;
 function render(){
   const top=topRowsAt(D.watch_dates.length-1), pf=T.portfolio||[], held=new Set(pf.map(h=>h.ticker));
   const total=pf.reduce((s,h)=>s+(h.marketValue||0),0);
-  renderScoreboard(SB0); const SB=effective(SB0);
+  renderScoreboard(SB0); renderLasting(SB0); const SB=effective(SB0);
   const plan=holdingPlan(pf,top,SB,total), trimCash=plan.reduce((s,p)=>s+p.trimRM,0);
   renderHoldings(plan,total);
   const bp=buyPlan(top,held,trimCash,SB,total); renderBuys(bp,trimCash,SB); renderPlan(plan,bp,SB);
   document.querySelectorAll("#useTrim button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.useTrim)));
-  document.querySelectorAll("#prov button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.prov)));
+  document.querySelectorAll("#nr button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.nr)));
   document.querySelectorAll("#cap button").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.v===+P.cap)));
   syncSticky();
 }
 function boot(pick,dash){
   D=pick; T=dash;
   ALL=new Map((dash.all||[]).map(t=>[t.ticker,t])); for(const h of dash.portfolio||[]) if(!ALL.has(h.ticker)) ALL.set(h.ticker,h);
+  buildCombo(dash);
   const m0=new Date(D.as_of_session+"T00:00:00"), m2=new Date(m0.getFullYear(),m0.getMonth()+2,1);
   $("title").textContent=`${m0.toLocaleDateString("en-GB",{month:"short"})} → ${m2.toLocaleDateString("en-GB",{month:"short",year:"numeric"})}`;
   const pfTotal=(dash.portfolio||[]).reduce((s,h)=>s+(h.marketValue||0),0);
@@ -502,7 +552,7 @@ function boot(pick,dash){
   $("cash").addEventListener("input",e=>{P.cash=Math.max(0,+e.target.value||0);save();render()});
   $("useTrim").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.useTrim=b.dataset.v;save();render()});
   $("cap").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.cap=+b.dataset.v;save();render()});
-  $("prov").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.prov=b.dataset.v;save();render()});
+  $("nr").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.nr=b.dataset.v;save();render()});
   prepRules(); SB0=scoreRules(); render();
 }
 // keep the sticky offsets in step with the real heights of the settings bar and a section title

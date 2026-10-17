@@ -383,6 +383,8 @@
      later; dashed outline for a few days after a report. Risk line = a
      position-sizing guide, not a sell signal. */
   .tag.earn{ background:var(--surface-raised); color:var(--text-muted); border:1px solid var(--border); }
+  /* Combo flag (2026-10-17): 12-month winner + uptrend + near 52-wk high. See generate_dashboard_data.compute_combo(). */
+  .combo-tag{ display:inline-block; font:700 10px 'IBM Plex Mono',monospace; letter-spacing:.03em; color:var(--bg); background:var(--gold); border-radius:4px; padding:1px 5px; margin-left:6px; vertical-align:2px; white-space:nowrap; cursor:help; }
   .tag.earn.soon{ background:var(--watch-dim); color:var(--watch); border-color:transparent; }
   .tag.earn.urgent{ background:var(--sell-dim); color:var(--sell); border-color:transparent; }
   .tag.earn.reported{ background:transparent; color:var(--watch); border:1px dashed currentColor; }
@@ -631,7 +633,7 @@
 <nav class="tabs" id="tabs" role="tablist" aria-label="Categories"></nav>
 
 <div class="search-wrap">
-  <input type="text" id="searchBox" class="search-box" placeholder="Search by ticker or name&hellip;" autocomplete="off">
+  <input type="text" id="searchBox" class="search-box" placeholder="Search by ticker or name, or type combo&hellip;" autocomplete="off">
 </div>
 
 <main id="main">
@@ -904,6 +906,12 @@ function riskLineHTML(s, isHolding) {
       </div>`;
 }
 
+// Combo flag tag (2026-10-17). Type "combo" in the search box to list only these.
+function comboTag(s) {
+  const c = s && s.combo;
+  return c ? `<span class="combo-tag" title="12-month winner (#${c.rank} of the top 60 by 12-1 month gain, ${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend (above its 200-day average, 50-day above 200-day) and ${c.offHigh}% from its 52-week high. Best rule in the 5-year Bursa backtest: +2.8% vs the average stock over 3 months, +6.4% over 6. Not a guarantee.">&#9733; COMBO</span>` : '';
+}
+
 function cardHTML(s, cat) {
   const trendClass = histogramTrendClass(s.histogramTrend);
   const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
@@ -911,10 +919,10 @@ function cardHTML(s, cat) {
   const priceRow = entries.length ? `<div class="price-row">${entries.join('')}</div>` : '';
 
   return `
-    <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" tabindex="0" role="button" aria-expanded="false">
+    <div class="card ${cat} expandable" data-ticker="${s.ticker.toLowerCase()}" data-name="${(s.name || '').toLowerCase()}" data-combo="${s.combo ? 1 : 0}" tabindex="0" role="button" aria-expanded="false">
       <div class="card-top">
         <div>
-          <span class="ticker">${s.ticker.replace('.KL','')}</span>${window.Valuation ? Valuation.bestTag(s.ticker) + Valuation.button(s.ticker) : ''}
+          <span class="ticker">${s.ticker.replace('.KL','')}</span>${comboTag(s)}${window.Valuation ? Valuation.bestTag(s.ticker) + Valuation.button(s.ticker) : ''}
           <span class="name">${s.name || ''}</span>
         </div>
         <div>
@@ -1759,7 +1767,8 @@ function applySearchFilter() {
   const cards = activePanel.querySelectorAll('.card[data-ticker]');
   let visibleCount = 0;
   cards.forEach(card => {
-    const matches = !query || card.dataset.ticker.includes(query) || card.dataset.name.includes(query);
+    const matches = !query || card.dataset.ticker.includes(query) || card.dataset.name.includes(query)
+      || (query === 'combo' && card.dataset.combo === '1');
     card.style.display = matches ? '' : 'none';
     if (matches) visibleCount++;
   });

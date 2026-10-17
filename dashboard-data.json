@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-17T19:39:40",
+  "generatedAt": "2026-10-17T21:28:32",
   "universeCount": 350,
   "buy": [
     {
@@ -29,6 +29,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2011-05-11",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.919,
         "bbLower": 7.238,
@@ -74,6 +75,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.141,
         "bbLower": 0.121,
@@ -119,6 +121,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-05-20",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.093,
         "bbLower": 2.0,
@@ -164,6 +167,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.231,
         "bbLower": 0.201,
@@ -209,6 +213,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.784,
         "bbLower": 4.543,
@@ -254,6 +259,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 35,
+        "mom12": 58.1,
+        "offHigh": -4.1
+      },
       "detail": {
         "ema40": 2.18,
         "bbLower": 2.078,
@@ -299,6 +309,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-05-24",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.672,
         "bbLower": 1.529,
@@ -344,6 +355,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.837,
         "bbLower": 0.782,
@@ -389,6 +401,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.838,
         "bbLower": 1.768,
@@ -434,6 +447,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.768,
         "bbLower": 0.741,
@@ -479,6 +493,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.351,
         "bbLower": 0.329,
@@ -524,6 +539,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-11",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.296,
         "bbLower": 1.172,
@@ -569,6 +585,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.332,
         "bbLower": 1.278,
@@ -614,6 +631,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2020-02-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.241,
         "bbLower": 0.008,
@@ -659,6 +677,11 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 17,
+        "mom12": 91.9,
+        "offHigh": 0.0
+      },
       "detail": {
         "ema40": 0.189,
         "bbLower": 0.157,
@@ -704,6 +727,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.367,
         "bbLower": 1.335,
@@ -749,6 +773,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-24",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 55,
+        "mom12": 33.7,
+        "offHigh": -9.0
+      },
       "detail": {
         "ema40": 7.632,
         "bbLower": 7.37,
@@ -794,6 +823,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.095,
         "bbLower": 0.087,
@@ -839,6 +869,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.475,
         "bbLower": 7.244,
@@ -884,6 +915,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2017-02-15",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 14.243,
         "bbLower": 12.75,
@@ -931,6 +963,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.342,
         "bbLower": 0.329,
@@ -976,6 +1009,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.281,
         "bbLower": 0.229,
@@ -1021,6 +1055,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.368,
         "bbLower": 0.268,
@@ -1066,6 +1101,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-02-10",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.065,
         "bbLower": 1.006,
@@ -1111,6 +1147,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 30,
+        "mom12": 76.7,
+        "offHigh": -5.8
+      },
       "detail": {
         "ema40": 0.53,
         "bbLower": 0.495,
@@ -1156,6 +1197,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.389,
         "bbLower": 0.366,
@@ -1201,6 +1243,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.398,
         "bbLower": 4.865,
@@ -1246,6 +1289,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.67,
         "bbLower": 0.264,
@@ -1291,6 +1335,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.379,
         "bbLower": 0.287,
@@ -1336,6 +1381,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.271,
         "bbLower": 0.237,
@@ -1381,6 +1427,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.793,
         "bbLower": 0.794,
@@ -1426,6 +1473,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 31,
+        "mom12": 76.3,
+        "offHigh": -7.0
+      },
       "detail": {
         "ema40": 1.198,
         "bbLower": 0.941,
@@ -1471,6 +1523,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -1516,6 +1569,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -1561,6 +1615,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -1606,6 +1661,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -1651,6 +1707,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.7,
         "bbLower": 2.601,
@@ -1696,6 +1753,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.448,
         "bbLower": 2.311,
@@ -1741,6 +1799,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.209,
         "bbLower": 0.189,
@@ -1786,6 +1845,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.563,
         "bbLower": 0.554,
@@ -1833,6 +1893,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.927,
         "bbLower": 0.876,
@@ -1878,6 +1939,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.171,
         "bbLower": 0.151,
@@ -1923,6 +1985,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.266,
         "bbLower": 0.205,
@@ -1968,6 +2031,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.16,
         "bbLower": 0.145,
@@ -2013,6 +2077,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-02-18",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.357,
         "bbLower": 0.338,
@@ -2058,6 +2123,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.236,
         "bbLower": 0.222,
@@ -2103,6 +2169,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.159,
         "bbLower": 0.144,
@@ -2148,6 +2215,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.169,
         "bbLower": 0.158,
@@ -2193,6 +2261,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.26,
         "bbLower": 1.076,
@@ -2238,6 +2307,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.431,
         "bbLower": 0.401,
@@ -2283,6 +2353,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.094,
         "bbLower": 0.082,
@@ -2328,6 +2399,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.978,
         "bbLower": 0.856,
@@ -2373,6 +2445,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 30.434,
         "bbLower": 28.787,
@@ -2418,6 +2491,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.401,
         "bbLower": 0.38,
@@ -2463,6 +2537,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.263,
         "bbLower": 0.237,
@@ -2508,6 +2583,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.137,
         "bbLower": 0.132,
@@ -2553,6 +2629,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.543,
         "bbLower": 0.498,
@@ -2598,6 +2675,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.601,
         "bbLower": 0.521,
@@ -2643,6 +2721,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.205,
         "bbLower": 0.191,
@@ -2688,6 +2767,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.592,
         "bbLower": 0.473,
@@ -2735,6 +2815,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.487,
         "bbLower": 0.465,
@@ -2780,6 +2861,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.777,
         "bbLower": 3.698,
@@ -2825,6 +2907,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.035,
         "bbLower": 0.031,
@@ -2870,6 +2953,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.295,
         "bbLower": 0.279,
@@ -2915,6 +2999,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.19,
         "bbLower": 0.175,
@@ -2960,6 +3045,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.744,
         "bbLower": 0.733,
@@ -3005,6 +3091,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.205,
         "bbLower": 0.191,
@@ -3050,6 +3137,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 57,
+        "mom12": 32.9,
+        "offHigh": -5.7
+      },
       "detail": {
         "ema40": 0.369,
         "bbLower": 0.361,
@@ -3095,6 +3187,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.058,
         "bbLower": 0.051,
@@ -3140,6 +3233,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.34,
         "bbLower": 0.322,
@@ -3185,6 +3279,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.208,
         "bbLower": 0.198,
@@ -3230,6 +3325,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.185,
         "bbLower": 0.168,
@@ -3275,6 +3371,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.303,
         "bbLower": 0.297,
@@ -3320,6 +3417,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.623,
         "bbLower": 0.61,
@@ -3365,6 +3463,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.515,
         "bbLower": 0.492,
@@ -3410,6 +3509,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.563,
         "bbLower": 0.554,
@@ -3455,6 +3555,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.785,
         "bbLower": 1.752,
@@ -3500,6 +3601,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.137,
         "bbLower": 0.132,
@@ -3545,6 +3647,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.13,
         "bbLower": 0.126,
@@ -3590,6 +3693,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.633,
         "bbLower": 0.586,
@@ -3635,6 +3739,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.927,
         "bbLower": 0.876,
@@ -3680,6 +3785,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.281,
         "bbLower": 0.229,
@@ -3725,6 +3831,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.157,
         "bbLower": 0.152,
@@ -3770,6 +3877,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-07-30",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 12,
+        "mom12": 116.0,
+        "offHigh": -5.7
+      },
       "detail": {
         "ema40": 9.922,
         "bbLower": 9.379,
@@ -3815,6 +3927,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.351,
         "bbLower": 0.329,
@@ -3860,6 +3973,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.199,
         "bbLower": 2.05,
@@ -3905,6 +4019,11 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 17,
+        "mom12": 91.9,
+        "offHigh": 0.0
+      },
       "detail": {
         "ema40": 0.189,
         "bbLower": 0.157,
@@ -3950,6 +4069,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.431,
         "bbLower": 0.401,
@@ -3995,6 +4115,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.322,
         "bbLower": 0.293,
@@ -4040,6 +4161,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.105,
         "bbLower": 0.097,
@@ -4085,6 +4207,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.307,
         "bbLower": 0.284,
@@ -4130,6 +4253,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 5,
+        "mom12": 200.0,
+        "offHigh": -3.8
+      },
       "detail": {
         "ema40": 0.623,
         "bbLower": 0.627,
@@ -4175,6 +4303,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.117,
         "bbLower": 0.11,
@@ -4220,6 +4349,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 30,
+        "mom12": 76.7,
+        "offHigh": -5.8
+      },
       "detail": {
         "ema40": 0.53,
         "bbLower": 0.495,
@@ -4265,6 +4399,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-05",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.038,
         "bbLower": 4.899,
@@ -4310,6 +4445,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2020-02-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.241,
         "bbLower": 0.008,
@@ -4355,6 +4491,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.708,
         "bbLower": 0.631,
@@ -4400,6 +4537,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.225,
         "bbLower": 0.221,
@@ -4445,6 +4583,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-20",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 39,
+        "mom12": 51.3,
+        "offHigh": -8.9
+      },
       "detail": {
         "ema40": 8.606,
         "bbLower": 8.33,
@@ -4490,6 +4633,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.505,
         "bbLower": 0.495,
@@ -4535,6 +4679,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.256,
         "bbLower": 0.246,
@@ -4580,6 +4725,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.578,
         "bbLower": 2.45,
@@ -4625,6 +4771,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.738,
         "bbLower": 0.665,
@@ -4670,6 +4817,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.612,
         "bbLower": 1.452,
@@ -4715,6 +4863,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.437,
         "bbLower": 0.415,
@@ -4760,6 +4909,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.227,
         "bbLower": 0.206,
@@ -4805,6 +4955,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.147,
         "bbLower": 0.122,
@@ -4850,6 +5001,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.135,
         "bbLower": 0.123,
@@ -4895,6 +5047,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.412,
         "bbLower": 0.382,
@@ -4940,6 +5093,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.475,
         "bbLower": 0.434,
@@ -4985,6 +5139,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.185,
         "bbLower": 0.158,
@@ -5030,6 +5185,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.074,
         "bbLower": 0.067,
@@ -5075,6 +5231,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.392,
         "bbLower": 0.377,
@@ -5120,6 +5277,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.401,
         "bbLower": 0.38,
@@ -5165,6 +5323,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-11-21",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 54,
+        "mom12": 34.3,
+        "offHigh": -8.5
+      },
       "detail": {
         "ema40": 0.587,
         "bbLower": 0.538,
@@ -5210,6 +5373,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.428,
         "bbLower": 0.401,
@@ -5255,6 +5419,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.361,
         "bbLower": 0.357,
@@ -5300,6 +5465,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.172,
         "bbLower": 0.146,
@@ -5345,6 +5511,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.32,
         "bbLower": 0.285,
@@ -5390,6 +5557,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.594,
         "bbLower": 2.452,
@@ -5435,6 +5603,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.114,
         "bbLower": 0.098,
@@ -5480,6 +5649,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.397,
         "bbLower": 0.372,
@@ -5525,6 +5695,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.208,
         "bbLower": 0.194,
@@ -5570,6 +5741,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.745,
         "bbLower": 3.609,
@@ -5615,6 +5787,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 19,
+        "mom12": 89.7,
+        "offHigh": -3.3
+      },
       "detail": {
         "ema40": 1.113,
         "bbLower": 1.14,
@@ -5660,6 +5837,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.244,
         "bbLower": 0.235,
@@ -5705,6 +5883,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.51,
         "bbLower": 0.493,
@@ -5750,6 +5929,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-08-29",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.462,
         "bbLower": 2.395,
@@ -5795,6 +5975,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.7,
         "bbLower": 2.601,
@@ -5840,6 +6021,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.251,
         "bbLower": 0.234,
@@ -5885,6 +6067,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.288,
         "bbLower": 0.265,
@@ -5930,6 +6113,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.627,
         "bbLower": 0.572,
@@ -5975,6 +6159,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.448,
         "bbLower": 2.311,
@@ -6020,6 +6205,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.47,
         "bbLower": 0.463,
@@ -6065,6 +6251,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.771,
         "bbLower": 0.731,
@@ -6110,6 +6297,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.862,
         "bbLower": 0.859,
@@ -6155,6 +6343,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 31,
+        "mom12": 76.3,
+        "offHigh": -7.0
+      },
       "detail": {
         "ema40": 1.198,
         "bbLower": 0.941,
@@ -6200,6 +6393,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.891,
         "bbLower": 0.872,
@@ -6245,6 +6439,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.187,
         "bbLower": 0.154,
@@ -6290,6 +6485,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 15,
+        "mom12": 99.5,
+        "offHigh": -4.5
+      },
       "detail": {
         "ema40": 3.718,
         "bbLower": 3.728,
@@ -6335,6 +6535,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 7,
+        "mom12": 152.1,
+        "offHigh": -9.0
+      },
       "detail": {
         "ema40": 0.964,
         "bbLower": 0.799,
@@ -6380,6 +6585,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.236,
         "bbLower": 0.229,
@@ -6425,6 +6631,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 40,
+        "mom12": 50.6,
+        "offHigh": -1.6
+      },
       "detail": {
         "ema40": 0.612,
         "bbLower": 0.586,
@@ -6470,6 +6681,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.513,
         "bbLower": 0.474,
@@ -6515,6 +6727,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.282,
         "bbLower": 0.239,
@@ -6560,6 +6773,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.266,
         "bbLower": 0.205,
@@ -6605,6 +6819,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.294,
         "bbLower": 0.276,
@@ -6650,6 +6865,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.41,
         "bbLower": 0.397,
@@ -6695,6 +6911,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.515,
         "bbLower": 0.474,
@@ -6740,6 +6957,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.251,
         "bbLower": 0.224,
@@ -6785,6 +7003,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.383,
         "bbLower": 0.361,
@@ -6830,6 +7049,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.676,
         "bbLower": 0.629,
@@ -6875,6 +7095,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -6920,6 +7141,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -6965,6 +7187,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -7010,6 +7233,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.681,
         "bbLower": 1.534,
@@ -7055,6 +7279,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.168,
         "bbLower": 0.165,
@@ -7100,6 +7325,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.365,
         "bbLower": 0.306,
@@ -7145,6 +7371,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.236,
         "bbLower": 0.222,
@@ -7190,6 +7417,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-21",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.776,
         "bbLower": 1.625,
@@ -7235,6 +7463,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.592,
         "bbLower": 0.473,
@@ -7280,6 +7509,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.249,
         "bbLower": 0.224,
@@ -7325,6 +7555,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 24,
+        "mom12": 82.7,
+        "offHigh": -6.1
+      },
       "detail": {
         "ema40": 0.884,
         "bbLower": 0.867,
@@ -7370,6 +7605,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.677,
         "bbLower": 0.635,
@@ -7415,6 +7651,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.483,
         "bbLower": 0.413,
@@ -7460,6 +7697,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.485,
         "bbLower": 0.455,
@@ -7505,6 +7743,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.368,
         "bbLower": 0.268,
@@ -7550,6 +7789,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.171,
         "bbLower": 0.151,
@@ -7595,6 +7835,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.094,
         "bbLower": 0.082,
@@ -7640,6 +7881,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.273,
         "bbLower": 0.263,
@@ -7685,6 +7927,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.342,
         "bbLower": 0.329,
@@ -7730,6 +7973,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.358,
         "bbLower": 0.344,
@@ -7775,6 +8019,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.159,
         "bbLower": 0.144,
@@ -7820,6 +8065,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.18,
         "bbLower": 0.17,
@@ -7865,6 +8111,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.342,
         "bbLower": 2.118,
@@ -7910,6 +8157,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.134,
         "bbLower": 1.063,
@@ -7955,6 +8203,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.978,
         "bbLower": 0.856,
@@ -8000,6 +8249,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.976,
         "bbLower": 0.96,
@@ -8045,6 +8295,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.975,
         "bbLower": 0.995,
@@ -8090,6 +8341,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.907,
         "bbLower": 0.913,
@@ -8135,6 +8387,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.263,
         "bbLower": 0.237,
@@ -8180,6 +8433,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.431,
         "bbLower": 0.391,
@@ -8225,6 +8479,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.169,
         "bbLower": 0.158,
@@ -8270,6 +8525,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.369,
         "bbLower": 0.339,
@@ -8315,6 +8571,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.259,
         "bbLower": 0.223,
@@ -8360,6 +8617,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.336,
         "bbLower": 0.297,
@@ -8405,6 +8663,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.369,
         "bbLower": 0.32,
@@ -8450,6 +8709,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.519,
         "bbLower": 0.499,
@@ -8495,6 +8755,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.699,
         "bbLower": 0.703,
@@ -8540,6 +8801,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.16,
         "bbLower": 1.127,
@@ -8585,6 +8847,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.153,
         "bbLower": 0.143,
@@ -8630,6 +8893,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.9,
         "bbLower": 0.879,
@@ -8675,6 +8939,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 51,
+        "mom12": 38.7,
+        "offHigh": -1.9
+      },
       "detail": {
         "ema40": 0.777,
         "bbLower": 0.758,
@@ -8720,6 +8989,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.175,
         "bbLower": 0.161,
@@ -8765,6 +9035,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.086,
         "bbLower": 1.017,
@@ -8810,6 +9081,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 29,
+        "mom12": 78.0,
+        "offHigh": -2.9
+      },
       "detail": {
         "ema40": 0.666,
         "bbLower": 0.638,
@@ -8855,6 +9131,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.389,
         "bbLower": 0.366,
@@ -8900,6 +9177,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.214,
         "bbLower": 0.206,
@@ -8945,6 +9223,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.195,
         "bbLower": 0.181,
@@ -8990,6 +9269,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.636,
         "bbLower": 0.634,
@@ -9035,6 +9315,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.238,
         "bbLower": 0.222,
@@ -9080,6 +9361,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.923,
         "bbLower": 0.871,
@@ -9125,6 +9407,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.998,
         "bbLower": 0.995,
@@ -9170,6 +9453,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.993,
         "bbLower": 0.903,
@@ -9215,6 +9499,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.993,
         "bbLower": 0.903,
@@ -9260,6 +9545,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.993,
         "bbLower": 0.903,
@@ -9305,6 +9591,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.993,
         "bbLower": 0.903,
@@ -9350,6 +9637,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.234,
         "bbLower": 0.227,
@@ -9395,6 +9683,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.432,
         "bbLower": 0.412,
@@ -9440,6 +9729,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.095,
         "bbLower": 0.087,
@@ -9485,6 +9775,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.617,
         "bbLower": 1.467,
@@ -9530,6 +9821,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.391,
         "bbLower": 0.354,
@@ -9575,6 +9867,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.753,
         "bbLower": 0.671,
@@ -9620,6 +9913,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.387,
         "bbLower": 0.355,
@@ -9665,6 +9959,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.238,
         "bbLower": 0.201,
@@ -9710,6 +10005,11 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 2,
+        "mom12": 318.9,
+        "offHigh": -2.5
+      },
       "detail": {
         "ema40": 0.679,
         "bbLower": 0.552,
@@ -9755,6 +10055,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.644,
         "bbLower": 0.624,
@@ -9800,6 +10101,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.216,
         "bbLower": 0.2,
@@ -9845,6 +10147,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.196,
         "bbLower": 0.184,
@@ -9890,6 +10193,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.146,
         "bbLower": 0.126,
@@ -9935,6 +10239,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.8,
         "bbLower": 0.788,
@@ -9980,6 +10285,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.252,
         "bbLower": 0.225,
@@ -10025,6 +10331,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.474,
         "bbLower": 0.393,
@@ -10070,6 +10377,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.199,
         "bbLower": 0.19,
@@ -10115,6 +10423,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.601,
         "bbLower": 0.521,
@@ -10160,6 +10469,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.033,
         "bbLower": 1.836,
@@ -10205,6 +10515,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.26,
         "bbLower": 1.076,
@@ -10250,6 +10561,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.273,
         "bbLower": 0.274,
@@ -10295,6 +10607,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.141,
         "bbLower": 0.121,
@@ -10340,6 +10653,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.319,
         "bbLower": 0.267,
@@ -10385,6 +10699,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.138,
         "bbLower": 0.131,
@@ -10430,6 +10745,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.608,
         "bbLower": 0.608,
@@ -10475,6 +10791,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.793,
         "bbLower": 0.794,
@@ -10520,6 +10837,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.284,
         "bbLower": 1.271,
@@ -10565,6 +10883,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.235,
         "bbLower": 0.208,
@@ -10610,6 +10929,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.445,
         "bbLower": 0.411,
@@ -10655,6 +10975,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.428,
         "bbLower": 0.396,
@@ -10700,6 +11021,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.209,
         "bbLower": 0.189,
@@ -10745,6 +11067,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.38,
         "bbLower": 0.374,
@@ -10790,6 +11113,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.455,
         "bbLower": 0.424,
@@ -10835,6 +11159,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.271,
         "bbLower": 0.237,
@@ -10880,6 +11205,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.889,
         "bbLower": 0.853,
@@ -10925,6 +11251,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.67,
         "bbLower": 0.264,
@@ -10970,6 +11297,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.337,
         "bbLower": 0.316,
@@ -11015,6 +11343,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.208,
         "bbLower": 0.191,
@@ -11060,6 +11389,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.716,
         "bbLower": 0.684,
@@ -11105,6 +11435,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-18",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 6.542,
         "bbLower": 6.052,
@@ -11150,6 +11481,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.612,
         "bbLower": 7.111,
@@ -11195,6 +11527,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.715,
         "bbLower": 6.988,
@@ -11240,6 +11573,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 10.107,
         "bbLower": 9.787,
@@ -11285,6 +11619,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 20.835,
         "bbLower": 19.535,
@@ -11330,6 +11665,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.784,
         "bbLower": 4.543,
@@ -11375,6 +11711,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 20.069,
         "bbLower": 18.753,
@@ -11420,6 +11757,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 10.475,
         "bbLower": 10.054,
@@ -11465,6 +11803,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2025-05-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.624,
         "bbLower": 4.474,
@@ -11510,6 +11849,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.37,
         "bbLower": 5.22,
@@ -11555,6 +11895,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.475,
         "bbLower": 7.244,
@@ -11600,6 +11941,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.19,
         "bbLower": 0.138,
@@ -11645,6 +11987,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-24",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 21.561,
         "bbLower": 19.787,
@@ -11690,6 +12033,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.724,
         "bbLower": 4.439,
@@ -11735,6 +12079,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.706,
         "bbLower": 1.645,
@@ -11780,6 +12125,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 30.434,
         "bbLower": 28.787,
@@ -11825,6 +12171,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.454,
         "bbLower": 3.077,
@@ -11870,6 +12217,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2024-02-29",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.853,
         "bbLower": 1.378,
@@ -11915,6 +12263,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.268,
         "bbLower": 0.249,
@@ -11960,6 +12309,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2017-02-15",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 14.243,
         "bbLower": 12.75,
@@ -12005,6 +12355,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.25,
         "bbLower": 0.25,
@@ -12050,6 +12401,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 22.804,
         "bbLower": 19.27,
@@ -12095,6 +12447,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.683,
         "bbLower": 5.28,
@@ -12140,6 +12493,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2011-05-11",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.919,
         "bbLower": 7.238,
@@ -12185,6 +12539,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-02-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.402,
         "bbLower": 2.393,
@@ -12230,6 +12585,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.269,
         "bbLower": 3.113,
@@ -12275,6 +12631,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.477,
         "bbLower": 0.438,
@@ -12320,6 +12677,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.182,
         "bbLower": 1.992,
@@ -12365,6 +12723,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-02-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.504,
         "bbLower": 1.222,
@@ -12410,6 +12769,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.149,
         "bbLower": 0.141,
@@ -12455,6 +12815,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.69,
         "bbLower": 3.594,
@@ -12500,6 +12861,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2025-02-25",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.843,
         "bbLower": 7.751,
@@ -12545,6 +12907,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.709,
         "bbLower": 2.556,
@@ -12590,6 +12953,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2017-02-23",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.335,
         "bbLower": 4.022,
@@ -12635,6 +12999,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.758,
         "bbLower": 0.728,
@@ -12680,6 +13045,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 34,
+        "mom12": 59.2,
+        "offHigh": -9.4
+      },
       "detail": {
         "ema40": 5.833,
         "bbLower": 5.608,
@@ -12725,6 +13095,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.71,
         "bbLower": 2.521,
@@ -12770,6 +13141,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": "2025-06-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.703,
         "bbLower": 2.573,
@@ -12815,6 +13187,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.952,
         "bbLower": 3.8,
@@ -12860,6 +13233,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.724,
         "bbLower": 5.279,
@@ -12905,6 +13279,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.22,
         "bbLower": 5.111,
@@ -12950,6 +13325,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.809,
         "bbLower": 1.561,
@@ -12995,6 +13371,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.55,
         "bbLower": 1.475,
@@ -13040,6 +13417,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.229,
         "bbLower": 1.198,
@@ -13085,6 +13463,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2023-02-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.266,
         "bbLower": 0.204,
@@ -13130,6 +13509,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.775,
         "bbLower": 0.738,
@@ -13175,6 +13555,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.299,
         "bbLower": 1.191,
@@ -13220,6 +13601,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.616,
         "bbLower": 1.51,
@@ -13265,6 +13647,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.838,
         "bbLower": 1.768,
@@ -13310,6 +13693,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.987,
         "bbLower": 0.958,
@@ -13355,6 +13739,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.543,
         "bbLower": 0.498,
@@ -13400,6 +13785,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.16,
         "bbLower": 0.145,
@@ -13445,6 +13831,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.229,
         "bbLower": 0.201,
@@ -13490,6 +13877,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.5,
         "bbLower": 4.981,
@@ -13535,6 +13923,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.415,
         "bbLower": 4.084,
@@ -13580,6 +13969,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.456,
         "bbLower": 1.323,
@@ -13625,6 +14015,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2016-05-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.531,
         "bbLower": 0.446,
@@ -13670,6 +14061,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.775,
         "bbLower": 0.766,
@@ -13715,6 +14107,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2011-08-22",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.546,
         "bbLower": 0.494,
@@ -13760,6 +14153,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.654,
         "bbLower": 1.519,
@@ -13805,6 +14199,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-02-10",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.065,
         "bbLower": 1.006,
@@ -13850,6 +14245,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.89,
         "bbLower": 0.826,
@@ -13895,6 +14291,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-05-14",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.066,
         "bbLower": 2.003,
@@ -13940,6 +14337,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.571,
         "bbLower": 0.533,
@@ -13985,6 +14383,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-19",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.415,
         "bbLower": 4.045,
@@ -14030,6 +14429,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.738,
         "bbLower": 0.666,
@@ -14075,6 +14475,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-02-18",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.357,
         "bbLower": 0.338,
@@ -14120,6 +14521,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 35,
+        "mom12": 58.1,
+        "offHigh": -4.1
+      },
       "detail": {
         "ema40": 2.18,
         "bbLower": 2.078,
@@ -14165,6 +14571,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2024-11-25",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.087,
         "bbLower": 4.755,
@@ -14210,6 +14617,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.592,
         "bbLower": 4.129,
@@ -14255,6 +14663,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-05-07",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.588,
         "bbLower": 1.521,
@@ -14300,6 +14709,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.956,
         "bbLower": 7.664,
@@ -14345,6 +14755,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2024-10-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.762,
         "bbLower": 2.708,
@@ -14390,6 +14801,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 8.429,
         "bbLower": 7.87,
@@ -14435,6 +14847,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.117,
         "bbLower": 1.039,
@@ -14480,6 +14893,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2017-02-22",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.617,
         "bbLower": 0.427,
@@ -14525,6 +14939,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.231,
         "bbLower": 0.201,
@@ -14570,6 +14985,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-07-23",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 58,
+        "mom12": 32.7,
+        "offHigh": -4.1
+      },
       "detail": {
         "ema40": 6.74,
         "bbLower": 6.615,
@@ -14615,6 +15035,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-02-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.495,
         "bbLower": 3.184,
@@ -14660,6 +15081,7 @@
       "earningsQuarterEnd": "2026-08-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.142,
         "bbLower": 0.13,
@@ -14705,6 +15127,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.066,
         "bbLower": 1.991,
@@ -14750,6 +15173,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-24",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 55,
+        "mom12": 33.7,
+        "offHigh": -9.0
+      },
       "detail": {
         "ema40": 7.632,
         "bbLower": 7.37,
@@ -14795,6 +15223,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-05-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.792,
         "bbLower": 0.748,
@@ -14840,6 +15269,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 44,
+        "mom12": 44.6,
+        "offHigh": -6.8
+      },
       "detail": {
         "ema40": 2.983,
         "bbLower": 3.133,
@@ -14885,6 +15319,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.009,
         "bbLower": 2.881,
@@ -14930,6 +15365,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.409,
         "bbLower": 0.379,
@@ -14975,6 +15411,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-11",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 6.174,
         "bbLower": 5.778,
@@ -15020,6 +15457,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 13,
+        "mom12": 107.4,
+        "offHigh": -7.4
+      },
       "detail": {
         "ema40": 5.919,
         "bbLower": 4.883,
@@ -15065,6 +15507,11 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 38,
+        "mom12": 51.3,
+        "offHigh": -9.2
+      },
       "detail": {
         "ema40": 7.059,
         "bbLower": 6.189,
@@ -15110,6 +15557,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-11",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.296,
         "bbLower": 1.172,
@@ -15155,6 +15603,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.582,
         "bbLower": 0.425,
@@ -15200,6 +15649,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.768,
         "bbLower": 0.741,
@@ -15245,6 +15695,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.376,
         "bbLower": 0.359,
@@ -15290,6 +15741,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.914,
         "bbLower": 1.684,
@@ -15335,6 +15787,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.563,
         "bbLower": 4.329,
@@ -15380,6 +15833,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.39,
         "bbLower": 0.371,
@@ -15425,6 +15879,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.647,
         "bbLower": 0.634,
@@ -15470,6 +15925,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.227,
         "bbLower": 0.206,
@@ -15515,6 +15971,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.832,
         "bbLower": 1.657,
@@ -15560,6 +16017,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-17",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.249,
         "bbLower": 3.01,
@@ -15605,6 +16063,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 4,
+        "mom12": 276.1,
+        "offHigh": 0.0
+      },
       "detail": {
         "ema40": 2.573,
         "bbLower": 2.473,
@@ -15650,6 +16113,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.77,
         "bbLower": 2.524,
@@ -15695,6 +16159,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.354,
         "bbLower": 0.325,
@@ -15740,6 +16205,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.806,
         "bbLower": 1.678,
@@ -15785,6 +16251,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.72,
         "bbLower": 0.667,
@@ -15830,6 +16297,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 13.226,
         "bbLower": 12.747,
@@ -15875,6 +16343,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.811,
         "bbLower": 2.538,
@@ -15920,6 +16389,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.948,
         "bbLower": 2.741,
@@ -15965,6 +16435,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.884,
         "bbLower": 0.818,
@@ -16010,6 +16481,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-03-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.798,
         "bbLower": 4.716,
@@ -16055,6 +16527,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-05-20",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.093,
         "bbLower": 2.0,
@@ -16100,6 +16573,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.379,
         "bbLower": 0.287,
@@ -16145,6 +16619,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.303,
         "bbLower": 2.214,
@@ -16190,6 +16665,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 22,
+        "mom12": 83.9,
+        "offHigh": 0.0
+      },
       "detail": {
         "ema40": 1.131,
         "bbLower": 1.044,
@@ -16235,6 +16715,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 19.547,
         "bbLower": 18.732,
@@ -16280,6 +16761,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 21.903,
         "bbLower": 20.921,
@@ -16325,6 +16807,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-18",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.657,
         "bbLower": 2.39,
@@ -16370,6 +16853,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.783,
         "bbLower": 4.671,
@@ -16415,6 +16899,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-14",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.547,
         "bbLower": 3.457,
@@ -16460,6 +16945,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2025-02-25",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 17.335,
         "bbLower": 17.01,
@@ -16505,6 +16991,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 18,
+        "mom12": 91.5,
+        "offHigh": -1.0
+      },
       "detail": {
         "ema40": 1.972,
         "bbLower": 1.954,
@@ -16550,6 +17041,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.806,
         "bbLower": 2.636,
@@ -16595,6 +17087,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.432,
         "bbLower": 5.245,
@@ -16640,6 +17133,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-05-24",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.672,
         "bbLower": 1.529,
@@ -16685,6 +17179,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-14",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.63,
         "bbLower": 2.462,
@@ -16730,6 +17225,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.204,
         "bbLower": 1.887,
@@ -16775,6 +17271,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.571,
         "bbLower": 0.513,
@@ -16820,6 +17317,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.591,
         "bbLower": 1.45,
@@ -16865,6 +17363,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.504,
         "bbLower": 1.402,
@@ -16910,6 +17409,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.109,
         "bbLower": 1.0,
@@ -16955,6 +17455,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.889,
         "bbLower": 3.75,
@@ -17000,6 +17501,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.581,
         "bbLower": 1.441,
@@ -17045,6 +17547,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.332,
         "bbLower": 1.278,
@@ -17090,6 +17593,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.571,
         "bbLower": 2.434,
@@ -17135,6 +17639,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.524,
         "bbLower": 3.448,
@@ -17180,6 +17685,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.392,
         "bbLower": 0.375,
@@ -17225,6 +17731,11 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-10-06",
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 48,
+        "mom12": 40.6,
+        "offHigh": -1.1
+      },
       "detail": {
         "ema40": 0.776,
         "bbLower": 0.683,
@@ -17270,6 +17781,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.93,
         "bbLower": 0.864,
@@ -17315,6 +17827,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.287,
         "bbLower": 1.271,
@@ -17360,6 +17873,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.367,
         "bbLower": 1.335,
@@ -17405,6 +17919,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.15,
         "bbLower": 1.104,
@@ -17450,6 +17965,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.341,
         "bbLower": 0.332,
@@ -17495,6 +18011,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.398,
         "bbLower": 4.865,
@@ -17540,6 +18057,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2023-05-23",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.273,
         "bbLower": 3.28,
@@ -17585,6 +18103,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.099,
         "bbLower": 0.096,
@@ -17630,6 +18149,11 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": {
+        "rank": 1,
+        "mom12": 761.5,
+        "offHigh": -0.7
+      },
       "detail": {
         "ema40": 0.57,
         "bbLower": 0.55,
@@ -17675,6 +18199,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.471,
         "bbLower": 2.298,
@@ -17720,6 +18245,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.487,
         "bbLower": 0.492,
@@ -17765,6 +18291,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.238,
         "bbLower": 0.21,
@@ -17810,6 +18337,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.202,
         "bbLower": 0.187,
@@ -17855,6 +18383,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.837,
         "bbLower": 0.782,
@@ -17900,6 +18429,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.106,
         "bbLower": 1.065,
@@ -17945,6 +18475,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2017-05-16",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.939,
         "bbLower": 1.829,
@@ -17990,6 +18521,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.687,
         "bbLower": 0.658,
@@ -18035,6 +18567,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.869,
         "bbLower": 0.862,
@@ -18080,6 +18613,7 @@
       "earningsQuarterEnd": "2026-10-31",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.933,
         "bbLower": 1.815,
@@ -18125,6 +18659,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.679,
         "bbLower": 0.654,
@@ -18170,6 +18705,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.069,
         "bbLower": 0.052,
@@ -18215,6 +18751,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.427,
         "bbLower": 0.325,
@@ -18260,6 +18797,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.47,
         "bbLower": 6.788,
@@ -18305,6 +18843,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.179,
         "bbLower": 0.168,
@@ -18350,6 +18889,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.75,
         "bbLower": 1.667,
@@ -18395,6 +18935,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.278,
         "bbLower": 1.076,
@@ -18440,6 +18981,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.503,
         "bbLower": 0.411,
@@ -18487,6 +19029,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.412,
         "bbLower": 0.382,
@@ -18538,6 +19081,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.392,
         "bbLower": 0.377,
@@ -18589,6 +19133,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.361,
         "bbLower": 0.357,
@@ -18640,6 +19185,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.249,
         "bbLower": 0.224,
@@ -18691,6 +19237,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.998,
         "bbLower": 0.995,
@@ -18742,6 +19289,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.612,
         "bbLower": 7.111,
@@ -18793,6 +19341,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 7.715,
         "bbLower": 6.988,
@@ -18844,6 +19393,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 10.107,
         "bbLower": 9.787,
@@ -18895,6 +19445,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.784,
         "bbLower": 4.543,
@@ -18946,6 +19497,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.724,
         "bbLower": 4.439,
@@ -18997,6 +19549,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 3.269,
         "bbLower": 3.113,
@@ -19048,6 +19601,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-27",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 5.724,
         "bbLower": 5.279,
@@ -19099,6 +19653,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.415,
         "bbLower": 4.084,
@@ -19150,6 +19705,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2025-05-07",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.588,
         "bbLower": 1.521,
@@ -19201,6 +19757,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2024-10-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 2.762,
         "bbLower": 2.708,
@@ -19252,6 +19809,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.117,
         "bbLower": 1.039,
@@ -19303,6 +19861,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.409,
         "bbLower": 0.379,
@@ -19354,6 +19913,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": "2026-08-28",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.914,
         "bbLower": 1.684,
@@ -19405,6 +19965,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2026-03-26",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 4.798,
         "bbLower": 4.716,
@@ -19456,6 +20017,7 @@
       "earningsQuarterEnd": "2026-09-30",
       "lastEarningsDate": null,
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 0.571,
         "bbLower": 0.513,
@@ -19507,6 +20069,7 @@
       "earningsQuarterEnd": null,
       "lastEarningsDate": "2017-05-16",
       "daysSinceEarnings": null,
+      "combo": null,
       "detail": {
         "ema40": 1.939,
         "bbLower": 1.829,
@@ -19584,5 +20147,13 @@
         "notes": "Sell at a loss"
       }
     ]
+  },
+  "comboMeta": {
+    "available": true,
+    "topN": 60,
+    "minValueMYR": 200000,
+    "maxOffHighPct": -10.0,
+    "eligible": 218,
+    "count": 28
   }
 }
