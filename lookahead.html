@@ -101,6 +101,12 @@
   .lasting p b{color:var(--ink)}
   .lasting table td:first-child{white-space:normal;min-width:200px}
   .lasting tr.hl td{background:var(--amber-soft)}
+  .lasting tr.sub td{font:600 10px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--amber);padding-top:14px;border-bottom:1px solid var(--line);text-align:left}
+  .lasting tr.pf td:first-child{font-weight:600}
+  .lasting .mix{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0;font-size:12px;color:var(--ink-dim)}
+  .lasting .mix span b{color:var(--ink)}
+  .lasting .pfsay{margin:10px 0 0;padding:9px 12px;border-radius:9px;background:var(--panel-2);font-size:12.5px;color:var(--ink-dim)}
+  .lasting .pfsay b{color:var(--ink)}
   .plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
   .month{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
   .month h3{font:600 15px var(--font-display);letter-spacing:.01em}
@@ -340,17 +346,51 @@ function buildCombo(dash){
 const comboOf=t=>(ALL.get(t)||{}).combo||null;
 const cbTag=t=>{const c=comboOf(t);return c?`<span class="tag cb" title="★ Combo #${c.rank}: top 60 by 12-1 month gain (${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend, ${c.offHigh<0?Math.abs(c.offHigh)+"% below":"at"} its 52-week high">★ COMBO</span>`:""};
 const isDown=a=>{const d=a&&a.detail;if(!d||d.pctVsSma200==null||d.pctVsSma50==null)return false;return d.pctVsSma200<0&&d.pctVsSma200<d.pctVsSma50};
+/* Your portfolio against the same models (added 2026-10-19). Three rows:
+   1. basket: today's holdings, RM-weighted, run through the same 5-year test
+      (portfolioBacktest from generate_dashboard_data.py; hindsight, not your past trades)
+   2. estimate: each holding counted in the model group it is in today (downtrend first,
+      then combo, 12-month winner top 30, tracker Top 30), using that group's 5-year average
+   3. actual: RM-weighted trailing return of your holdings minus the median liquid stock */
+const GROUPS=[{k:"combo",l:"★ Combo",bt:0},{k:"m12",l:"12-month winners",bt:1},{k:"top30",l:"Top 30",bt:2},{k:"down",l:"Downtrend",bt:3}];
+function portfolioRows(){
+  const pf=(T.portfolio||[]).filter(h=>(h.marketValue||0)>0), tot=pf.reduce((s,h)=>s+h.marketValue,0);
+  if(!pf.length||!tot) return {rows:"",mix:"",say:""};
+  const top=topRowsAt(D.watch_dates.length-1);
+  const grp=h=>{const a=ALL.get(h.ticker)||h; if(isDown(a))return "down"; if(a.combo)return "combo"; if(a.mom12Rank&&a.mom12Rank<=30)return "m12"; if(top.has(h.ticker))return "top30"; return "none"};
+  const by={combo:[],m12:[],top30:[],down:[],none:[]}; for(const h of pf) by[grp(h)].push(h);
+  const share=k=>by[k].reduce((s,h)=>s+h.marketValue,0)/tot;
+  const est=[1,2,3].map(c=>GROUPS.reduce((s,g)=>s+share(g.k)*BT[g.bt][c],0));
+  const PB=T.portfolioBacktest, MR=T.marketRet||{};
+  const act=["m1","m3","m6"].map(k=>{const v=pf.filter(h=>(ALL.get(h.ticker)||h).ret&&(ALL.get(h.ticker)||h).ret[k]!=null);if(MR[k]==null||!v.length)return null;
+    const w=v.reduce((s,h)=>s+h.marketValue,0);return (v.reduce((s,h)=>s+h.marketValue*(ALL.get(h.ticker)||h).ret[k],0)/w-MR[k])/100});
+  const cell=v=>`<td class="${cls(v)}">${v==null?"–":spct(v)}</td>`;
+  let rows=`<tr class="sub"><td colspan="6">Your portfolio: ${pf.length} holdings, ${money(tot)}</td></tr>`;
+  rows+=PB&&PB.m6?`<tr class="pf"><td>Your holdings as one basket (weighted by RM), same 5-year test</td>${cell(PB.m1&&PB.m1.avg)}${cell(PB.m3&&PB.m3.avg)}${cell(PB.m6.avg)}<td>${pct(PB.m6.ahead,0)}</td><td>${PB.m3?`${PB.m3.yearsAhead} of ${PB.m3.years}`:"–"}</td></tr>`
+    :`<tr class="pf"><td>Your holdings as one basket, same 5-year test</td><td colspan="5" class="muted" style="text-align:left">needs backtest_prices.pkl next to the screener (from backtest_weights.py)</td></tr>`;
+  rows+=`<tr class="pf"><td>Your holdings today, by model group (estimate from the rows above)</td>${cell(est[0])}${cell(est[1])}${cell(est[2])}<td class="muted">–</td><td class="muted">–</td></tr>`;
+  rows+=act.some(v=>v!=null)?`<tr class="pf"><td>Your holdings, actual last 1 / 3 / 6 months vs the median liquid stock</td>${cell(act[0])}${cell(act[1])}${cell(act[2])}<td class="muted">–</td><td class="muted">–</td></tr>`
+    :`<tr class="pf"><td>Your holdings, actual last 1 / 3 / 6 months</td><td colspan="5" class="muted" style="text-align:left">appears after the next full screener run (it adds the 1 / 3 / 6-month return columns)</td></tr>`;
+  const names=k=>by[k].sort((a,b)=>b.marketValue-a.marketValue).map(h=>esc(tkd(h.ticker))+((ALL.get(h.ticker)||h).name?" "+esc((ALL.get(h.ticker)||h).name):"")).join(", ");
+  const mix=`<div class="mix"><span>Today your money is in:</span>`+[...GROUPS,{k:"none",l:"none of these"}].map(g=>`<span title="${names(g.k)}"><b>${pct(share(g.k),0)}</b> ${g.l}${by[g.k].length&&g.k!=="none"?` (${names(g.k)})`:""}</span>`).join("")+`</div>`;
+  const parts=[];
+  if(PB&&PB.m6) parts.push(`Over the same 5 years, today's basket ${PB.m6.avg<BT[0][3]?`trailed the ★ Combo by <b>${((BT[0][3]-PB.m6.avg)*100).toFixed(1)} points</b>`:`kept up with the ★ Combo`} over 6-month holds (${spct(PB.m6.avg)} vs ${spct(BT[0][3])}) and was ahead of the market in only <b>${PB.m3?PB.m3.yearsAhead:"–"} of ${PB.m3?PB.m3.years:"–"}</b> years.`);
+  if(share("down")>0) parts.push(`<b>${pct(share("down"),0)}</b> of your money is in downtrend stocks, the group that lagged most (${spct(BT[3][3])} over 6 months).`);
+  parts.push(share("combo")>0?`<b>${pct(share("combo"),0)}</b> is already in ★ Combo stocks.`:`None of it is in ★ Combo stocks yet.`);
+  if(act[2]!=null) parts.push(`Over the last 6 months your holdings did <b>${spct(act[2])}</b> vs the median liquid stock.`);
+  return {rows,mix,say:`<p class="pfsay">${parts.join(" ")} Moving money from downtrend holdings into ★ Combo stocks is what shifts the estimate row toward the ★ Combo row.</p>`};
+}
 function renderLasting(SB){
   const avail=CMETA&&CMETA.available, n=COMBO_R?COMBO_R.today.length:0, top=RULES[0];
-  const following=!SB.leader&&P.nr==="combo"&&avail&&n>0;
+  const following=!SB.leader&&P.nr==="combo"&&avail&&n>0, PR=portfolioRows();
   let head;
   if(!avail) head=`<p><b>The ★ Combo list isn't in today's data yet.</b> It needs the new 12-month column, which arrives with the next full screener run (the 7 PM weekday run, or double-click run_daily.bat). Until then this page falls back to ${P.nr==="prov"?"the provisional leader":"holding cash"}.</p>`;
   else if(SB.leader) head=`<p>A short-term rule is leading in the replay above, so section 3 follows it. For holds of <b>3–6 months</b>, the ★ Combo is the rule with the longest record: <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).</p>`;
   else head=`<p><b>${following?"Recommended: switch to the ★ Combo and hold 3–6 months.":"The ★ Combo is the strategy that has lasted."}</b> Your Top 30 ranks stocks by their <b>3-month</b> gain, and that is the weaker version: it ${top.s[20].avg!=null&&top.s[20].avg<0?`is behind the market in the replay above (${spct(top.s[20].avg)} after 4 weeks) and `:""}added only ${spct(BT[2][3])} over 6 months in the 5-year test. Ranking by the <b>12-month</b> gain, and keeping only stocks still in an uptrend near their high, did much better and kept working the longer it was held. <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).${following?" Section 3 is built from it.":` Choose <b>★ Combo</b> in the settings bar to build section 3 from it.`}</p>`;
   $("lasting").innerHTML=`<div class="lasting"><h3>Strategy that lasts: 5-year Bursa test</h3>${head}
     <div class="scroll"><table><thead><tr><th>Rule (picked fresh each month)</th><th>1 month</th><th>3 months</th><th>6 months</th><th>Ahead in 6-mo windows</th><th>Years ahead (3 mo)</th></tr></thead><tbody>`+
-    BT.map(r=>`<tr${r[6]?' class="hl"':""}><td>${esc(r[0])}</td><td class="${cls(r[1])}">${spct(r[1])}</td><td class="${cls(r[2])}">${spct(r[2])}</td><td class="${cls(r[3])}">${spct(r[3])}</td><td>${pct(r[4],0)}</td><td>${r[5]}</td></tr>`).join("")+
-    `</tbody></table></div><p class="note" style="margin:8px 0 0">vs the average liquid Bursa stock (price ≥ RM0.10, RM200k+ traded a day), Oct 2022 – Oct 2026, before brokerage and stamp duty. All momentum rules lost in 2022, a rebound year when last year's losers won, so expect bad years. The test re-picked monthly: review once a month and replace holdings that drop off the list. Stocks listed today only (delisted companies missing), which flatters every row a little.</p></div>`;
+    BT.map(r=>`<tr${r[6]?' class="hl"':""}><td>${esc(r[0])}</td><td class="${cls(r[1])}">${spct(r[1])}</td><td class="${cls(r[2])}">${spct(r[2])}</td><td class="${cls(r[3])}">${spct(r[3])}</td><td>${pct(r[4],0)}</td><td>${r[5]}</td></tr>`).join("")+PR.rows+
+    `</tbody></table></div>${PR.mix}${PR.say}<p class="note" style="margin:8px 0 0">vs the average liquid Bursa stock (price ≥ RM0.10, RM200k+ traded a day), Oct 2022 – Oct 2026, before brokerage and stamp duty. All momentum rules lost in 2022, a rebound year when last year's losers won, so expect bad years. The test re-picked monthly: review once a month and replace holdings that drop off the list. Stocks listed today only (delisted companies missing), which flatters every row a little. Your basket row uses hindsight: it shows how the stocks you hold today did, not your actual past trades. The estimate row assumes each holding behaves like its group's 5-year average.</p></div>`;
 }
 
 /* ---- per-stock state today ---- */
