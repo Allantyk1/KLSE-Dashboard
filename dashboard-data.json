@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T15:10:39",
+  "generatedAt": "2026-10-21T17:51:08",
   "universeCount": 351,
   "buy": [
     {
@@ -22820,6 +22820,20 @@
     "targetPct": 8.0
   },
   "realized": {
+    "since": "2026-10",
+    "target": 1000.0,
+    "monthly": [
+      {
+        "m": "2026-10",
+        "bought": 7760.0,
+        "sold": 14040.0,
+        "gains": 305.0,
+        "losses": -1414.0,
+        "realized": -1109.0,
+        "n": 3,
+        "wins": 1
+      }
+    ],
     "total": -1109.0,
     "thisMonth": -1109.0,
     "thisYear": -1109.0,
@@ -22833,6 +22847,8 @@
         "price": 7.19,
         "avgCost": 6.885,
         "fees": 0.0,
+        "proceeds": 7190.0,
+        "opened": "opening",
         "realized": 305.0,
         "realizedPct": 4.43,
         "closedPosition": false,
@@ -22845,6 +22861,8 @@
         "price": 0.465,
         "avgCost": 0.629,
         "fees": 0.0,
+        "proceeds": 2790.0,
+        "opened": "opening",
         "realized": -984.0,
         "realizedPct": -26.07,
         "closedPosition": true,
@@ -22857,6 +22875,8 @@
         "price": 2.03,
         "avgCost": 2.245,
         "fees": 0.0,
+        "proceeds": 4060.0,
+        "opened": "opening",
         "realized": -430.0,
         "realizedPct": -9.58,
         "closedPosition": true,
