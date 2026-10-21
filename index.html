@@ -1093,7 +1093,7 @@ function soldSectionHTML(realized) {
     <div class="sold-sum">
       <span>This month <b style="color:${pnlColor(realized.thisMonth)}">${fmtRM(realized.thisMonth)}</b></span>
       <span>\u00b7 This year <b style="color:${pnlColor(realized.thisYear)}">${fmtRM(realized.thisYear)}</b></span>
-      <span>\u00b7 ${realized.nWins}/${realized.nSells} sells at a profit</span>
+      <span>\u00b7 ${realized.nWins}/${realized.nSells} sells at a profit</span>${realized.nDivs ? ` <span>\u00b7 incl. dividends ${fmtRM(realized.divThisYear)} this year</span>` : ''}
     </div>` + realized.sells.map(soldCardHTML).join('');
 }
 
@@ -1107,7 +1107,7 @@ function portfolioHTML(rows, realized) {
     <div class="pf-summary">
       <div class="pf-stat"><div class="label">Market Value</div><div class="value">RM ${totalValue.toFixed(2)}</div></div>
       <div class="pf-stat"><div class="label">Unrealized P&amp;L</div><div class="value" style="color:${totalPnl>=0?'var(--buy)':'var(--sell)'}">RM ${totalPnl.toFixed(2)}</div></div>
-      ${realized ? `<div class="pf-stat"><div class="label">Realized P&amp;L (${new Date().getFullYear()})</div><div class="value" style="color:${pnlColor(realized.thisYear)}">RM ${Number(realized.thisYear).toFixed(2)}</div><div class="sub">${realized.nSells} sell${realized.nSells === 1 ? '' : 's'} \u00b7 all-time ${fmtRM(realized.total)}</div></div>` : ''}
+      ${realized ? `<div class="pf-stat"><div class="label">Realized P&amp;L (${new Date().getFullYear()})</div><div class="value" style="color:${pnlColor(realized.thisYear)}">RM ${Number(realized.thisYear).toFixed(2)}</div><div class="sub">${realized.nSells} sell${realized.nSells === 1 ? '' : 's'}${realized.nDivs ? ` + ${fmtRM(realized.divThisYear)} dividends` : ''} \u00b7 all-time ${fmtRM(realized.total)}</div></div>` : ''}
     </div>`;
   // Portfolio holdings are merged (in generate_dashboard_data.py) with the
   // same technical fields the other tabs use, so they share cardHTML() --

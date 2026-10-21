@@ -95,6 +95,7 @@
   .tag.grn{color:var(--green);border-color:var(--green)}
   .tag.cb{color:var(--bg);background:var(--amber);border-color:var(--amber);cursor:help}
   .tag.dn{color:var(--red);border-color:var(--red)}
+  .tag.dv{color:var(--blue);border-color:var(--blue);margin-left:0}
   .lasting{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:12px;padding:12px 14px;margin-bottom:12px}
   .lasting h3{font:600 14px var(--font-display);margin:0 0 4px}
   .lasting p{margin:0 0 8px;font-size:12.5px;color:var(--ink-dim);max-width:90ch}
@@ -227,16 +228,16 @@
     <div class="tiles" id="pnlTiles"></div>
     <div class="pnl-charts">
       <div class="panel"><h3>Realized P&amp;L by month</h3>
-        <div class="legend" style="margin:0 0 8px"><span><i style="background:var(--green)"></i>Gains (winning sells)</span><span><i style="background:var(--red)"></i>Losses (losing sells)</span></div>
+        <div class="legend" style="margin:0 0 8px"><span><i style="background:var(--green)"></i>Gains (winning sells)</span><span><i style="background:var(--red)"></i>Losses (losing sells)</span><span><i style="background:var(--blue)"></i>Dividends</span></div>
         <div id="pnlBars"></div></div>
       <div class="panel"><h3>Cumulative realized P&amp;L, year to date</h3>
         <div class="legend" style="margin:0 0 8px"><span><i style="background:var(--ink)"></i>Total realized</span><span><i style="background:var(--ink-faint)"></i>Target to date (dashed)</span></div>
         <div id="pnlCum"></div></div>
     </div>
     <div class="panel" style="margin-bottom:12px"><div class="scroll"><table id="pnlTbl"></table></div></div>
-    <div class="ct-bar"><h3 style="font:600 16px var(--font-display);margin:0">Closed trades</h3><button type="button" id="ctAll" hidden>Expand all months</button></div>
+    <div class="ct-bar"><h3 style="font:600 16px var(--font-display);margin:0">Closed trades &amp; dividends</h3><button type="button" id="ctAll" hidden>Expand all months</button></div>
     <div class="panel"><div class="scroll freeze"><table id="closedTbl"></table></div>
-      <p class="note">Every SELL row in <b>KLSE_Trade_Journal.xlsx</b> from the start month, grouped by the month sold, newest month first. Tap a month to expand or collapse it; tap a column heading to sort within each month. <b>Realized P&amp;L</b> = sale value − fees − average cost × shares sold, the same average-cost method as the journal. <b>Opened</b> = the day the position last went from zero to held; "carried over" means it came in as an OPENING balance on 14 Oct 2026, so its true buy date isn't in the journal. <b>Partial</b> = some shares are still held. Dividends are not included.</p></div>
+      <p class="note">Every SELL and DIVIDEND row in <b>KLSE_Trade_Journal.xlsx</b> from the start month, grouped by month (sale date / payment date), newest month first. Tap a month to expand or collapse it; tap a column heading to sort within each month. <b>Realized P&amp;L</b> = sale value − fees − average cost × shares sold, the same average-cost method as the journal. <b>Opened</b> = the day the position last went from zero to held; "carried over" means it came in as an OPENING balance on 14 Oct 2026, so its true buy date isn't in the journal. <b>Partial</b> = some shares are still held. <b>DIVIDEND</b> rows: Price = dividend per share, Amount = shares × DPS − fees, % = yield on your average cost; they don't count as wins.</p></div>
   </section>
 
   <footer>Built from dashboard-data.json (section 5: your trade journal), pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
@@ -621,15 +622,15 @@ const axisLbl=v=>(v<0?"−":"")+"RM"+Math.abs(v).toLocaleString("en-US",{maximum
 function svgFrame(ticks,W,H,L,R,Tp,B,y){return ticks.map(t=>`<line class="${t===0?"zero":"grid"}" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text x="${L-6}" y="${y(t)+3}" text-anchor="end">${axisLbl(t)}</text>`).join("")}
 function barsSVG(rows){
   const W=innerWidth<600?380:560,H=innerWidth<600?230:250,L=62,R=10,Tp=12,B=26;
-  const lo=Math.min(0,...rows.map(r=>r.losses)),hi=Math.max(0,...rows.map(r=>r.gains)),ticks=niceTicks(lo,hi);
+  const lo=Math.min(0,...rows.map(r=>r.losses)),hi=Math.max(0,...rows.map(r=>Math.max(r.gains,r.dividends||0))),ticks=niceTicks(lo,hi);
   const y0=ticks[0],y1=ticks[ticks.length-1],y=v=>Tp+(H-Tp-B)*(1-(v-y0)/(y1-y0));
-  const n=rows.length,slot=(W-L-R)/Math.max(n,1),bw=Math.min(34,slot*0.32);
+  const n=rows.length,slot=(W-L-R)/Math.max(n,1),bw=Math.min(28,slot*0.24);
   let g=svgFrame(ticks,W,H,L,R,Tp,B,y);
   rows.forEach((r,i)=>{const cx=L+slot*(i+.5);
     const bar=(x,v,c,lab)=>v?`<rect x="${x}" y="${Math.min(y(v),y(0))}" width="${bw}" height="${Math.max(1,Math.abs(y(v)-y(0)))}" rx="3" fill="var(${c})"><title>${mLong(r.m)} ${lab}: ${sm(v,2)}</title></rect>`:"";
-    g+=bar(cx-bw-2,r.gains,"--green","gains")+bar(cx+2,r.losses,"--red","losses");
+    g+=bar(cx-1.5*bw-3,r.gains,"--green","gains")+bar(cx-bw/2,r.dividends||0,"--blue","dividends")+bar(cx+bw/2+3,r.losses,"--red","losses");
     g+=`<text x="${cx}" y="${H-8}" text-anchor="middle">${mShort(r.m)}</text>`;
-    if(r.n) g+=`<text class="lab" x="${cx}" y="${Math.min(y(r.gains),y(0))-5}" text-anchor="middle">net ${sm(r.realized)}</text>`;});
+    if(r.n||r.divs) g+=`<text class="lab" x="${cx}" y="${Math.min(y(Math.max(r.gains,r.dividends||0)),y(0))-5}" text-anchor="middle">net ${sm(r.realized)}</text>`;});
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Realized gains and losses by month">${g}</svg>`;
 }
 function cumSVG(rows,target){
@@ -646,27 +647,27 @@ function cumSVG(rows,target){
   const last=pts[n-1];if(last) g+=`<text class="lab" x="${x(n-1)+8}" y="${y(last.v)-6}">${sm(last.v,2)}</text>`;
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative realized P&L this year">${g}</svg>`;
 }
-function sumRows(rs){return rs.reduce((a,r)=>{for(const k of ["bought","sold","gains","losses","realized","n","wins"])a[k]+=r[k]||0;return a},{bought:0,sold:0,gains:0,losses:0,realized:0,n:0,wins:0})}
+function sumRows(rs){return rs.reduce((a,r)=>{for(const k of ["bought","sold","gains","losses","dividends","realized","n","wins","divs"])a[k]+=r[k]||0;return a},{bought:0,sold:0,gains:0,losses:0,dividends:0,realized:0,n:0,wins:0,divs:0})}
 function renderPnl(){
   const R=T.realized, el=$("s5");
   if(!R||!R.monthly||!R.monthly.length){$("pnlLede").innerHTML="No trade journal yet. Add your BUY / SELL rows to <b>KLSE_Trade_Journal.xlsx</b> and run <b>refresh_portfolio_and_publish.bat</b>.";["pnlTiles","pnlBars","pnlCum","pnlTbl","closedTbl"].forEach(i=>$(i).innerHTML="");return}
   const tgt=R.target||0, months=R.monthly, cur=months[months.length-1], cq=qOf(cur.m), cy=cq.y;
   const yr=months.filter(r=>+r.m.slice(0,4)===cy), qr=yr.filter(r=>qOf(r.m).q===cq.q);
   const Y=sumRows(yr), Q=sumRows(qr), M=sumRows([cur]);
-  const split=x=>`Gains ${sm(x.gains)} · Losses ${sm(x.losses)}`;
-  $("pnlLede").innerHTML=`Realized gain / loss from shares you <b>sold</b>, counted in the month of the sale, from <b>${mLong(R.since)}</b> to the build date. <b>Bought</b> = new money put into BUY rows that month (opening balances carried over on 14 Oct are not counted). Gains and losses shown separately; YTD restarts each January. Target <b>${money(tgt)}/month</b>${tgt?"":" (none set)"}. Fees as typed in the journal; dividends not included.`;
+  const split=x=>`Gains ${sm(x.gains)} · Losses ${sm(x.losses)} · Dividends ${sm(x.dividends)}`;
+  $("pnlLede").innerHTML=`Realized gain / loss from shares you <b>sold</b>, counted in the month of the sale, from <b>${mLong(R.since)}</b> to the build date. <b>Bought</b> = new money put into BUY rows that month (opening balances carried over on 14 Oct are not counted). Cash <b>dividends</b> (DIVIDEND rows) are added in the month they were paid. Gains, losses and dividends shown separately; YTD restarts each January. Target <b>${money(tgt)}/month</b>${tgt?"":" (none set)"}. Fees as typed in the journal.`;
   const vsY=Y.realized-tgt*yr.length;
   $("pnlTiles").innerHTML=[
     tile(`${mLong(cur.m)} realized`,`<span class="${cls(M.realized)}">${sm(M.realized,2)}</span>`,split(M)),
     tile(`Q${cq.q} ${cy} realized`,`<span class="${cls(Q.realized)}">${sm(Q.realized,2)}</span>`,split(Q)),
-    tile(`${cy} YTD realized`,`<span class="${cls(Y.realized)}">${sm(Y.realized,2)}</span>`,`${split(Y)} · ${Y.n} sold, ${Y.wins} win${Y.wins===1?"":"s"}`),
+    tile(`${cy} YTD realized`,`<span class="${cls(Y.realized)}">${sm(Y.realized,2)}</span>`,`${split(Y)} · ${Y.n} sold, ${Y.wins} win${Y.wins===1?"":"s"}, ${Y.divs} dividend${Y.divs===1?"":"s"}`),
     tgt?tile("YTD vs target",`<span class="${cls(vsY)}">${sm(vsY)}</span>`,`${money(tgt*yr.length)} target over ${yr.length} month${yr.length===1?"":"s"}`):"",
   ].join("");
   $("pnlBars").innerHTML=barsSVG(months);
   $("pnlCum").innerHTML=cumSVG(yr,tgt);
   // table: months, then quarter-to-date and YTD per year
-  const row=(lab,x,cum,nT,c="")=>{const t=tgt*nT,vs=x.realized-t;return `<tr class="${c}"><td>${lab}</td><td>${money(x.bought)}</td><td>${money(x.sold)}</td><td class="${x.gains?"pos":"muted"}">${sm(x.gains)}</td><td class="${x.losses?"neg":"muted"}">${sm(x.losses)}</td><td class="${cls(x.realized)}">${sm(x.realized,2)}</td><td class="${cls(cum)}">${sm(cum,2)}</td><td>${x.n}</td><td>${x.wins}</td>${tgt?`<td>${money(t)}</td><td class="${cls(vs)}">${sm(vs)}</td>`:""}</tr>`};
-  let h=`<thead><tr><th>Period</th><th>Bought</th><th>Sold</th><th>Gains</th><th>Losses</th><th>Total realized</th><th>YTD cumulative</th><th>Sells</th><th>Wins</th>${tgt?"<th>Target</th><th>vs target</th>":""}</tr></thead><tbody>`;
+  const row=(lab,x,cum,nT,c="")=>{const t=tgt*nT,vs=x.realized-t;return `<tr class="${c}"><td>${lab}</td><td>${money(x.bought)}</td><td>${money(x.sold)}</td><td class="${x.gains?"pos":"muted"}">${sm(x.gains)}</td><td class="${x.losses?"neg":"muted"}">${sm(x.losses)}</td><td class="${x.dividends?"pos":"muted"}">${sm(x.dividends)}</td><td class="${cls(x.realized)}">${sm(x.realized,2)}</td><td class="${cls(cum)}">${sm(cum,2)}</td><td>${x.n}</td><td>${x.wins}</td>${tgt?`<td>${money(t)}</td><td class="${cls(vs)}">${sm(vs)}</td>`:""}</tr>`};
+  let h=`<thead><tr><th>Period</th><th>Bought</th><th>Sold</th><th>Gains</th><th>Losses</th><th>Dividends</th><th>Total realized</th><th>YTD cumulative</th><th>Sells</th><th>Wins</th>${tgt?"<th>Target</th><th>vs target</th>":""}</tr></thead><tbody>`;
   const years=[...new Set(months.map(r=>+r.m.slice(0,4)))];
   for(const y of years){
     const ym=months.filter(r=>+r.m.slice(0,4)===y);let c=0;
@@ -681,20 +682,23 @@ function renderPnl(){
 }
 function renderClosed(R){
   const since=R.since+"-01";
-  const list=(R.sells||[]).filter(x=>!x.date||x.date>=since).map(x=>({...x,name:(ALL.get(x.ticker)||{}).name||"",openedKey:x.opened==="opening"?"0000":x.opened||""}));
-  const key={ticker:x=>x.ticker,shares:x=>x.shares,opened:x=>x.openedKey,date:x=>x.date||"",res:x=>x.closedPosition?1:0,avg:x=>x.avgCost,price:x=>x.price,proceeds:x=>x.proceeds??x.shares*x.price,realized:x=>x.realized,pct:x=>x.realizedPct};
+  const nm=t=>(ALL.get(t)||{}).name||"";
+  const list=(R.sells||[]).filter(x=>!x.date||x.date>=since).map(x=>({...x,name:nm(x.ticker),openedKey:x.opened==="opening"?"0000":x.opened||""}))
+    .concat((R.dividends||[]).filter(d=>!d.date||d.date>=since).map(d=>({div:true,date:d.date,ticker:d.ticker,name:nm(d.ticker),shares:d.shares,opened:null,openedKey:"",
+      avgCost:null,price:d.dps,proceeds:d.amount,realized:d.amount,realizedPct:d.yieldOnCost,notes:d.notes})));
+  const key={ticker:x=>x.ticker,shares:x=>x.shares,opened:x=>x.openedKey,date:x=>x.date||"",res:x=>x.div?2:x.closedPosition?1:0,avg:x=>x.avgCost,price:x=>x.price,proceeds:x=>x.proceeds??x.shares*x.price,realized:x=>x.realized,pct:x=>x.realizedPct};
   const f=key[CS.k]||key.date;
   list.sort((a,b)=>{const p=f(a),q=f(b);return CS.dir*(typeof p==="string"?p.localeCompare(q):(p??-1e12)-(q??-1e12))});
-  const cols=[["ticker","Stock"],["shares","Shares"],["opened","Opened"],["date","Sold"],["res","Result"],["avg","Avg cost"],["price","Sell price"],["proceeds","Sale value"],["realized","Realized P&L"],["pct","%"]];
+  const cols=[["ticker","Stock"],["shares","Shares"],["opened","Opened"],["date","Date"],["res","Result"],["avg","Avg cost"],["price","Price / DPS"],["proceeds","Amount"],["realized","Realized P&L"],["pct","%"]];
   const th=([k,l])=>`<th class="sort${k==="ticker"||k==="res"?" l":""}" data-k="${k}" tabindex="0"${CS.k===k?` aria-sort="${CS.dir<0?"descending":"ascending"}"`:""}>${l}${CS.k===k?(CS.dir<0?" ▾":" ▴"):""}</th>`;
-  const rowHTML=x=>`<tr class="ct-row"><td><span class="tk">${esc(tkd(x.ticker))}</span><span class="co">${esc(x.name)}</span></td><td>${(x.shares||0).toLocaleString()}</td><td>${x.opened==="opening"?'<span class="muted">carried over</span>':x.opened?dshort(x.opened):"–"}</td><td>${x.date?dshort(x.date):"–"}</td><td class="l">${x.closedPosition?"Closed":'<span class="muted">Partial</span>'}</td><td>${px(x.avgCost)}</td><td>${px(x.price)}</td><td>${money(x.proceeds??x.shares*x.price)}</td><td class="${cls(x.realized)}">${sm(x.realized,2)}</td><td class="${cls(x.realizedPct)}">${x.realizedPct==null?"–":(x.realizedPct>=0?"+":"−")+Math.abs(x.realizedPct).toFixed(1)+"%"}</td></tr>`;
+  const rowHTML=x=>`<tr class="ct-row"><td><span class="tk">${esc(tkd(x.ticker))}</span><span class="co">${esc(x.name)}</span></td><td>${(x.shares||0).toLocaleString()}</td><td>${x.div?'<span class="muted">–</span>':x.opened==="opening"?'<span class="muted">carried over</span>':x.opened?dshort(x.opened):"–"}</td><td>${x.date?dshort(x.date):"–"}</td><td class="l">${x.div?`<span class="tag dv" title="${esc(x.notes||"Cash dividend")}">DIVIDEND</span>`:x.closedPosition?"Closed":'<span class="muted">Partial</span>'}</td><td>${x.div?'<span class="muted">–</span>':px(x.avgCost)}</td><td>${x.div?money(x.price,4):px(x.price)}</td><td>${money(x.proceeds??x.shares*x.price)}</td><td class="${cls(x.realized)}">${sm(x.realized,2)}</td><td class="${cls(x.realizedPct)}"${x.div?' title="Yield on your average cost"':""}>${x.realizedPct==null?"–":(x.div?"":(x.realizedPct>=0?"+":"−"))+Math.abs(x.realizedPct).toFixed(1)+"%"}${x.div&&x.realizedPct!=null?' <span class="muted">yld</span>':""}</td></tr>`;
   // group by the month sold (newest month first); each month collapses / expands
   const groups=new Map();for(const x of list){const m=x.date?x.date.slice(0,7):"undated";if(!groups.has(m))groups.set(m,[]);groups.get(m).push(x)}
   const order=[...groups.keys()].sort((a,b)=>b.localeCompare(a));
   if(OPENM==null) OPENM=new Set(order.slice(0,1));   // first visit: only the latest month open
   let body="";
-  for(const m of order){const g=groups.get(m),open=OPENM.has(m),tot=g.reduce((a,x)=>a+(x.realized||0),0),w=g.filter(x=>x.realized>0).length;
-    body+=`<tr class="mhead" data-m="${m}" tabindex="0" aria-expanded="${open}"><td colspan="10"><span class="caret">${open?"▾":"▸"}</span><b>${m==="undated"?"No date":mLong(m)}</b><span class="muted"> · ${g.length} sell${g.length===1?"":"s"} · ${w} win${w===1?"":"s"}</span><span class="${cls(tot)}" style="float:right">${sm(tot,2)}</span></td></tr>`;
+  for(const m of order){const g=groups.get(m),open=OPENM.has(m),tot=g.reduce((a,x)=>a+(x.realized||0),0),ns=g.filter(x=>!x.div).length,w=g.filter(x=>!x.div&&x.realized>0).length,nd=g.length-ns;
+    body+=`<tr class="mhead" data-m="${m}" tabindex="0" aria-expanded="${open}"><td colspan="10"><span class="caret">${open?"▾":"▸"}</span><b>${m==="undated"?"No date":mLong(m)}</b><span class="muted"> · ${ns} sell${ns===1?"":"s"} · ${w} win${w===1?"":"s"}${nd?` · ${nd} dividend${nd===1?"":"s"}`:""}</span><span class="${cls(tot)}" style="float:right">${sm(tot,2)}</span></td></tr>`;
     if(open) body+=g.map(rowHTML).join("");}
   $("closedTbl").innerHTML=`<thead><tr>${cols.map(th).join("")}</tr></thead><tbody>`+(list.length?body:`<tr><td colspan="10" class="muted">No sells since ${mLong(R.since)} yet.</td></tr>`)+"</tbody>";
   $("ctAll").hidden=!list.length;$("ctAll").textContent=order.every(m=>OPENM.has(m))?"Collapse all months":"Expand all months";
