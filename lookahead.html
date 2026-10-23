@@ -140,6 +140,54 @@
   .ct-bar button{font:500 12px var(--font-body);color:var(--ink-dim);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer}
   .ct-bar button:hover{color:var(--amber);border-color:var(--amber)}
   #closedTbl th.sort:hover,#closedTbl th[aria-sort]{color:var(--amber)}
+  /* ---- 5. Dip watch (2026-10-23, port of the US page) ---- */
+  .tag.low{color:var(--red);border-color:var(--red)} .tag.held{color:var(--blue);border-color:var(--blue)} .tag.chk{color:var(--ink-faint);border-style:dashed}
+  .dw-stale{color:var(--amber)}
+  /* Dip cards (2026-10-23): same layout idea as the LEAPS screener card */
+  .dw-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:10px}
+  .dw-bar .btn{font:600 12px var(--font-body);color:var(--ink-dim);background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:6px 12px;cursor:pointer}
+  .dw-search input{font:500 13px var(--font-body);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 10px;width:240px;max-width:100%}
+  .dw-search input:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  @media (max-width:600px){.dw-search,.dw-search input{width:100%}}
+  .dcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+  @media (max-width:400px){.dcards{grid-template-columns:minmax(0,1fr)}}
+  .dcard{background:var(--panel);border:1.5px solid var(--green);border-radius:16px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:10px}
+  .dcard.avoid{border-color:var(--red)} .dcard.chk{border-color:var(--line);border-style:dashed}
+  .dc-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+  .dc-head .tkr{font:700 20px var(--font-data);letter-spacing:-.01em}
+  .dc-head .px{font:700 20px var(--font-data);text-align:right}
+  .dc-sub{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--ink-dim);margin-top:2px}
+  .dc-sub .co2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .pill{display:inline-block;font:700 10px var(--font-data);letter-spacing:.05em;border-radius:999px;padding:3px 9px;vertical-align:4px;margin-left:6px}
+  .pill.dip{background:var(--green-soft);color:var(--green)} .pill.avoid{background:var(--red-soft);color:var(--red)} .pill.chk{background:var(--panel-2);color:var(--ink-faint)}
+  .dc-chart svg{display:block;width:100%;height:auto}
+  .dc-leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:var(--ink-dim)}
+  .dc-leg i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:3px;margin-right:4px}
+  .dc-leg i.box{height:8px;border:0;background:var(--red-soft);vertical-align:0}
+  .dc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .dc-t{background:var(--panel-2);border-radius:10px;padding:7px 9px;min-width:0}
+  .dc-t .k{font:500 9.5px var(--font-data);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint)}
+  .dc-t .v{font:600 16px var(--font-data);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dc-t .s{font-size:10.5px;color:var(--ink-dim);line-height:1.3}
+  .dc-chips{display:flex;flex-wrap:wrap;gap:5px}
+  .chip{font-size:11px;border-radius:7px;padding:3px 8px;background:var(--panel-2);color:var(--ink-dim)}
+  .chip.g{background:var(--green-soft);color:var(--green)} .chip.r{background:var(--red-soft);color:var(--red)} .chip.a{background:var(--amber-soft);color:var(--amber)}
+  .dc-h{font:600 12px var(--font-body);margin:2px 0 -2px}
+  .dc-h small{font-weight:400;color:var(--ink-faint)}
+  .dc-rec{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+  .dc-rec div{background:var(--panel-2);border-radius:9px;padding:6px 4px;text-align:center}
+  .dc-rec .k{font:500 10px var(--font-data);color:var(--ink-faint)}
+  .dc-rec .v{font:600 13.5px var(--font-data);margin:2px 0}
+  .dc-rec .s{font-size:9.5px;color:var(--ink-dim);line-height:1.25}
+  .dc-eps{width:100%;font-size:11px}
+  .dc-eps th{font-size:9px;padding:3px 4px} .dc-eps td{padding:4px;font-size:11px}
+  @media (max-width:420px){.dc-eps th{letter-spacing:0;padding:3px 2px}.dc-eps td{padding:4px 2px;font-size:10.5px}}
+  .dc-foot{font-size:10.5px;color:var(--ink-faint);line-height:1.45}
+  [hidden]{display:none!important}
+  .tag.lowok{color:var(--amber);border-color:var(--amber)}
+  .pill.lowok{background:var(--amber-soft);color:var(--amber)} .dcard.lowok{border-color:var(--amber)}
+  .upl-status{font-size:12px;color:var(--ink-dim);line-height:1.5} .upl-status b{color:var(--ink)}
+  .empty-pf{padding:22px;text-align:center;color:var(--ink-dim);font-size:13px}
   footer{margin-top:34px;font-size:11px;color:var(--ink-faint);line-height:1.6}
   @media (max-width:600px){h1{font-size:25px}.co{max-width:120px}.jump{margin-left:0}}
 
@@ -183,7 +231,7 @@
       <div class="seg" id="cap"><button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button></div></div>
     <div class="ctl"><span class="lbl">If no short-term rule passes</span>
       <div class="seg" id="nr"><button type="button" data-v="combo">★ Combo (5-yr tested)</button><button type="button" data-v="prov">Provisional leader</button><button type="button" data-v="cash">Hold cash</button></div></div>
-    <nav class="jump" aria-label="Jump to section"><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a><a href="#s5">5 Actual P&amp;L</a></nav>
+    <nav class="jump" aria-label="Jump to section"><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a><a href="#sdw">5 Dip watch</a><a href="#s5">6 Actual P&amp;L</a></nav>
   </div>
 
   <section class="desk" id="s1">
@@ -222,8 +270,31 @@
     <div class="plan" id="plan"></div>
   </section>
 
+  <section class="desk" id="sdw">
+    <div class="desk-head"><span class="idx">5</span><h2>Dip watch &amp; momentum</h2></div>
+    <p class="lede" id="dwLede">Loading…</p>
+    <div class="tiles" id="dwTiles"></div>
+    <div class="panel" style="margin-bottom:12px">
+      <h3>Dip watch: 15%+ under the 20-day high</h3>
+      <div class="dw-bar">
+        <div class="dw-search"><input type="search" id="dwSearch" list="dwList" placeholder="Search ticker or company" aria-label="Search dip stocks" autocomplete="off"><datalist id="dwList"></datalist></div>
+        <div class="seg" id="dwView"><button type="button" data-v="cards">Cards</button><button type="button" data-v="table">Table</button></div>
+        <div class="seg" id="dwSort"><button type="button" data-v="dd">Biggest dip</button><button type="button" data-v="rate">Best bounce record</button><button type="button" data-v="held">Held first</button></div>
+        <label class="chk" style="font-size:12px;color:var(--ink-dim);display:flex;gap:6px;align-items:center"><input type="checkbox" id="dwHideLow"> Hide 52-week lows</label>
+      </div>
+      <div class="upl-status" id="dwSearchNote" hidden style="margin:-2px 0 10px"></div>
+      <div class="dcards" id="dwCards"></div>
+      <div class="dw-bar" style="margin:10px 0 0"><button type="button" class="btn" id="dwMore" hidden></button></div>
+      <div class="scroll freeze" id="dwTblWrap"><table id="dwTbl"></table></div>
+      <p class="note" id="dwNote"></p></div>
+    <div class="panel">
+      <h3>Gap-up continuation: last 10 sessions</h3>
+      <div class="scroll freeze"><table id="gapTbl"></table></div>
+      <p class="note" id="gapNote"></p></div>
+  </section>
+
   <section class="desk" id="s5">
-    <div class="desk-head"><span class="idx">5</span><h2>Actual P&amp;L: month, quarter, year to date</h2></div>
+    <div class="desk-head"><span class="idx">6</span><h2>Actual P&amp;L: month, quarter, year to date</h2></div>
     <p class="lede" id="pnlLede"></p>
     <div class="tiles" id="pnlTiles"></div>
     <div class="pnl-charts">
@@ -240,7 +311,7 @@
       <p class="note">Every SELL and DIVIDEND row in <b>KLSE_Trade_Journal.xlsx</b> from the start month, grouped by month (sale date / payment date), newest month first. Tap a month to expand or collapse it; tap a column heading to sort within each month. <b>Realized P&amp;L</b> = sale value − fees − average cost × shares sold, the same average-cost method as the journal. <b>Opened</b> = the day the position last went from zero to held; "carried over" means it came in as an OPENING balance on 14 Oct 2026, so its true buy date isn't in the journal. <b>Partial</b> = some shares are still held. <b>DIVIDEND</b> rows: Price = dividend per share, Amount = shares × DPS − fees, % = yield on your average cost; they don't count as wins.</p></div>
   </section>
 
-  <footer>Built from dashboard-data.json (section 5: your trade journal), pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
+  <footer>Built from dashboard-data.json (section 6: your trade journal), dip_watch_data.json (section 5), pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
 </div>
 
 <script src="valuation.js"></script>
@@ -262,11 +333,11 @@ const SIGN={B:"BUY",W:"WATCH",S:"SELL"};
 const SR_TOP=30, SR_MONTHS=3, SR_MIN_WHITE=2, SR_MAX_WHITE=6, SR_MIN_GREEN=2;
 const RISK_ATR=3, MAX_BUYS=6, EARN_SOON_DAYS=10, LOT=100, JUMP=0.5;
 
-const P={cash:null,useTrim:"1",cap:15,nr:"combo"};
+const P={cash:null,useTrim:"1",cap:15,nr:"combo",dwView:"cards",dwSort:"dd",dwHideLow:false};
 try{Object.assign(P,JSON.parse(localStorage.getItem("klseLookaheadPrefs")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("klseLookaheadPrefs",JSON.stringify(P))}catch(e){}};
 
-let D,T,V={}, ALL=new Map(), BOX={}, JMP={};
+let D,T,V={}, ALL=new Map(), BOX={}, JMP={}, DW=null, DWIDX=[];
 
 /* ---- tracker helpers (copied from tracker.html) ---- */
 function isoLocal(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}  /* local date, not UTC (UTC+8) */
@@ -295,7 +366,11 @@ function prepRules(){
     const r=[];for(const t in first){const c=D.watch[t]?.c[i];if(c!=null&&first[t].rp>0)r.push({t,p:c/first[t].rp-1,d:first[t].d})}
     r.sort((a,b)=>b.p-a.p);RANK.push(r)}
   EVD={}; for(const e of D.events){(EVD[e.src+"|"+e.d]=EVD[e.src+"|"+e.d]||[]).push(e.t)}
+  // Dip watch flags (dip_watch_data.json) lined up with the tracker's session dates
+  const pos={}; (DW&&DW.dates||[]).forEach((d,k)=>pos[d]=k); DWIDX=D.watch_dates.map(d=>pos[d]??null);
 }
+const dwFlag=(t,key,i)=>{const k=DWIDX[i];if(k==null||!DW)return false;const f=DW.flags[t];return !!(f&&f[key]&&f[key][k]==="1")};
+const dwPick=(key,i,back=1)=>{if(!DW)return [];const out=[];for(const t in DW.flags){if(!D.watch[t])continue;for(let j=Math.max(0,i-back+1);j<=i;j++)if(dwFlag(t,key,j)){out.push(t);break}}return out};
 const recentEv=(src,i,k=5)=>{const s=new Set();for(let j=Math.max(0,i-k+1);j<=i;j++)for(const t of (EVD[src+"|"+D.watch_dates[j]]||[]))s.add(t);return [...s]};
 const ret5=(t,i)=>{const c=D.watch[t].c;return i>=5&&c[i]&&c[i-5]?c[i]/c[i-5]-1:null};
 const t20at=(t,i)=>(D.watch[t].t20||"")[i]==="1";
@@ -310,6 +385,9 @@ const RULES=[
   {k:"t20",name:"Today's Top 20",desc:"The dashboard's Buy tab that day",pick:i=>Object.keys(D.watch).filter(t=>t20at(t,i))},
   {k:"movers",name:"Best 1-month movers",desc:"30 biggest 20-session gainers, all stocks",pick:i=>i<20?[]:Object.keys(D.watch).filter(t=>{const c=D.watch[t].c;return c[i]&&c[i-20]&&jumps(t)[i]-jumps(t)[i-20]===0}).sort((a,b)=>{const ca=D.watch[a].c,cb=D.watch[b].c;return cb[i]/cb[i-20]-ca[i]/ca[i-20]}).slice(0,30)},
   {k:"deep",name:"Deep discount",desc:"7+ of the last 10 days below the weekly average",pick:i=>Object.keys(D.watch).filter(t=>{const st=boxStates(t);if(st[i]==null)return false;let g=0;for(let j=Math.max(0,i-9);j<=i;j++)if(st[j]===1)g++;return g>=7})},
+  {k:"dip15",dw:true,name:"Dip 15%+, not at a 52-week low",desc:"15%+ under its 20-day high but not a new 52-week low (section 5)",pick:i=>dwPick("dip",i)},
+  {k:"gapup",dw:true,name:"Gap-up continuation (last 5 days)",desc:"Opened 4%+ above the prior close on 2× volume and closed up (section 5)",pick:i=>dwPick("gap",i,5)},
+  {k:"low52",dw:true,name:"At a new 52-week low",desc:"Closed below every close of the past year. An AVOID flag on the US page; on Bursa it is replayed like any other rule (section 5)",pick:i=>dwPick("low",i)},
   {k:"sr",name:"STRONG REBOUND (retired)",desc:"Top 30 stock, 2–6 white days right after 2+ green. Retired on Bursa 2026-10-12: negative in the 5-year backtest. Still replayed, never recommended",retired:true,pick:i=>RANK[i].slice(0,30).map(r=>r.t).filter(t=>D.watch[t]&&isSR(streakAt(boxStates(t),i),true))},
 ];
 const MIN_WINDOWS=10, MIN_WIN=0.6, MIN_STOCKS=3, MIN_PROV=5;
@@ -325,10 +403,12 @@ function scoreRules(){
     const a=R.s[20],b=R.s[10];
     R.passes=a.n>=MIN_WINDOWS&&a.avg>0&&a.wins/a.n>=MIN_WIN&&(b.avg==null||b.avg>-0.01);
     R.eligible=!R.retired&&R.passes;
+    // dip / gap rules can only lead when dip_watch_data.json covers today's session
+    R.stale=!!R.dw&&DWIDX[N-1]==null; if(R.stale){R.eligible=false;R.passes=false}
   }
   const el=RULES.filter(r=>r.eligible).sort((x,y)=>y.s[20].avg-x.s[20].avg);
   /* provisional = would pass, but on fewer than MIN_WINDOWS windows (a young rule or a long look-back) */
-  const pv=RULES.filter(r=>!r.retired&&!r.eligible&&r.s[20].n>=MIN_PROV&&r.s[20].avg>0&&r.s[20].wins/r.s[20].n>=MIN_WIN&&(r.s[10].avg==null||r.s[10].avg>-0.01)).sort((x,y)=>y.s[20].avg-x.s[20].avg);
+  const pv=RULES.filter(r=>!r.retired&&!r.stale&&!r.eligible&&r.s[20].n>=MIN_PROV&&r.s[20].avg>0&&r.s[20].wins/r.s[20].n>=MIN_WIN&&(r.s[10].avg==null||r.s[10].avg>-0.01)).sort((x,y)=>y.s[20].avg-x.s[20].avg);
   return {leader:el[0]||null,runner:el[1]||null,prov:el.length?null:(pv[0]||null)};
 }
 function renderScoreboard(SB){
@@ -345,7 +425,7 @@ function renderScoreboard(SB){
   }
   v+=`<p class="note" style="margin-top:-4px">Sample: ${N} sessions from ${dshort(D.watch_dates[0])} to ${dshort(D.watch_dates[N-1])}. Four-week windows overlap heavily, and one market regime can favour one rule, so treat a lead under ~20 windows as provisional.</p>`;
   $("verdict").innerHTML=v;
-  const status=r=>r===SB.leader?'<span class="act buy">LEADING</span>':r===SB.prov?'<span class="act keep">PROVISIONAL</span>':r===SB.runner?'<span class="act dip">RUNNER-UP</span>':r.retired?'<span class="act exit">RETIRED</span>':r.eligible?'<span class="act hold">PASSES</span>':(r.s[20].n<MIN_WINDOWS?'<span class="act wait">TOO LITTLE DATA</span>':'<span class="act wait">NOT BEATING</span>');
+  const status=r=>r===SB.leader?'<span class="act buy">LEADING</span>':r===SB.prov?'<span class="act keep">PROVISIONAL</span>':r===SB.runner?'<span class="act dip">RUNNER-UP</span>':r.retired?'<span class="act exit">RETIRED</span>':r.stale?'<span class="act wait" title="dip_watch_data.json does not cover the latest session yet">DIP DATA STALE</span>':r.eligible?'<span class="act hold">PASSES</span>':(r.s[20].n<MIN_WINDOWS?'<span class="act wait">TOO LITTLE DATA</span>':'<span class="act wait">NOT BEATING</span>');
   const order=r=>r===SB.leader?0:r===SB.runner?1:r===SB.prov?1:r.retired?9:2;
   const rows=[...RULES].sort((a,b)=>order(a)-order(b)||(b.s[20].avg??-9)-(a.s[20].avg??-9));
   $("ruleTbl").innerHTML=`<thead><tr><th>Rule</th><th class="l">Status</th><th>2 wks vs market</th><th>4 wks vs market</th><th>Windows ahead (4 wks)</th><th>Picks today</th></tr></thead><tbody>`+
@@ -466,6 +546,8 @@ function holdingPlan(pf,top,SB,total){
     if(st&&st.green&&act!=="exit") why.push("Green now (below its weekly average): if you add, today is a better bid than a white day.");
     const vw=valWhy(v); if(vw) why.push(vw);
     if(earnSoon(a)) why.push(`Results ${a.earningsEstimate?"due within":"in"} ${a.earningsDays} days: decide before, not after.`);
+    const dwr=dipRow(h.ticker);
+    if(dwr&&!dwr.suspect) why.push(`Dip watch: ${pct(-dwr.dd,0)} under its 20-day high${dwr.low52?", at a new 52-week low":""}.${dwr.card&&dwr.card.n?` It got back half the drop in ${dwr.card.bounced} of ${dwr.card.n} past dips (context only).`:""}`);
     if(!why.length) why.push("No rule fired: hold and let the next checkpoint decide.");
     return {h,a,st,w,act,trimSh,trimRM,why,rl,below,sig,price};
   });
@@ -703,6 +785,140 @@ function renderClosed(R){
   $("closedTbl").innerHTML=`<thead><tr>${cols.map(th).join("")}</tr></thead><tbody>`+(list.length?body:`<tr><td colspan="10" class="muted">No sells since ${mLong(R.since)} yet.</td></tr>`)+"</tbody>";
   $("ctAll").hidden=!list.length;$("ctAll").textContent=order.every(m=>OPENM.has(m))?"Collapse all months":"Expand all months";
 }
+/* ---- 5. dip watch & momentum (port of the US page, 2026-10-23) ---- */
+// Bursa verdict on 52-week-low dips, from the stats re-computed every run (the US page hard-codes AVOID)
+const lowStats=()=>{const S=(DW&&DW.stats)||{};return {st:S.notlow||{},nl:S.newlow||{}}};
+const lowBad=()=>{const {st,nl}=lowStats();return nl.ex!=null&&st.ex!=null&&nl.ex<=0&&nl.ex<st.ex};
+const dipRow=t=>DW&&DW.dips?DW.dips.find(r=>r.t===t):null;
+let DW_ALL=false, DW_Q="";
+// search: matches the ticker (start of it) or any word in the company name
+function dwMatch(list){
+  const q=DW_Q.trim().toUpperCase(); if(!q) return list;
+  return list.filter(r=>r.t.startsWith(q)||tkd(r.t).startsWith(q)||String((ALL.get(r.t)||{}).name||"").toUpperCase().includes(q));
+}
+function dwSearchNote(shown){
+  const el=$("dwSearchNote"), q=DW_Q.trim().toUpperCase();
+  if(!q){el.hidden=true;return}
+  el.hidden=false;
+  if(shown) {el.innerHTML=`${shown} match${shown===1?"":"es"} for <b>${esc(q)}</b> in today's dip list.`;return}
+  // not in the dip list: say where the stock stands, if the screener knows it
+  const t=ALL.has(q)?q:ALL.has(q+".KL")?q+".KL":[...ALL.keys()].find(k=>String((ALL.get(k)||{}).name||"").toUpperCase()===q);
+  const a=t&&ALL.get(t), w=t&&D.watch[t];
+  if(a&&w){const c=w.c.filter(v=>v!=null), hi=Math.max(...c.slice(-20)), last=c[c.length-1];
+    el.innerHTML=`<b>${esc(tkd(t))} ${esc(a.name||"")}</b> is not in today's dip list: it is ${spct(last/hi-1)} from its 20-day high (a card appears at −15% or more${a.price!=null&&a.price<(DW.params.min_price||0)?`; it is also under the RM${(+DW.params.min_price||0).toFixed(2)} floor`:""}).`}
+  else el.innerHTML=`No match for <b>${esc(q)}</b> in today's dip list or the screener.`;
+}
+const days=v=>v==null?"–":`${Math.round(v)}d`;
+function dipChart(ch,low52){
+  const W=340,H=118,pad=4,c=ch.c,ma=ch.ma,n=c.length; if(!n) return "";
+  const vals=c.concat(ma.filter(v=>v!=null)), lo=Math.min(...vals), hi=Math.max(...vals), rg=(hi-lo)||1;
+  const x=i=>pad+(W-2*pad)*i/Math.max(1,n-1), y=v=>pad+(H-2*pad)*(1-(v-lo)/rg);
+  const line=a=>a.map((v,i)=>v==null?null:`${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean).join(" ");
+  const zones=(ch.zones||[]).map(([a,b])=>{const xa=x(Math.max(0,a)),xb=x(Math.min(n-1,Math.max(a+0.3,b)));return xb>pad?`<rect x="${xa.toFixed(1)}" y="0" width="${Math.max(2,xb-xa).toFixed(1)}" height="${H}" fill="var(--red-soft)" opacity=".7"/>`:""}).join("");
+  const area=`${pad},${H} ${line(c)} ${x(n-1).toFixed(1)},${H}`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Price over 1.5 years with past dips shaded">${zones}
+    <polygon points="${area}" fill="var(--blue-soft)" opacity=".55"/>
+    <polyline points="${line(ma)}" fill="none" stroke="var(--ink-faint)" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <polyline points="${line(c)}" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>
+    <circle cx="${x(n-1).toFixed(1)}" cy="${y(c[n-1]).toFixed(1)}" r="3.5" fill="${low52?"var(--red)":"var(--blue)"}"/></svg>`;
+}
+function dipCard(r,held){
+  const a=ALL.get(r.t)||{}, k=r.card||{}, now=k.now, rec=k.rec||{};
+  const cls=r.suspect?"chk":r.low52?(lowBad()?"avoid":"lowok"):"dip", pill=r.suspect?"CHECK DATA":r.low52?(lowBad()?"AVOID · 52W LOW":"52W LOW"):"DIP WATCH";
+  const rate=k.n?k.bounced/k.n:null;
+  const t=(kk,v,s2)=>`<div class="dc-t"><div class="k">${kk}</div><div class="v">${v}</div><div class="s">${s2}</div></div>`;
+  const chips=[];
+  if(now) chips.push(`<span class="chip ${now.deeper_than==null?"":now.deeper_than>=0.75?"r":now.deeper_than<=0.25?"g":""}">This dip ${spct(now.depth,0)} from its ${dshort(now.peak_d)} peak, ${now.days}d so far${now.deeper_than!=null?` · deeper than ${pct(now.deeper_than,0)} of past dips`:" · first 15%+ dip in the record"}</span>`);
+  if(now&&now.longer_than!=null) chips.push(`<span class="chip ${now.longer_than>=0.75?"a":""}">Longer than ${pct(now.longer_than,0)} of past dips</span>`);
+  if(r.post_earn) chips.push(`<span class="chip a">Post-earnings fall ${spct(r.big)} on ${dshort(r.big_d)}</span>`);
+  if(r.low52) chips.push(`<span class="chip ${lowBad()?"r":"a"}">New 52-week low · on Bursa these dips did ${spct(lowStats().nl.ex)} vs market in 4 wks</span>`);
+  if(r.suspect) chips.push(`<span class="chip">One-day fall of ${spct(r.big,0)}: likely a bonus issue, split or consolidation in the price data</span>`);
+  if(r.uptrend) chips.push(`<span class="chip g">Was above its 200-day avg at the peak</span>`);
+  if(held.has(r.t)) chips.push(`<span class="chip g">You hold this</span>`);
+  const sg=sigOf(r.t); if(sg||a.score!=null) chips.push(`<span class="chip">${sg?SIGN[sg]:"No signal"} · score ${a.score??"–"}</span>`);
+  if(comboOf(r.t)) chips.push(`<span class="chip a">★ Combo #${comboOf(r.t).rank}</span>`);
+  if(a.earningsDate) chips.push(`<span class="chip${earnSoon(a)?" a":""}">Results ${a.earningsEstimate?"due by ":""}${dshort(a.earningsDate)}</span>`);
+  const H=[["5","1 wk"],["10","2 wks"],["20","4 wks"],["40","8 wks"],["60","12 wks"]];
+  const recT=H.map(([h,l])=>{const q=rec[h]||{};return `<div><div class="k">${l}</div><div class="v ${cls2(q.avg)}">${spct(q.avg,0)}</div><div class="s">med ${spct(q.med,0)}<br>up ${q.n?Math.round(q.up*q.n)+"/"+q.n:"–"}</div></div>`}).join("");
+  const eps=(k.eps||[]).map(e=>`<tr><td title="${e.pk_d}">${dshort(e.pk_d)}</td><td class="neg">${spct(e.depth,0)}</td><td>${e.down}d</td><td>${e.bounce?days(e.to_bounce):'<span class="neg">none</span>'}</td><td>${e.run_gain!=null?`<span class="pos">${spct(e.run_gain,0)}</span><span class="muted"> ${e.run_len}d</span>`:"–"}</td><td class="${cls2(e.r20)}">${spct(e.r20,0)}</td></tr>`).join("");
+  return `<article class="dcard ${cls}">
+    <div><div class="dc-head"><div><span class="tkr">${esc(tkd(r.t))}</span><span class="pill ${cls}">${pill}</span></div><div class="px">${px(r.px)}</div></div>
+      <div class="dc-sub"><span class="co2">${esc(a.name||"")}${r.value?` · RM${(r.value/1e6).toFixed(r.value<1e6?2:1)}m/day traded`:""}</span><span class="neg" style="white-space:nowrap">${spct(r.dd)} off 20d high</span></div></div>
+    <div class="dc-chart">${k.chart?dipChart(k.chart,r.low52):""}
+      <div class="dc-leg"><span><i style="border-color:var(--ink)"></i>price</span><span><i style="border-color:var(--ink-faint);border-top-style:dashed"></i>200-day avg</span><span><i class="box"></i>past dips, peak → low</span><span>1.5 yrs</span></div></div>
+    <div class="dc-tiles">
+      ${t("Bounce rate",k.n?`${k.bounced}/${k.n}`:"–",rate!=null?`${pct(rate,0)} got back half within 12 wks`:"no past dips")}
+      ${t("Time to bounce",days(k.to_bounce),"low → half the drop back")}
+      ${t("Upward run",k.run_gain!=null?`${spct(k.run_gain,0)}`:"–",k.run_len!=null?`lasts ${days(k.run_len)} until a 10% pullback`:"after the bounce")}
+      ${t("Dip length",days(k.down),"peak → low, typical")}
+      ${t("Typical depth",spct(k.depth,0),"peak → low")}
+      ${t("Back to old high",k.to_high_of?`${k.to_high_n}/${k.to_high_of}`:"–",k.to_high!=null?`typically ${days(k.to_high)} after the low`:"within a year")}
+    </div>
+    <div class="dc-chips">${chips.join("")}</div>
+    <div class="dc-h">Return after first hitting −15% <small>· average of ${(rec["20"]||{}).n||0} past dips</small></div>
+    <div class="dc-rec">${recT}</div>
+    ${eps?`<div class="dc-h">Recent dips <small>· newest first</small></div>
+    <div class="scroll"><table class="dc-eps"><thead><tr><th>Peak</th><th>Depth</th><th>Down</th><th>Bounce in</th><th>Run after</th><th>4 wks</th></tr></thead><tbody>${eps}</tbody></table></div>`:""}
+    <div class="dc-foot">Days are trading days, medians over 5 years. A <b>bounce</b> = getting back half the drop from the low. The <b>run</b> ends at the first 10% pullback from its high. History is context, not a forecast: across Bursa stocks a strong bounce record got back half the drop in 4 weeks ${pct(((DW.stats||{}).by_record||{}).high?.rec,0)} of the time vs ${pct(((DW.stats||{}).by_record||{}).low?.rec,0)} for a poor one.${window.Valuation?" "+Valuation.button(r.t):""}</div>
+  </article>`;
+}
+const cls2=v=>v==null?"muted":v>=0?"pos":"neg";
+function renderDipCards(held){
+  let list=dwMatch(DW.dips||[]);
+  if(P.dwHideLow) list=list.filter(r=>!r.low52&&!r.suspect);
+  const rate=r=>r.card&&r.card.n>=3?r.card.bounced/r.card.n:-1;
+  if(P.dwSort==="rate") list.sort((a,b)=>(a.suspect-b.suspect)||(a.low52-b.low52)||rate(b)-rate(a)||((b.card||{}).n||0)-((a.card||{}).n||0));
+  else if(P.dwSort==="held") list.sort((a,b)=>(held.has(b.t)-held.has(a.t))||(a.suspect-b.suspect)||(a.low52-b.low52)||a.dd-b.dd);
+  const LIMIT=12, show=(DW_ALL||DW_Q.trim())?list:list.slice(0,LIMIT);
+  $("dwCards").innerHTML=show.length?show.map(r=>dipCard(r,held)).join(""):`<div class="empty-pf">No stock above the RM${(+DW.params.min_price||0).toFixed(2)} / RM${Math.round((DW.params.min_value||0)/1000)}k-a-day floor is 15% or more under its 20-day high today.</div>`;
+  dwSearchNote(list.length);
+  const more=$("dwMore"); more.hidden=list.length<=LIMIT||!!DW_Q.trim(); more.textContent=DW_ALL?"Show fewer":`Show all ${list.length}`;
+}
+function renderDipWatch(held){
+  if(!DW){
+    $("dwLede").innerHTML="No <b>dip_watch_data.json</b> yet. Run <b>python generate_dip_watch.py</b> (it is step 10 of the daily pipeline) and publish again.";
+    ["dwTiles","dwTbl","dwCards","gapTbl","dwNote","gapNote"].forEach(id=>$(id).innerHTML=""); return;
+  }
+  const S=DW.stats||{}, st=S.notlow||{}, nl=S.newlow||{}, g=S.gap||{}, br=S.by_record||{};
+  const stale=DW.as_of!==D.as_of_session;
+  const yrs=Object.entries(g.by_year||{}), posY=yrs.filter(([,v])=>v>0).length;
+  const yr0=S.since?S.since.slice(0,4):"";
+  const verdictDip=st.n?`On Bursa since ${yr0}, a 15%+ dip that was <b>not</b> a new 52-week low did <b>${spct(st.ex)}</b> vs the market 4 weeks later (${pct(st.win,0)} beat it); one that <b>was</b> a new 52-week low did <b>${spct(nl.ex)}</b> (${pct(nl.win,0)}). ${lowBad()?"So, like the US backtest, the 52-week-low dips are flagged AVOID.":"Unlike the US backtest (where new-low dips had no edge), on Bursa they did no worse, so they are shown in amber, not as AVOID."}`:"Not enough Bursa dip history yet.";
+  $("dwLede").innerHTML=`Stocks that have just fallen hard, and stocks that just gapped up on heavy volume. Prices as of <b class="${stale?"dw-stale":""}">${dshort(DW.as_of)}</b>${stale?` (the tracker is on ${dshort(D.as_of_session)}: run generate_dip_watch.py again)`:""}. Every figure is re-computed on up to 5 years of Bursa prices each run (${DW.tickers_priced} stocks). Stocks under <b>RM${(+DW.params.min_price||0).toFixed(2)}</b> or trading under <b>RM${Math.round((DW.params.min_value||0)/1000)}k a day</b> are left out, and falls that include a one-day drop of ${pct(DW.params.jump||0.45,0)}+ (usually a bonus issue or split in the price data) are kept out of the history. ${verdictDip} A stock's own bounce record is <b>context, not a signal</b>. The two buy rules are forward-tested in the section 1 scoreboard before the page ever funds them.`;
+  $("dwTiles").innerHTML=[
+    tile("Dip, not a 52w low",`<span class="${cls(st.ex)}">${spct(st.ex)}</span>`,`4 weeks vs market · ${pct(st.win,0)} beat it · ${st.n||0} dips since ${yr0}`),
+    tile("Dip at a new 52w low",`<span class="${cls(nl.ex)}">${spct(nl.ex)}</span>`,`4 weeks vs market · ${pct(nl.win,0)} beat it · ${nl.n||0} dips`),
+    tile("Strong vs poor bounce record",`${pct(br.high&&br.high.rec,0)} / ${pct(br.low&&br.low.rec,0)}`,`got back half the drop in 4 weeks (${br.high?br.high.n:0} vs ${br.low?br.low.n:0} dips)`),
+    tile("Gap-up continuation",`<span class="${cls(g.ex)}">${spct(g.ex)}</span>`,`3 months vs market · positive in ${posY} of ${yrs.length} years · ${g.n||0} gaps`),
+  ].join("");
+  const rec=r=>r.hist&&r.hist.n?r.hist:null;
+  const read=r=>r.suspect?'<span class="act wait">CHECK DATA</span>':r.low52?(lowBad()?'<span class="act exit">AVOID: 52W LOW</span>':'<span class="act wait">52W LOW</span>'):'<span class="act dip">DIP WATCH</span>';
+  const dips=dwMatch(DW.dips||[]);
+  $("dwList").innerHTML=(DW.dips||[]).map(r=>`<option value="${esc(tkd(r.t))}">${esc((ALL.get(r.t)||{}).name||"")}</option>`).join("");
+  $("dwTbl").innerHTML=dips.length?`<thead><tr><th>Stock</th><th class="l">Read</th><th>Price</th><th>Off 20d high</th><th>Off 52w high</th><th>Days since peak</th><th>Biggest 1-day fall</th><th>Past dips</th><th>Got back half</th><th>Fell 10% more</th><th>4 wks vs mkt</th><th>Signal</th></tr></thead><tbody>`+
+    dips.map(r=>{const a=ALL.get(r.t)||{},h=rec(r);return `<tr><td><span class="tk">${esc(tkd(r.t))}</span>${held.has(r.t)?'<span class="tag held">HELD</span>':""}${r.low52?`<span class="tag ${lowBad()?"low":"lowok"}">52W LOW</span>`:""}${r.post_earn?'<span class="tag earn" title="The biggest fall came within 4 days of the last results announcement">POST-RESULTS</span>':""}${r.suspect?'<span class="tag chk" title="A one-day fall of 45%+ is usually a bonus issue, split or consolidation in the price data">BONUS/SPLIT?</span>':""}${window.Valuation?Valuation.button(r.t):""}<span class="co">${esc(a.name||"")}</span></td>
+      <td class="l">${read(r)}</td><td>${px(r.px)}</td><td class="neg">${spct(r.dd)}</td><td class="${cls(r.dd52)}">${spct(r.dd52,0)}</td><td>${r.days??"–"}</td>
+      <td class="${cls(r.big)}">${spct(r.big)}${r.big_d?`<span class="muted"> ${dshort(r.big_d)}</span>`:""}</td>
+      <td>${h?h.n:"–"}</td><td>${h?pct(h.rec,0):"–"}</td><td>${h?pct(h.slide,0):"–"}</td><td class="${h?cls(h.ex):"muted"}">${h?spct(h.ex):"–"}</td>
+      <td>${sigOf(r.t)?SIGN[sigOf(r.t)]:"–"}<span class="muted"> ${a.score??""}</span></td></tr>`}).join("")+`</tbody>`
+    :`<tbody><tr><td class="empty-pf">No stock is 15% or more under its 20-day high today.</td></tr></tbody>`;
+  $("dwNote").innerHTML=`<b>Past dips</b> = this stock's earlier 15%+ falls over 5 years. <b>Got back half</b> = recovered half the drop within 4 weeks. <b>Fell 10% more</b> = dropped another 10% within 4 weeks first or instead. Across all stocks, a strong record (two-thirds or more) got back half ${pct(br.high&&br.high.rec,0)} of the time vs ${pct(br.low&&br.low.rec,0)} for a poor one (one-third or less), too small to trade on alone. <b>POST-RESULTS</b> = the biggest fall came within 4 days of the last quarterly results (Yahoo date; beat or miss is not tracked). <b>BONUS/SPLIT?</b> = a one-day fall of 45%+, usually a price-data adjustment, so check before acting. Use your usual entries (Support, then halfway to Mid BB, in board lots of 100) and the 3 × ATR risk line.`;
+  const cardsView=P.dwView!=="table";
+  $("dwTblWrap").hidden=cardsView; $("dwCards").hidden=!cardsView; $("dwMore").hidden=true;
+  $("dwSort").hidden=!cardsView; $("dwHideLow").parentElement.hidden=!cardsView;
+  if(cardsView) renderDipCards(held); else dwSearchNote(dips.length);
+  document.querySelectorAll("#dwView button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===(cardsView?"cards":"table"))));
+  document.querySelectorAll("#dwSort button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.dwSort)));
+  $("dwHideLow").checked=!!P.dwHideLow;
+  const gaps=DW.gaps||[];
+  $("gapTbl").innerHTML=gaps.length?`<thead><tr><th>Stock</th><th class="l">Gap day</th><th>Gap open</th><th>Day close</th><th>Volume ×</th><th>Since gap day</th><th>Price</th><th class="l">Trend</th><th>Signal</th></tr></thead><tbody>`+
+    gaps.map(r=>{const a=ALL.get(r.t)||{};return `<tr><td><span class="tk">${esc(tkd(r.t))}</span>${held.has(r.t)?'<span class="tag held">HELD</span>':""}${r.post_earn?'<span class="tag earn">POST-RESULTS</span>':""}${window.Valuation?Valuation.button(r.t):""}<span class="co">${esc(a.name||"")}</span></td>
+      <td class="l">${dshort(r.d)}<span class="muted"> ${r.sessions_ago?r.sessions_ago+"d ago":"today"}</span></td><td class="pos">${spct(r.gap)}</td><td class="${cls(r.day)}">${spct(r.day)}</td><td>${(r.volx||0).toFixed(1)}×</td>
+      <td class="${cls(r.since)}">${spct(r.since)}</td><td>${px(r.px)}</td><td class="l">${r.uptrend?'<span class="pos">Uptrend</span>':'<span class="muted">Not in uptrend</span>'}</td><td>${sigOf(r.t)?SIGN[sigOf(r.t)]:"–"}<span class="muted"> ${a.score??""}</span></td></tr>`}).join("")+`</tbody>`
+    :`<tbody><tr><td class="empty-pf">No 4%+ gap-up on 2× volume in the last 10 sessions.</td></tr></tbody>`;
+  $("gapNote").innerHTML=`A <b>gap-up</b> = opened ${pct(DW.params.gap_min,0)}+ above the prior close on ${DW.params.gap_vol}× the 50-day volume and closed up, usually a results or news reaction. In the US backtest this was the only momentum entry with a 3-month edge in most years. On Bursa, re-computed each run, the 3-month edge vs the market was: ${yrs.map(([y,v])=>`${y} <span class="${cls(v)}">${spct(v)}</span>`).join(", ")||"not enough data"}. You cannot see a gap coming from price alone; this list catches the move <b>after</b> the first day, while the drift tends to continue. Thin Bursa stocks are left out (RM${Math.round((DW.params.min_value||0)/1000)}k-a-day floor) because a 2× volume day means little there.`;
+}
+
 function render(){
   const top=topRowsAt(D.watch_dates.length-1), pf=T.portfolio||[], held=new Set(pf.map(h=>h.ticker));
   const total=pf.reduce((s,h)=>s+(h.marketValue||0),0);
@@ -710,6 +926,7 @@ function render(){
   const plan=holdingPlan(pf,top,SB,total), trimCash=plan.reduce((s,p)=>s+p.trimRM,0);
   renderHoldings(plan,total);
   const bp=buyPlan(top,held,trimCash,SB,total); renderBuys(bp,trimCash,SB); renderPlan(plan,bp,SB);
+  try{renderDipWatch(held)}catch(e){console.error("Dip watch:",e)}
   renderPnl();
   document.querySelectorAll("#useTrim button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.useTrim)));
   document.querySelectorAll("#nr button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.nr)));
@@ -735,6 +952,11 @@ function boot(pick,dash){
   $("closedTbl").addEventListener("click",e=>{const th=e.target.closest("th.sort");if(th){cSort(th);return}const tr=e.target.closest("tr.mhead");if(tr)togM(tr)});
   $("ctAll").addEventListener("click",()=>{const ms=[...$("closedTbl").querySelectorAll("tr.mhead")].map(t=>t.dataset.m);const all=ms.every(m=>OPENM.has(m));OPENM=new Set(all?[]:ms);saveOpen();renderClosed(T.realized)});
   $("closedTbl").addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const th=e.target.closest("th.sort"),tr=e.target.closest("tr.mhead");if(th){e.preventDefault();cSort(th)}else if(tr){e.preventDefault();togM(tr)}});
+  $("dwView").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.dwView=b.dataset.v;save();render()});
+  $("dwSort").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;P.dwSort=b.dataset.v;save();render()});
+  $("dwHideLow").addEventListener("change",e=>{P.dwHideLow=e.target.checked;save();render()});
+  $("dwSearch").addEventListener("input",e=>{DW_Q=e.target.value;render()});
+  $("dwMore").addEventListener("click",()=>{DW_ALL=!DW_ALL;render()});
   prepRules(); SB0=scoreRules(); render();
 }
 // keep the sticky offsets in step with the real heights of the settings bar and a section title
@@ -743,8 +965,8 @@ function syncSticky(){const phone=matchMedia("(max-width:600px)").matches;root.s
 syncSticky(); addEventListener("resize",syncSticky); if(window.ResizeObserver) new ResizeObserver(syncSticky).observe(ctl);
 const get=f=>fetch(f+"?v="+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(f+" "+r.status);return r.json()});
 const valP=window.Valuation?Valuation.load():Promise.resolve();  // for the Valuation buttons
-Promise.all([get("pick_tracker_data.json"),get("dashboard-data.json"),get("valuation_data.json").catch(()=>({tickers:{}})),valP])
-  .then(([pick,dash,val])=>{V=val.tickers||{};boot(pick,dash)})
+Promise.all([get("pick_tracker_data.json"),get("dashboard-data.json"),get("valuation_data.json").catch(()=>({tickers:{}})),valP,get("dip_watch_data.json").catch(()=>null)])
+  .then(([pick,dash,val,,dw])=>{V=val.tickers||{};DW=dw;boot(pick,dash)})
   .catch(err=>{$("meta").textContent="Could not load data: "+err.message+". Run the daily pipeline and push again.";console.error(err)});
 })();
 </script>
