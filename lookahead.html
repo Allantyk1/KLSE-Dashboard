@@ -106,6 +106,19 @@
   .tag.earn{color:var(--amber);border-color:var(--amber)}
   .tag.grn{color:var(--green);border-color:var(--green)}
   .tag.cb{color:var(--bg);background:var(--amber);border-color:var(--amber);cursor:help}
+  /* ★ Combo stocks as links to the screener (2026-11-10) */
+  a.tag.cb{cursor:pointer;text-decoration:none}
+  a.tag.cb:hover{filter:brightness(1.1)}
+  .slink{color:inherit;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px}
+  .slink:hover{color:var(--amber);text-decoration-color:var(--amber)}
+  .cb-list{margin:2px 0 10px}
+  .cb-list .pk-h a{color:var(--amber);text-decoration:none;font-weight:600}
+  .cb-list .pk-h a:hover{text-decoration:underline}
+  a.pk{text-decoration:none;color:var(--ink);cursor:pointer}
+  a.pk:hover{border-color:var(--amber)}
+  .pk.cbk{background:var(--amber-soft);border-color:transparent}
+  .pk.cbk b{color:var(--amber);font-weight:700}
+  .pk.cbk i{color:var(--green)}
   .tag.dn{color:var(--red);border-color:var(--red)}
   .tag.dv{color:var(--blue);border-color:var(--blue);margin-left:0}
   .lasting{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:12px;padding:12px 14px;margin-bottom:12px}
@@ -509,7 +522,17 @@ function buildCombo(dash){
   COMBO_R={k:"combo",name:"★ Combo",desc:"12-month winner, in an uptrend, within 10% of its 52-week high",today:list,combo:true};
 }
 const comboOf=t=>(ALL.get(t)||{}).combo||null;
-const cbTag=t=>{const c=comboOf(t);return c?`<span class="tag cb" title="★ Combo #${c.rank}: top 60 by 12-1 month gain (${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend, ${c.offHigh<0?Math.abs(c.offHigh)+"% below":"at"} its 52-week high">★ COMBO</span>`:""};
+// Links into the screener (2026-11-10): DESK#5263 opens that stock's detail view,
+// DESK#combo lists every ★ Combo stock. Uses public.html when opened from it.
+const DESK=/(^|[?&])from=public\b/.test(location.search)?"public.html":"index.html";
+const deskHref=t=>`${DESK}#${encodeURIComponent(tkd(t))}`;
+const cbTag=t=>{const c=comboOf(t);return c?`<a class="tag cb" href="${deskHref(t)}" title="★ Combo #${c.rank}: top 60 by 12-1 month gain (${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend, ${c.offHigh<0?Math.abs(c.offHigh)+"% below":"at"} its 52-week high. Tap to open it on the screener">★ COMBO</a>`:""};
+// Today's ★ Combo stocks as tappable chips, best rank first
+function comboChips(list){
+  const rows=list.map(t=>({t,c:comboOf(t)||{},a:ALL.get(t)||{}})).sort((x,y)=>(x.c.rank??999)-(y.c.rank??999));
+  return `<div class="cb-list"><div class="pk-h">★ Combo today (${rows.length}) · tap a stock to open its chart on the screener · <a href="${DESK}#combo">see them all on the screener ›</a></div><div class="pk-list">`+
+    rows.map(r=>`<a class="pk cbk" href="${deskHref(r.t)}" title="${esc(tkd(r.t))} · ★ Combo #${r.c.rank??"–"} · 12-month gain ${r.c.mom12!=null?(r.c.mom12>=0?"+":"")+r.c.mom12+"%":"–"} · ${r.c.offHigh!=null?(r.c.offHigh<0?Math.abs(r.c.offHigh)+"% below":"at")+" its 52-week high":""}"><b>#${r.c.rank??"–"}</b>${esc(r.a.name||tkd(r.t))}${r.c.mom12!=null?`<i>${r.c.mom12>=0?"+":""}${r.c.mom12}%</i>`:""}</a>`).join("")+`</div></div>`;
+}
 const isDown=a=>{const d=a&&a.detail;if(!d||d.pctVsSma200==null||d.pctVsSma50==null)return false;return d.pctVsSma200<0&&d.pctVsSma200<d.pctVsSma50};
 /* Your portfolio against the same models (added 2026-10-19). Three rows:
    1. basket: today's holdings, RM-weighted, run through the same 5-year test
@@ -537,7 +560,8 @@ function portfolioRows(){
   rows+=act.some(v=>v!=null)?`<tr class="pf"><td>Your holdings, actual last 1 / 3 / 6 months vs the median liquid stock</td>${cell(act[0])}${cell(act[1])}${cell(act[2])}<td class="muted">–</td><td class="muted">–</td></tr>`
     :`<tr class="pf"><td>Your holdings, actual last 1 / 3 / 6 months</td><td colspan="5" class="muted" style="text-align:left">appears after the next full screener run (it adds the 1 / 3 / 6-month return columns)</td></tr>`;
   const names=k=>by[k].sort((a,b)=>b.marketValue-a.marketValue).map(h=>esc(tkd(h.ticker))+((ALL.get(h.ticker)||h).name?" "+esc((ALL.get(h.ticker)||h).name):"")).join(", ");
-  const mix=`<div class="mix"><span>Today your money is in:</span>`+[...GROUPS,{k:"none",l:"none of these"}].map(g=>`<span title="${names(g.k)}"><b>${pct(share(g.k),0)}</b> ${g.l}${by[g.k].length&&g.k!=="none"?` (${names(g.k)})`:""}</span>`).join("")+`</div>`;
+  const links=k=>by[k].sort((a,b)=>b.marketValue-a.marketValue).map(h=>`<a class="slink" href="${deskHref(h.ticker)}">${esc(tkd(h.ticker))}${(ALL.get(h.ticker)||h).name?" "+esc((ALL.get(h.ticker)||h).name):""}</a>`).join(", ");
+  const mix=`<div class="mix"><span>Today your money is in:</span>`+[...GROUPS,{k:"none",l:"none of these"}].map(g=>`<span title="${names(g.k)}"><b>${pct(share(g.k),0)}</b> ${g.l}${by[g.k].length&&g.k!=="none"?` (${links(g.k)})`:""}</span>`).join("")+`</div>`;
   const parts=[];
   if(PB&&PB.m6) parts.push(`Over the same 5 years, today's basket ${PB.m6.avg<BT[0][3]?`trailed the ★ Combo by <b>${((BT[0][3]-PB.m6.avg)*100).toFixed(1)} points</b>`:`kept up with the ★ Combo`} over 6-month holds (${spct(PB.m6.avg)} vs ${spct(BT[0][3])}) and was ahead of the market in only <b>${PB.m3?PB.m3.yearsAhead:"–"} of ${PB.m3?PB.m3.years:"–"}</b> years.`);
   if(share("down")>0) parts.push(`<b>${pct(share("down"),0)}</b> of your money is in downtrend stocks, the group that lagged most (${spct(BT[3][3])} over 6 months).`);
@@ -552,7 +576,7 @@ function renderLasting(SB){
   if(!avail) head=`<p><b>The ★ Combo list isn't in today's data yet.</b> It needs the new 12-month column, which arrives with the next full screener run (the 7 PM weekday run, or double-click run_daily.bat). Until then this page falls back to ${P.nr==="prov"?"the provisional leader":"holding cash"}.</p>`;
   else if(SB.leader) head=`<p>A short-term rule is leading in the replay above, so section 3 follows it. For holds of <b>3–6 months</b>, the ★ Combo is the rule with the longest record: <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).</p>`;
   else head=`<p><b>${following?"Recommended: switch to the ★ Combo and hold 3–6 months.":"The ★ Combo is the strategy that has lasted."}</b> Your Top 30 ranks stocks by their <b>3-month</b> gain, and that is the weaker version: it ${top.s[20].avg!=null&&top.s[20].avg<0?`is behind the market in the replay above (${spct(top.s[20].avg)} after 4 weeks) and `:""}added only ${spct(BT[2][3])} over 6 months in the 5-year test. Ranking by the <b>12-month</b> gain, and keeping only stocks still in an uptrend near their high, did much better and kept working the longer it was held. <b>${n}</b> stocks qualify today (of ${CMETA.eligible} liquid stocks with a year of history).${following?" Section 3 is built from it.":` Choose <b>★ Combo</b> in the settings bar to build section 3 from it.`}</p>`;
-  $("lasting").innerHTML=`<div class="lasting"><h3>Strategy that lasts: 5-year Bursa test</h3>${head}
+  $("lasting").innerHTML=`<div class="lasting"><h3>Strategy that lasts: 5-year Bursa test</h3>${head}${avail&&n?comboChips(COMBO_R.today):""}
     <div class="scroll"><table><thead><tr><th>Rule (picked fresh each month)</th><th>1 month</th><th>3 months</th><th>6 months</th><th>Ahead in 6-mo windows</th><th>Years ahead (3 mo)</th></tr></thead><tbody>`+
     BT.map(r=>`<tr${r[6]?' class="hl"':""}><td>${esc(r[0])}</td><td class="${cls(r[1])}">${spct(r[1])}</td><td class="${cls(r[2])}">${spct(r[2])}</td><td class="${cls(r[3])}">${spct(r[3])}</td><td>${pct(r[4],0)}</td><td>${r[5]}</td></tr>`).join("")+PR.rows+
     `</tbody></table></div>${PR.mix}${PR.say}<p class="note" style="margin:8px 0 0">vs the average liquid Bursa stock (price ≥ RM0.10, RM200k+ traded a day), Oct 2022 – Oct 2026, before brokerage and stamp duty. All momentum rules lost in 2022, a rebound year when last year's losers won, so expect bad years. The test re-picked monthly: review once a month and replace holdings that drop off the list. Stocks listed today only (delisted companies missing), which flatters every row a little. Your basket row uses hindsight: it shows how the stocks you hold today did, not your actual past trades. The estimate row assumes each holding behaves like its group's 5-year average.</p></div>`;

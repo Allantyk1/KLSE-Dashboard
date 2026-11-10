@@ -1905,6 +1905,26 @@ function showRenderErrorBanner(err) {
 // alongside dashboard-data.json by generate_dashboard_data.py), never
 // dashboard-data.json itself, so nothing served by this page's data source
 // ever contains personal holdings.
+
+// Deep links (2026-11-10), used by the Look-ahead page's ★ Combo links:
+//   public.html#combo  -> All Stocks tab filtered to the ★ Combo stocks
+//   public.html#5263   -> opens that stock's detail view (Back returns to the list)
+function openFromLink() {
+  const h = decodeURIComponent(location.hash.slice(1)).trim().toLowerCase();
+  if (!h) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  if (h === 'combo') {
+    switchTab('all');                       // switching clears the search, so fill it after
+    const box = document.getElementById('searchBox');
+    box.value = 'combo';
+    box.dispatchEvent(new Event('input'));
+    return;
+  }
+  const t = h.endsWith('.kl') ? h : h + '.kl';
+  if (stocksByTicker.has(t)) { switchTab('all'); openDetailModal(t, 'all'); }
+}
+// a link to the same page only changes the #hash (no reload): handle that too
+window.addEventListener('hashchange', () => { if (stocksByTicker.size) openFromLink(); });
 fetch('public-data.json?t=' + Date.now())
   .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
   .then(async data => {
@@ -1919,6 +1939,7 @@ fetch('public-data.json?t=' + Date.now())
     // instead of silently masquerading as "no data yet, here's the sample".
     try {
       render(data);
+      openFromLink();
     } catch (err) {
       console.error('Render failed on real data:', err);
       showRenderErrorBanner(err);
