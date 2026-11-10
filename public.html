@@ -368,6 +368,14 @@
     margin-left:0.3em;
     font-weight:500;
   }
+  /* Sell - Resistance box (2026-11-10, port of the US dashboard): the card's
+     4 numbers sit 2 x 2 - buy levels on top (Entry - EMA20 / Entry - BB Zone),
+     sell levels below (Sell - Resistance / Target Price). */
+  .price-row{ display:grid; grid-template-columns:1fr 1fr; }
+  .price-stat.sell{ box-shadow:inset 3px 0 0 var(--watch); }
+  .price-stat.sell .label{ color:var(--watch); }
+  .price-stat .note{ font-size:0.66rem; color:var(--text-muted); margin-top:0.15rem; }
+  .price-stat.sell.hit .note{ color:var(--watch); font-weight:600; }
 
   .card.expandable{ cursor:pointer; }
   .card.expandable:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
@@ -537,7 +545,8 @@
 
   /* Pinned stat row inside the sticky header (Entry EMA20 / BB Zone / Target) */
   .dm-stat-row{
-    display:flex;
+    display:grid;
+    grid-template-columns:1fr 1fr;
     gap:0.5rem;
     max-width:640px;
     margin:0.6rem auto 0;
@@ -546,6 +555,7 @@
   .dm-stat-row .price-stat{ flex:1; min-width:0; padding:0.3rem 0.5rem; }
   .dm-stat-row .price-stat .label{ font-size:0.6rem; }
   .dm-stat-row .price-stat .val{ font-size:0.78rem; }
+  .dm-stat-row .price-stat .note{ font-size:0.6rem; }
   .dm-price{ white-space:nowrap; }
   @media (max-width: 420px){
     .dm-ticker, .dm-price{ font-size:1.1rem; }
@@ -870,6 +880,17 @@ function priceStatRowHTML(s) {
   const entries = [];
   if (s.entryEma20) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 EMA20</div><div class="val">RM ${s.entryEma20.toFixed(3)}</div></div>`);
   if (s.entryBbZone) entries.push(`<div class="price-stat"><div class="label">Entry \u2013 BB Zone</div><div class="val">RM ${s.entryBbZone.toFixed(3)}</div></div>`);
+  // Sell - Resistance box (2026-11-10, port of the US sellBox()). The upper
+  // Bollinger band (the "Resistance" in the detail table) is the first place
+  // to take profit: sell 50-100% there and let any rest run toward the
+  // Target Price, with the risk line underneath.
+  const resist = s.detail && s.detail.bbUpper;
+  if (resist) {
+    const hit = s.price != null && s.price >= resist;
+    const sellUp = (!hit && s.price) ? (resist / s.price - 1) * 100 : null;
+    const sellUpText = sellUp != null ? `<span class="upside" style="color:var(--buy)">+${sellUp.toFixed(1)}%</span>` : '';
+    entries.push(`<div class="price-stat sell${hit ? ' hit' : ''}" title="Upper Bollinger band (resistance). Take profit on 50%-100% of the position here; hold any rest toward the Target Price."><div class="label">Sell \u2013 Resistance</div><div class="val">RM ${resist.toFixed(3)}${sellUpText}</div><div class="note">${hit ? 'At resistance now: sell 50%\u2013100%' : 'Sell 50%\u2013100% here'}</div></div>`);
+  }
   if (s.targetPrice) {
     const hasUpside = s.pctUpsideToTarget != null && !isNaN(s.pctUpsideToTarget);
     const upsideColor = (s.pctUpsideToTarget || 0) >= 0 ? 'var(--buy)' : 'var(--sell)';
