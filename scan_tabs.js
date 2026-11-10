@@ -5,8 +5,8 @@
    Three shortlists layered on the same cards; search (and the KDJ chips on
    index.html) still apply on top:
     below_support - price at least GAP (slider, 10-40%) below the average
-       "Entry - BB Zone" of the past week (5 sessions) or month (21 sessions):
-       avgEntryW / avgEntryM, written by generate_dashboard_data.py from
+       "Entry - BB Zone" of the past week (5 sessions), 2 weeks (10; 2026-11-10)
+       or month (21 sessions): avgEntryW / avgEntry2W / avgEntryM, written by generate_dashboard_data.py from
        chart-history.json. Stocks at a new 52-week low are listed last.
     below_fair    - price under the blended fair value in the Valuation dialog
        (valuation_data.json; only the tickers that file covers). Fair value
@@ -36,11 +36,13 @@ window.ScanTabs = (function () {
   const STORE = 'klse-desk-support';
 
   let ALL = [], MAP = new Map(), DIP = null, dipTried = false;
-  let BASIS = 'm';   // 'w' = past 5 sessions, 'm' = past 21 sessions
+  let BASIS = 'm';   // 'w' = past 5 sessions, '2w' = past 10 (2026-11-10), 'm' = past 21
+  const BASIS_KEY = { w: 'avgEntryW', '2w': 'avgEntry2W', m: 'avgEntryM' };
+  const BASIS_TXT = { w: "week's", '2w': "2 weeks'", m: "month's" };
   let GAP = 0.10;    // minimum gap below that average (10-40%)
   try {
     const sv = JSON.parse(localStorage.getItem(STORE) || 'null');
-    if (sv && (sv.b === 'w' || sv.b === 'm')) BASIS = sv.b;
+    if (sv && BASIS_KEY[sv.b]) BASIS = sv.b;
     if (sv && sv.g >= 10 && sv.g <= 40) GAP = sv.g / 100;
   } catch (e) {}
 
@@ -105,7 +107,7 @@ window.ScanTabs = (function () {
 
   function rows(key) {
     if (key === 'below_support') {
-      const k = BASIS === 'w' ? 'avgEntryW' : 'avgEntryM';
+      const k = BASIS_KEY[BASIS];
       return ALL
         .filter(s => s.price != null && s[k] && s.price <= s[k] * (1 - GAP))
         .map(s => ({ s, avg: s[k], gap: s.price / s[k] - 1, near: atNew52wLow(s.ticker) }))
@@ -137,7 +139,7 @@ window.ScanTabs = (function () {
   function why(key, r) {
     const low52 = atNew52wLow(r.s.ticker) ? '<span class="warn">⚠ at a new 52-week low</span>' : '';
     if (key === 'below_support') {
-      return `<div class="scan-why">Price is <b>${pct(r.gap)} below</b> the past ${BASIS === 'w' ? 'week' : 'month'}'s average Entry – BB Zone ${rm(r.avg)}${low52}</div>`;
+      return `<div class="scan-why">Price is <b>${pct(r.gap)} below</b> the past ${BASIS_TXT[BASIS]} average Entry – BB Zone ${rm(r.avg)}${low52}</div>`;
     }
     if (key === 'below_fair') {
       const stretch = r.near
@@ -156,7 +158,7 @@ window.ScanTabs = (function () {
   }
 
   const NOTES = {
-    below_support: () => `Stocks whose price has fallen <b>below the average "Entry – BB Zone" price of the past ${BASIS === 'w' ? 'week' : 'month'}</b> by at least the gap you set. The BB Zone entry follows the price down, so the average of where it sat recently is the line to test. Sorted deepest first. Stocks at a new 52-week low are listed separately at the bottom: in the US dip backtest (Oct 23) those had no bounce edge. Not yet backtested on Bursa.`,
+    below_support: () => `Stocks whose price has fallen <b>below the average "Entry – BB Zone" price of the past ${BASIS_TXT[BASIS].replace(/'s?$/, '')}</b> by at least the gap you set. The BB Zone entry follows the price down, so the average of where it sat recently is the line to test. Sorted deepest first. Stocks at a new 52-week low are listed separately at the bottom: in the US dip backtest (Oct 23) those had no bounce edge. Not yet backtested on Bursa.`,
     below_fair: () => `Stocks trading <b>below the blended fair value</b> from the Valuation dialog (median of up to 9 methods). Only tickers the valuation file covers can appear. A very large gap usually means one or two methods (often DCF on a cash-rich or cyclical year) are pulling the value up – open Valuation before trusting it.`,
     rebound: () => `Stocks now <b>15%+ below their 20-day high</b> whose own past 15%+ dips ran <b>≥30% off the low at least 70% of the time</b> (at least ${REBOUND_MIN_N} past dips, 5 years of Bursa prices). The 30% is measured from the dip low to the run's high before a 10% pullback, so it is the best-case exit, not a hold-to-date return. Each stock's own history, not a forecast: the US backtest found a strong past bounce record only slightly improved the next dip's outcome. Only stocks at RM0.20+ trading RM100k+ a day are checked. The Look-ahead scoreboard tracks how this list performs.`,
   };
@@ -169,7 +171,7 @@ window.ScanTabs = (function () {
     return `<div class="scan-ctrl">
       <span>Compare with the average of the past</span>
       <span class="seg" role="group" aria-label="Average over">
-        <button type="button" data-basis="w" class="${BASIS === 'w' ? 'active' : ''}">Week</button><button type="button" data-basis="m" class="${BASIS === 'm' ? 'active' : ''}">Month</button>
+        <button type="button" data-basis="w" class="${BASIS === 'w' ? 'active' : ''}">Week</button><button type="button" data-basis="2w" class="${BASIS === '2w' ? 'active' : ''}">2 Weeks</button><button type="button" data-basis="m" class="${BASIS === 'm' ? 'active' : ''}">Month</button>
       </span>
       <label class="gap-wrap">At least <input type="range" min="10" max="40" step="1" value="${g}" aria-label="Minimum gap below the average"><span class="gap-val">${g}%</span> below</label>
     </div>`;

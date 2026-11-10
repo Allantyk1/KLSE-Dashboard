@@ -197,13 +197,36 @@
     display:inline-block;
   }
 
+  /* Tabs wrap onto extra rows instead of scrolling sideways (2026-11-10), so
+     every tab is visible on a laptop or a phone. Main tabs sit on the first
+     row(s); the dashed scan tabs start on a new row (.tab-break, added in
+     render()). Each pill stretches to fill its row so the rows line up. */
   .tabs{
     display:flex;
+    flex-wrap:wrap;
     gap:0.4rem;
     padding:0.75rem 1rem;
     max-width:640px;
     margin:0 auto;
-    overflow-x:auto;
+  }
+  .tabs .tab{ flex:1 1 auto; text-align:center; }
+  .tabs .tab-break{ flex-basis:100%; height:0; }
+  .tab .lbl-s{ display:none; }
+  /* Phones: an even 12-column grid. index.html (5 main tabs): Buy / Watch / Sell,
+     then All Stocks / Portfolio, then the 3 scans = 3 rows. public.html (4 main
+     tabs): Buy / Watch / Sell / All, then the 3 scans = 2 rows. Long labels
+     switch to short ones (lbl-s) so nothing is cut off. */
+  @media (max-width: 480px){
+    .tabs{ display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:0.35rem; padding:0.6rem 0.75rem; }
+    .tabs .tab{ grid-column:span 4; min-width:0; font-size:0.78rem; padding:0.45rem 0.3rem; overflow:hidden; text-overflow:ellipsis; }
+    .tabs[data-main="5"] .tab[data-cat="all"], .tabs[data-main="5"] .tab[data-cat="portfolio"]{ grid-column:span 6; }
+    .tabs[data-main="4"] .tab:not(.scan-tab){ grid-column:span 3; }
+    .tabs .tab-break{ display:none; }
+    .tab .lbl-l{ display:none; }
+    .tab .lbl-s{ display:inline; }
+    .tabs[data-main="5"] .tab[data-cat="all"] .lbl-l{ display:inline; }
+    .tabs[data-main="5"] .tab[data-cat="all"] .lbl-s{ display:none; }
+    .tabs .tab .count{ font-size:0.7rem; margin-left:0.25em; }
   }
 
   .search-wrap{
@@ -823,6 +846,8 @@ const CATEGORIES = [
 ];
 // Scan tabs (2026-11-09): Below Support / Below Fair Value / Rebound >=30% -- see scan_tabs.js
 if (window.ScanTabs) CATEGORIES.push(...ScanTabs.TABS);
+// Shorter tab labels used on phones only (2026-11-10), so every tab fits without scrolling.
+const TAB_SHORT = { all: 'All', below_support: 'Support', below_fair: 'Fair Value' };
 
 // Tab selected by default on every page load. KDJ filter defaults to "All
 // KDJ" already, via activeKdjFilter = 'ALL' below.
@@ -1145,16 +1170,26 @@ function render(data) {
   const mainEl = document.getElementById('main');
   mainEl.innerHTML = '';
   tabsEl.innerHTML = '';
+  tabsEl.dataset.main = CATEGORIES.filter(c => !c.scan).length;   // phone grid layout (CSS)
 
   CATEGORIES.forEach((cat, i) => {
     const isScan = cat.scan && window.ScanTabs;
     const count = isScan ? ScanTabs.count(cat.key)
       : cat.key === 'portfolio' ? (data.portfolio || []).length : (data[cat.key] || []).length;
     const btn = document.createElement('button');
+    // first scan tab starts a new row (see .tab-break CSS)
+    if (isScan && !tabsEl.querySelector('.tab-break')) {
+      const br = document.createElement('span');
+      br.className = 'tab-break';
+      br.setAttribute('aria-hidden', 'true');
+      tabsEl.appendChild(br);
+    }
     btn.className = 'tab' + (isScan ? ' scan-tab' : '') + (cat.key === DEFAULT_TAB ? ' active' : '');
     btn.dataset.cat = cat.key;
     btn.setAttribute('role', 'tab');
-    btn.innerHTML = `${cat.label}<span class="count">${count}</span>`;
+    const short = TAB_SHORT[cat.key];
+    btn.innerHTML = (short ? `<span class="lbl-l">${cat.label}</span><span class="lbl-s">${short}</span>` : cat.label)
+      + `<span class="count">${count}</span>`;
     btn.addEventListener('click', () => switchTab(cat.key));
     tabsEl.appendChild(btn);
 

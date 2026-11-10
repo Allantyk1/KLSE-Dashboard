@@ -435,17 +435,18 @@ function scoreRules(){
 function picksDetail(R){
   const h=20, i0=N-1;
   const mv5=t=>{const c=D.watch[t]?.c;return c&&i0>=5&&c[i0]&&c[i0-5]?c[i0]/c[i0-5]-1:null};
-  const code=t=>String(t).replace(/\.KL$/,"");
+  // show the company name (e.g. SUNCON); the code stays in the tooltip (2026-11-10)
+  const code=t=>(ALL.get(t)||{}).name||(D.watch[t]&&D.watch[t].co)||tkd(t);
   const today=R.today.map(t=>({t,m:mv5(t)})).sort((a,b)=>(b.m??-9)-(a.m??-9));
   let html=`<div class="pk-h">Picked on <b>${dshort(D.watch_dates[i0])}</b> (${today.length}) · last 5 days shown, green = up</div><div class="pk-list">`+
-    today.map(x=>`<span class="pk ${x.m==null?"":x.m>=0?"up":"dn"}" title="${esc(x.t)}">${esc(code(x.t))}<i>${spct(x.m)}</i></span>`).join("")+`</div>`;
+    today.map(x=>`<span class="pk ${x.m==null?"":x.m>=0?"up":"dn"}" title="${esc(tkd(x.t))}">${esc(code(x.t))}<i>${spct(x.m)}</i></span>`).join("")+`</div>`;
   // latest past session with picks whose 4-week outcome is known
   let j=-1; for(let i=N-1-h;i>=0;i--){if(R.pick(i).length){j=i;break}}
   if(j<0) return html+`<div class="pk-h">No earlier picks old enough to measure yet.</div>`;
   const m=MKT[h][j], rows=R.pick(j).map(t=>({t,ex:fwd(t,j,h)!=null&&m!=null?fwd(t,j,h)-m:null})).sort((a,b)=>(b.ex??-9)-(a.ex??-9));
   const beat=rows.filter(x=>x.ex!=null&&x.ex>0).length, known=rows.filter(x=>x.ex!=null).length;
   html+=`<div class="pk-h">How the last measured batch did: picked <b>${dshort(D.watch_dates[j])}</b>, 4 weeks later vs market · <b>${beat} of ${known}</b> outperformed</div><div class="pk-list">`+
-    rows.map(x=>`<span class="pk ${x.ex==null?"":x.ex>0?"up":"dn"}" title="${esc(x.t)}">${esc(code(x.t))}<i>${spct(x.ex)}</i></span>`).join("")+`</div>`;
+    rows.map(x=>`<span class="pk ${x.ex==null?"":x.ex>0?"up":"dn"}" title="${esc(tkd(x.t))}">${esc(code(x.t))}<i>${spct(x.ex)}</i></span>`).join("")+`</div>`;
   return html;
 }
 function renderScoreboard(SB){
