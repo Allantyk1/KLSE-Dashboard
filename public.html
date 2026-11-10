@@ -633,24 +633,16 @@
     font-size:0.72rem;
     padding:1rem 0 0.5rem;
   }
-  /* ---- Wide screens (2026-11-10): the page was a 640px phone-width column on a
-     laptop. From 900px it widens and the cards sit in 2 columns (3 from 1400px).
-     Anything that isn't a stock card (portfolio totals, the Sold list, scan
-     notes / slider / group titles, "nothing here") spans the full row.
-     Phones are unchanged. The detail pop-up keeps its phone width. */
+  /* ---- Wide screens (2026-11-10, matched to the US Market Desk): from 900px the
+     page uses the full browser width with one full-width card per row, and all
+     tabs sit on one row at their natural width (the scan tabs follow straight
+     after Portfolio). Phones are unchanged. The detail pop-up keeps its width. */
   @media (min-width: 900px){
-    header, .tabs, .search-wrap, .kdj-filter-row, main, footer{ max-width:1180px; }
-    .panel.active, .panel.active .scan-list{
-      display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
-      gap:0.75rem; align-items:start;
+    header, .tabs, .search-wrap, .kdj-filter-row, main, footer{
+      max-width:none; padding-left:2rem; padding-right:2rem;
     }
-    .panel.active > :not(.card), .panel.active .scan-list > :not(.card){ grid-column:1 / -1; }
-    .panel.active .card{ margin-bottom:0; }
-    .panel.active .scan-list{ margin:0; }
-  }
-  @media (min-width: 1400px){
-    header, .tabs, .search-wrap, .kdj-filter-row, main, footer{ max-width:1500px; }
-    .panel.active, .panel.active .scan-list{ grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    .tabs .tab{ flex:0 0 auto; }
+    .tabs .tab-break{ display:none; }
   }
 </style>
 </head>
