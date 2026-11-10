@@ -812,6 +812,7 @@
 </div>
 
 <script src="valuation.js"></script>
+<script src="scan_tabs.js"></script>
 <script>
 const CATEGORIES = [
   { key: 'buy', label: 'Buy' },
@@ -820,6 +821,8 @@ const CATEGORIES = [
   { key: 'all', label: 'All Stocks' },
   { key: 'portfolio', label: 'Portfolio' },
 ];
+// Scan tabs (2026-11-09): Below Support / Below Fair Value / Rebound >=30% -- see scan_tabs.js
+if (window.ScanTabs) CATEGORIES.push(...ScanTabs.TABS);
 
 // Tab selected by default on every page load. KDJ filter defaults to "All
 // KDJ" already, via activeKdjFilter = 'ALL' below.
@@ -1017,7 +1020,7 @@ function comboTag(s) {
   return c ? `<span class="combo-tag" title="12-month winner (#${c.rank} of the top 60 by 12-1 month gain, ${c.mom12>=0?"+":""}${c.mom12}%), in an uptrend (above its 200-day average, 50-day above 200-day) and ${c.offHigh}% from its 52-week high. Best rule in the 5-year Bursa backtest: +2.8% vs the average stock over 3 months, +6.4% over 6. Not a guarantee.">&#9733; COMBO</span>` : '';
 }
 
-function cardHTML(s, cat) {
+function cardHTML(s, cat, extra) {
   const trendClass = histogramTrendClass(s.histogramTrend);
   const trendTag = trendClass ? `<span class="tag ${trendClass}">${s.histogramTrend}</span>` : '';
   const kdjTag = kdjTagHTML(s.kdjAction, s.kdjK, s.kdjD);
@@ -1056,6 +1059,7 @@ function cardHTML(s, cat) {
         <span>Trend <b>${s.emaTrend || '\u2014'}</b></span>
         ${trendTag}${kdjTag}${earningsTagHTML(s)}
       </div>
+      ${extra || ''}
       ${priceRow}
       ${riskLineHTML(s, isHolding)}
       <span class="detail-cta">Tap for full technical detail \u25be</span>
@@ -1135,6 +1139,7 @@ function render(data) {
   });
   portfolioByTicker.clear();
   (data.portfolio || []).forEach(r => portfolioByTicker.set(r.ticker.toLowerCase(), r));
+  if (window.ScanTabs) ScanTabs.setStocks(data.all);
 
   const tabsEl = document.getElementById('tabs');
   const mainEl = document.getElementById('main');
@@ -1142,9 +1147,11 @@ function render(data) {
   tabsEl.innerHTML = '';
 
   CATEGORIES.forEach((cat, i) => {
-    const count = cat.key === 'portfolio' ? (data.portfolio || []).length : (data[cat.key] || []).length;
+    const isScan = cat.scan && window.ScanTabs;
+    const count = isScan ? ScanTabs.count(cat.key)
+      : cat.key === 'portfolio' ? (data.portfolio || []).length : (data[cat.key] || []).length;
     const btn = document.createElement('button');
-    btn.className = 'tab' + (cat.key === DEFAULT_TAB ? ' active' : '');
+    btn.className = 'tab' + (isScan ? ' scan-tab' : '') + (cat.key === DEFAULT_TAB ? ' active' : '');
     btn.dataset.cat = cat.key;
     btn.setAttribute('role', 'tab');
     btn.innerHTML = `${cat.label}<span class="count">${count}</span>`;
@@ -1154,7 +1161,10 @@ function render(data) {
     const panel = document.createElement('div');
     panel.className = 'panel' + (cat.key === DEFAULT_TAB ? ' active' : '');
     panel.id = `panel-${cat.key}`;
-    if (cat.key === 'portfolio') {
+    if (isScan) {
+      panel.innerHTML = ScanTabs.panelHTML(cat.key, scanCard);
+      ScanTabs.bindControls(panel, scanCard, onScanChange);
+    } else if (cat.key === 'portfolio') {
       panel.innerHTML = portfolioHTML(data.portfolio, data.realized);
     } else {
       let rows = data[cat.key] || [];
@@ -1173,8 +1183,22 @@ function render(data) {
   updateKdjChipCounts(); // scoped to the initially-active tab (DEFAULT_TAB)
 }
 
-function wireCardExpansion() {
-  document.querySelectorAll('.card.expandable').forEach(card => {
+// Scan tabs (2026-11-09): one card per listed stock, with the reason it is listed.
+// data-cat "scan" opens the plain screener detail, like the All Stocks tab.
+function scanCard(s, why) { return cardHTML(s, 'scan', why); }
+// Below Support's Week/Month or slider changed: the list was rebuilt, so
+// re-wire its cards, refresh the tab count and re-apply search + KDJ chips.
+function onScanChange(panel) {
+  wireCardExpansion(panel);
+  const key = panel.id.replace('panel-', '');
+  const c = document.querySelector(`.tab[data-cat="${key}"] .count`);
+  if (c) c.textContent = ScanTabs.count(key);
+  updateKdjChipCounts();
+  applyFilters();
+}
+
+function wireCardExpansion(root) {
+  (root || document).querySelectorAll('.card.expandable').forEach(card => {
     const open = () => openDetailModal(card.dataset.ticker, card.dataset.cat);
     card.addEventListener('click', open);
     card.addEventListener('keydown', e => {
@@ -1984,6 +2008,11 @@ document.querySelectorAll('.theme-toggle').forEach(btn =>
   btn.addEventListener('click', () => setTheme(currentTheme() === 'light' ? 'dark' : 'light')));
 
 function switchTab(key) {
+  // A search typed on one tab is cleared when you switch tabs (2026-11-09, as on
+  // the US dashboard), so a leftover "maybank" doesn't silently hide everything
+  // on the next tab.
+  const box = document.getElementById('searchBox');
+  if (box.value) { box.value = ''; updateValHint(); }
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === key));
   document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${key}`));
   updateKdjChipCounts(); // counts are scoped to whichever tab is now active
@@ -1992,8 +2021,9 @@ function switchTab(key) {
 
 // activeKdjFilter is a SECOND, independent filter dimension (KDJ Action --
 // entry/exit timing) layered on top of whichever Buy/Watch/Sell/All/
-// Portfolio tab is active. It persists across tab switches, same as the
-// search box does, and both combine (AND) in applyFilters() below.
+// Portfolio tab is active. It persists across tab switches (the search box
+// is cleared on a switch since 2026-11-09), and both combine (AND) in
+// applyFilters() below.
 let activeKdjFilter = 'ALL';
 
 function applyFilters() {
@@ -2073,7 +2103,8 @@ fetch('dashboard-data.json?t=' + Date.now())
   .then(async data => {
     // Valuation dialog data (valuation.js, 2026-10-16) -- loaded first so the cards
     // render with their Valuation buttons; a missing file just means no buttons.
-    if (window.Valuation) await Valuation.load();
+    // + dip_watch_data.json for the Rebound >=30% tab (scan_tabs.js, 2026-11-09); never throws.
+    await Promise.all([window.Valuation ? Valuation.load() : null, window.ScanTabs ? ScanTabs.load() : null]);
     // Real data fetched and parsed successfully -- from here on, any error
     // is a genuine bug in render(), NOT a missing-file situation. Handling
     // it in its own try/catch (rather than letting it bubble into the

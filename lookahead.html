@@ -89,6 +89,18 @@
   .act.exit{background:var(--red-soft);color:var(--red);border:1px solid var(--red)}
   .act.hold{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line)}
   .act.wait{background:var(--panel-2);color:var(--ink-faint);border:1px dashed var(--line)}
+  /* Picks today: click the number to list the stocks (2026-11-09, port of the US page) */
+  .pk-btn{font:600 12.5px var(--font-data);color:var(--amber);background:none;border:1px solid var(--line);border-radius:6px;padding:2px 9px;cursor:pointer}
+  .pk-btn:hover,.pk-btn[aria-expanded="true"]{border-color:var(--amber);background:var(--panel-2)}
+  .pk-btn:disabled{color:var(--ink-faint);cursor:default;border-color:transparent}
+  tr.pk-row>td{background:var(--panel-2);text-align:left;white-space:normal;padding:10px 14px}
+  .pk-h{font:600 11px var(--font-body);color:var(--ink-dim);margin:2px 0 6px}
+  .pk-h b{color:var(--ink)}
+  .pk-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .pk{display:inline-flex;gap:6px;align-items:baseline;font:600 11.5px var(--font-data);border-radius:6px;padding:3px 8px;background:var(--panel);border:1px solid var(--line)}
+  .pk i{font-style:normal;font-weight:500}
+  .pk.up{background:var(--green-soft);border-color:transparent} .pk.up i{color:var(--green)}
+  .pk.dn{background:var(--red-soft);border-color:transparent} .pk.dn i{color:var(--red)}
   .act.keep{background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue)}
   .tag{font:600 9.5px var(--font-data);color:var(--ink-dim);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px;white-space:nowrap}
   .tag.earn{color:var(--amber);border-color:var(--amber)}
@@ -358,7 +370,7 @@ const sigOf=t=>(D.tickers[t]||{}).sig||"";
 
 /* ---- 1. rule scoreboard ---- */
 /* Each rule returns the tickers it would pick on session i, using only data known that day. */
-let RANK=[], EVD={}, N=0;
+let RANK=[], EVD={}, N=0, MKT={};
 function prepRules(){
   N=D.watch_dates.length; RANK=[];
   for(let i=0;i<N;i++){const d=D.watch_dates[i],cut=cutoffFor(d,SR_MONTHS),first={};
@@ -386,6 +398,7 @@ const RULES=[
   {k:"movers",name:"Best 1-month movers",desc:"30 biggest 20-session gainers, all stocks",pick:i=>i<20?[]:Object.keys(D.watch).filter(t=>{const c=D.watch[t].c;return c[i]&&c[i-20]&&jumps(t)[i]-jumps(t)[i-20]===0}).sort((a,b)=>{const ca=D.watch[a].c,cb=D.watch[b].c;return cb[i]/cb[i-20]-ca[i]/ca[i-20]}).slice(0,30)},
   {k:"deep",name:"Deep discount",desc:"7+ of the last 10 days below the weekly average",pick:i=>Object.keys(D.watch).filter(t=>{const st=boxStates(t);if(st[i]==null)return false;let g=0;for(let j=Math.max(0,i-9);j<=i;j++)if(st[j]===1)g++;return g>=7})},
   {k:"dip15",dw:true,name:"Dip 15%+, not at a 52-week low",desc:"15%+ under its 20-day high but not a new 52-week low (section 5)",pick:i=>dwPick("dip",i)},
+  {k:"rebound30",dw:true,minStocks:1,minDistinct:10,name:"Rebound ≥30% (bounce record)",desc:"15%+ dip, and 70%+ of its own past 15%+ dips ran ≥30% off the low (5+ dips, RM0.20+ and RM100k+ a day). Same list as the dashboard's Rebound tab; only a few picks a day, so a window counts from 1 pick",pick:i=>dwPick("r30",i)},
   {k:"gapup",dw:true,name:"Gap-up continuation (last 5 days)",desc:"Opened 4%+ above the prior close on 2× volume and closed up (section 5)",pick:i=>dwPick("gap",i,5)},
   {k:"low52",dw:true,name:"At a new 52-week low",desc:"Closed below every close of the past year. An AVOID flag on the US page; on Bursa it is replayed like any other rule (section 5)",pick:i=>dwPick("low",i)},
   {k:"sr",name:"STRONG REBOUND (retired)",desc:"Top 30 stock, 2–6 white days right after 2+ green. Retired on Bursa 2026-10-12: negative in the 5-year backtest. Still replayed, never recommended",retired:true,pick:i=>RANK[i].slice(0,30).map(r=>r.t).filter(t=>D.watch[t]&&isSR(streakAt(boxStates(t),i),true))},
@@ -394,22 +407,46 @@ const MIN_WINDOWS=10, MIN_WIN=0.6, MIN_STOCKS=3, MIN_PROV=5;
 function scoreRules(){
   const tickers=Object.keys(D.watch), mk={};
   for(const h of [10,20]){mk[h]=[];for(let i=0;i+h<N;i++){mk[h][i]=mean(tickers.map(t=>fwd(t,i,h)).filter(v=>v!=null))}}
+  MKT=mk;
   for(const R of RULES){
     R.s={}; R.today=R.pick(N-1);
+    const seen=new Set();
     for(const h of [10,20]){const diffs=[];
-      for(let i=0;i+h<N;i++){const v=R.pick(i).map(t=>fwd(t,i,h)).filter(x=>x!=null);if(v.length>=MIN_STOCKS&&mk[h][i]!=null)diffs.push(mean(v)-mk[h][i])}
+      for(let i=0;i+h<N;i++){const pk=R.pick(i).filter(t=>fwd(t,i,h)!=null),v=pk.map(t=>fwd(t,i,h));if(v.length>=(R.minStocks??MIN_STOCKS)&&mk[h][i]!=null){diffs.push(mean(v)-mk[h][i]);if(h===20)pk.forEach(t=>seen.add(t))}}
       R.s[h]={avg:mean(diffs),wins:diffs.filter(x=>x>0).length,n:diffs.length};
     }
     const a=R.s[20],b=R.s[10];
     R.passes=a.n>=MIN_WINDOWS&&a.avg>0&&a.wins/a.n>=MIN_WIN&&(b.avg==null||b.avg>-0.01);
     R.eligible=!R.retired&&R.passes;
+    // rules with only a handful of picks a day can look perfect on one or two lucky
+    // stocks: they may not lead (or be provisional) until enough DIFFERENT stocks
+    // have been measured (2026-11-09, as on the US page)
+    R.distinct=seen.size; R.fewStocks=!!R.minDistinct&&R.distinct<R.minDistinct; if(R.fewStocks){R.eligible=false;R.passes=false}
     // dip / gap rules can only lead when dip_watch_data.json covers today's session
     R.stale=!!R.dw&&DWIDX[N-1]==null; if(R.stale){R.eligible=false;R.passes=false}
   }
   const el=RULES.filter(r=>r.eligible).sort((x,y)=>y.s[20].avg-x.s[20].avg);
   /* provisional = would pass, but on fewer than MIN_WINDOWS windows (a young rule or a long look-back) */
-  const pv=RULES.filter(r=>!r.retired&&!r.stale&&!r.eligible&&r.s[20].n>=MIN_PROV&&r.s[20].avg>0&&r.s[20].wins/r.s[20].n>=MIN_WIN&&(r.s[10].avg==null||r.s[10].avg>-0.01)).sort((x,y)=>y.s[20].avg-x.s[20].avg);
+  const pv=RULES.filter(r=>!r.retired&&!r.stale&&!r.fewStocks&&!r.eligible&&r.s[20].n>=MIN_PROV&&r.s[20].avg>0&&r.s[20].wins/r.s[20].n>=MIN_WIN&&(r.s[10].avg==null||r.s[10].avg>-0.01)).sort((x,y)=>y.s[20].avg-x.s[20].avg);
   return {leader:el[0]||null,runner:el[1]||null,prov:el.length?null:(pv[0]||null)};
+}
+/* Picks today detail (2026-11-09, port of the US page): today's list, plus how the most
+   recent fully measured batch did (picked 20 sessions ago, 4 weeks later vs market). */
+function picksDetail(R){
+  const h=20, i0=N-1;
+  const mv5=t=>{const c=D.watch[t]?.c;return c&&i0>=5&&c[i0]&&c[i0-5]?c[i0]/c[i0-5]-1:null};
+  const code=t=>String(t).replace(/\.KL$/,"");
+  const today=R.today.map(t=>({t,m:mv5(t)})).sort((a,b)=>(b.m??-9)-(a.m??-9));
+  let html=`<div class="pk-h">Picked on <b>${dshort(D.watch_dates[i0])}</b> (${today.length}) · last 5 days shown, green = up</div><div class="pk-list">`+
+    today.map(x=>`<span class="pk ${x.m==null?"":x.m>=0?"up":"dn"}" title="${esc(x.t)}">${esc(code(x.t))}<i>${spct(x.m)}</i></span>`).join("")+`</div>`;
+  // latest past session with picks whose 4-week outcome is known
+  let j=-1; for(let i=N-1-h;i>=0;i--){if(R.pick(i).length){j=i;break}}
+  if(j<0) return html+`<div class="pk-h">No earlier picks old enough to measure yet.</div>`;
+  const m=MKT[h][j], rows=R.pick(j).map(t=>({t,ex:fwd(t,j,h)!=null&&m!=null?fwd(t,j,h)-m:null})).sort((a,b)=>(b.ex??-9)-(a.ex??-9));
+  const beat=rows.filter(x=>x.ex!=null&&x.ex>0).length, known=rows.filter(x=>x.ex!=null).length;
+  html+=`<div class="pk-h">How the last measured batch did: picked <b>${dshort(D.watch_dates[j])}</b>, 4 weeks later vs market · <b>${beat} of ${known}</b> outperformed</div><div class="pk-list">`+
+    rows.map(x=>`<span class="pk ${x.ex==null?"":x.ex>0?"up":"dn"}" title="${esc(x.t)}">${esc(code(x.t))}<i>${spct(x.ex)}</i></span>`).join("")+`</div>`;
+  return html;
 }
 function renderScoreboard(SB){
   const L=SB.leader, top=RULES[0];
@@ -425,14 +462,23 @@ function renderScoreboard(SB){
   }
   v+=`<p class="note" style="margin-top:-4px">Sample: ${N} sessions from ${dshort(D.watch_dates[0])} to ${dshort(D.watch_dates[N-1])}. Four-week windows overlap heavily, and one market regime can favour one rule, so treat a lead under ~20 windows as provisional.</p>`;
   $("verdict").innerHTML=v;
-  const status=r=>r===SB.leader?'<span class="act buy">LEADING</span>':r===SB.prov?'<span class="act keep">PROVISIONAL</span>':r===SB.runner?'<span class="act dip">RUNNER-UP</span>':r.retired?'<span class="act exit">RETIRED</span>':r.stale?'<span class="act wait" title="dip_watch_data.json does not cover the latest session yet">DIP DATA STALE</span>':r.eligible?'<span class="act hold">PASSES</span>':(r.s[20].n<MIN_WINDOWS?'<span class="act wait">TOO LITTLE DATA</span>':'<span class="act wait">NOT BEATING</span>');
+  const status=r=>r===SB.leader?'<span class="act buy">LEADING</span>':r===SB.prov?'<span class="act keep">PROVISIONAL</span>':r===SB.runner?'<span class="act dip">RUNNER-UP</span>':r.retired?'<span class="act exit">RETIRED</span>':r.fewStocks?`<span class="act wait" title="Results so far come from only ${r.distinct} different stocks; needs ${r.minDistinct}+ before it can lead">ON TRIAL · ${r.distinct} STOCK${r.distinct===1?"":"S"}</span>`:r.stale?'<span class="act wait" title="dip_watch_data.json does not cover the latest session yet">DIP DATA STALE</span>':r.eligible?'<span class="act hold">PASSES</span>':(r.s[20].n<MIN_WINDOWS?'<span class="act wait">TOO LITTLE DATA</span>':'<span class="act wait">NOT BEATING</span>');
   const order=r=>r===SB.leader?0:r===SB.runner?1:r===SB.prov?1:r.retired?9:2;
   const rows=[...RULES].sort((a,b)=>order(a)-order(b)||(b.s[20].avg??-9)-(a.s[20].avg??-9));
   $("ruleTbl").innerHTML=`<thead><tr><th>Rule</th><th class="l">Status</th><th>2 wks vs market</th><th>4 wks vs market</th><th>Windows ahead (4 wks)</th><th>Picks today</th></tr></thead><tbody>`+
     rows.map(r=>`<tr><td><span class="tk">${esc(r.name)}</span><span class="co" style="max-width:360px;white-space:normal">${esc(r.desc)}</span></td><td class="l">${status(r)}</td>
       <td class="${cls(r.s[10].avg)}">${spct(r.s[10].avg)}</td><td class="${cls(r.s[20].avg)}">${spct(r.s[20].avg)}</td>
-      <td>${r.s[20].n?`${r.s[20].wins} / ${r.s[20].n}`:"–"}</td><td>${r.today.length}</td></tr>`).join("")+`</tbody>`;
-  $("ruleNote").innerHTML=`<b>Pass test</b>: ${MIN_WINDOWS}+ four-week windows, ahead of the market in ${Math.round(MIN_WIN*100)}%+ of them, positive on average, and not below −1% at 2 weeks. The best passing rule is <b>LEADING</b>. When none passes, the best rule that would pass on ${MIN_PROV}–${MIN_WINDOWS-1} windows is <b>PROVISIONAL</b>. A window needs at least ${MIN_STOCKS} picks to count. "Market" = equal-weight average of every tracked Bursa stock. Windows containing a 50%+ one-day move (bonus issue / split) are left out. Unlike the US page, there is no 2-week STRONG REBOUND idea and no NO DIP warning: both were retired on Bursa after the 2026-10-12 backtest.`;
+      <td>${r.s[20].n?`${r.s[20].wins} / ${r.s[20].n}`:"–"}</td><td><button type="button" class="pk-btn" data-k="${r.k}" aria-expanded="false" ${r.today.length?"":"disabled"} title="Show the stocks">${r.today.length}</button></td></tr>`).join("")+`</tbody>`;
+  // Picks today: click the number to open the stock list under that row (2026-11-09, port of the US page)
+  $("ruleTbl").onclick=e=>{const b=e.target.closest(".pk-btn");if(!b||b.disabled)return;
+    const tr=b.closest("tr"),open=tr.nextElementSibling&&tr.nextElementSibling.classList.contains("pk-row");
+    $("ruleTbl").querySelectorAll("tr.pk-row").forEach(x=>x.remove());
+    $("ruleTbl").querySelectorAll(".pk-btn").forEach(x=>x.setAttribute("aria-expanded","false"));
+    if(open)return;
+    const R=RULES.find(x=>x.k===b.dataset.k);
+    tr.insertAdjacentHTML("afterend",`<tr class="pk-row"><td colspan="6">${picksDetail(R)}</td></tr>`);
+    b.setAttribute("aria-expanded","true");};
+  $("ruleNote").innerHTML=`<b>Pass test</b>: ${MIN_WINDOWS}+ four-week windows, ahead of the market in ${Math.round(MIN_WIN*100)}%+ of them, positive on average, and not below −1% at 2 weeks. The best passing rule is <b>LEADING</b>. When none passes, the best rule that would pass on ${MIN_PROV}–${MIN_WINDOWS-1} windows is <b>PROVISIONAL</b>. A window needs at least ${MIN_STOCKS} picks to count (1 for Rebound ≥30%, which picks only a few stocks a day). <b>ON TRIAL</b>: the rule's record so far rests on fewer than 10 different stocks, so it is shown but cannot lead until more have been measured. Tap a <b>Picks today</b> number to see the stocks and how the last measured batch did. "Market" = equal-weight average of every tracked Bursa stock. Windows containing a 50%+ one-day move (bonus issue / split) are left out. Unlike the US page, there is no 2-week STRONG REBOUND idea and no NO DIP warning: both were retired on Bursa after the 2026-10-12 backtest.`;
 }
 
 /* the rule set the plan follows: the leader, or (no leader + "Follow provisional leader") the provisional rule */
