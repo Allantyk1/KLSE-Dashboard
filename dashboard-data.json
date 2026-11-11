@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T00:20:58",
+  "generatedAt": "2026-11-11T21:15:36",
   "universeCount": 354,
   "buy": [
     {
@@ -23223,12 +23223,12 @@
         "atr14": 0.0331,
         "riskLine": 0.408
       },
-      "shares": 2000,
-      "avgCost": 0.615,
+      "shares": 3000,
+      "avgCost": 0.585,
       "currentPrice": 0.51,
-      "marketValue": 1020.0,
-      "pnl": -210.0,
-      "pnlPct": -17.07
+      "marketValue": 1530.0,
+      "pnl": -225.0,
+      "pnlPct": -12.82
     },
     {
       "ticker": "0303.KL",
@@ -23345,12 +23345,12 @@
         "atr14": 0.0477,
         "riskLine": 0.695
       },
-      "shares": 5000,
-      "avgCost": 0.95,
+      "shares": 6000,
+      "avgCost": 0.9383,
       "currentPrice": 0.85,
-      "marketValue": 4250.0,
-      "pnl": -500.0,
-      "pnlPct": -10.53
+      "marketValue": 5100.0,
+      "pnl": -529.8,
+      "pnlPct": -9.41
     },
     {
       "ticker": "1066.KL",
@@ -24028,6 +24028,67 @@
       "pnlPct": -11.71
     },
     {
+      "ticker": "5357.KL",
+      "name": "SKYECHIP",
+      "price": 2.48,
+      "score": 14.8,
+      "rsi": 35.1,
+      "emaTrend": "Bearish",
+      "macdSignal": "Bearish",
+      "histogramTrend": "Momentum Falling",
+      "ema20": 2.692,
+      "entryEma20": 2.692,
+      "entryBbZone": 2.468,
+      "avgEntryW": 2.563,
+      "avgEntry2W": 2.606,
+      "avgEntryM": 2.687,
+      "targetPrice": 2.58,
+      "pctUpsideToTarget": 4.0,
+      "pctOffHigh": -26.2,
+      "kdjK": 23.4,
+      "kdjD": 21.3,
+      "kdjJ": 27.8,
+      "kdjCross": "GOLDEN",
+      "kdjAction": "Buy Zone",
+      "earningsDate": "2027-02-28",
+      "earningsDays": 109,
+      "earningsEstimate": true,
+      "earningsSource": "bursa_deadline",
+      "earningsQuarterEnd": "2026-12-31",
+      "lastEarningsDate": null,
+      "daysSinceEarnings": null,
+      "combo": null,
+      "mom12Rank": null,
+      "ret": {
+        "m1": -15.93,
+        "m3": -17.88,
+        "m6": null
+      },
+      "detail": {
+        "ema40": 2.788,
+        "bbLower": 2.487,
+        "bbMid": 2.699,
+        "bbUpper": 2.911,
+        "high52wk": 3.36,
+        "macdLine": -0.09877,
+        "macdSignalLine": -0.07839,
+        "macdHistogram": -0.02038,
+        "volumeRatio": 1.26,
+        "dividendYield": 0.0,
+        "analystCount": 10,
+        "pctVsSma50": -13.37,
+        "pctVsSma200": null,
+        "atr14": 0.0993,
+        "riskLine": 2.17
+      },
+      "shares": 1000,
+      "avgCost": 2.49,
+      "currentPrice": 2.48,
+      "marketValue": 2480.0,
+      "pnl": -10.0,
+      "pnlPct": -0.4
+    },
+    {
       "ticker": "5398.KL",
       "name": "GAMUDA",
       "price": 4.84,
@@ -24176,7 +24237,7 @@
       },
       {
         "m": "2026-11",
-        "bought": 6577.5,
+        "bought": 10472.5,
         "sold": 0.0,
         "gains": 0.0,
         "losses": 0.0,
@@ -24343,17 +24404,17 @@
   "portfolioBacktest": {
     "asOf": "2026-11-02",
     "from": "2022-11-11",
-    "nHoldings": 21,
+    "nHoldings": 22,
     "m1": {
-      "avg": 0.0041,
+      "avg": 0.0042,
       "ahead": 0.522,
       "n": 46,
       "yearsAhead": 3,
       "years": 5
     },
     "m3": {
-      "avg": 0.0149,
-      "ahead": 0.523,
+      "avg": 0.015,
+      "ahead": 0.5,
       "n": 44,
       "yearsAhead": 3,
       "years": 5
