@@ -234,6 +234,39 @@
     .scroll.freeze td:first-child,.scroll.freeze th:first-child{white-space:normal;min-width:118px;max-width:132px}
     .scroll.freeze td:first-child .tag{display:inline-block;margin:2px 4px 0 0}
     .scroll.freeze td:first-child .val-btn{margin:3px 0 0}}
+  /* Section 0: market turn alert + monthly rotation (2026-11-13, port of the US page of 2026-11-12) */
+  .mk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-bottom:12px}
+  @media (min-width:1100px){.mk-grid.study{grid-template-columns:1.45fr 1fr}}
+  .mk-list td:nth-child(-n+2),.mk-list th:nth-child(-n+2),#mkBt td:first-child,#mkBt th:first-child{text-align:left}
+  .mk-list td{vertical-align:top}
+  .mk-list .co{display:block;font:400 11px var(--font-body);color:var(--ink-faint);max-width:150px;white-space:normal}
+  .mk-list .pr b{font-weight:600} .mk-list .pr small{display:block;font-size:10.5px;color:var(--ink-faint);font-weight:400}
+  .rbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0 4px;background:var(--panel-2)}
+  .rbar i{display:block;height:100%} .rbar .hb{background:var(--amber)} .rbar .lb{background:var(--blue)}
+  .rg-tbl td,.rg-tbl th{white-space:normal;text-align:left} .rg-tbl td:last-child,.rg-tbl th:last-child{text-align:right;white-space:nowrap}
+  .rg-tbl tr.now td{background:var(--amber-soft)} .rg-tbl tr.now td:first-child{font-weight:600;color:var(--amber)}
+  .spark{display:block;width:100%;height:40px;margin-top:4px}
+  details.ev summary{cursor:pointer;font-size:12px;color:var(--ink-dim);margin-top:8px}
+  .mk-view{border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.55;margin-bottom:12px}
+  .mk-view b{color:var(--blue)}
+  .mk-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .mk-chips a{text-decoration:none}
+  #mkBt tr.sub td{font:600 10px var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--amber);text-align:left;padding-top:12px}
+  /* KLSE Fear Score cash levels (2026-11-13, port of the US VXN cash levels) */
+  .cz{display:grid;gap:6px;margin-top:8px}
+  .cz-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;align-items:center;gap:8px;border-radius:10px;padding:9px 12px;color:#fff;position:relative;opacity:.55}
+  .cz-row b{font-size:13px;letter-spacing:.04em} .cz-row i{display:block;font-size:11px;opacity:.85}
+  .cz-row .lv,.cz-row .cs{font-family:var(--font-data);font-weight:600;text-align:right}
+  .cz-row.now{opacity:1;outline:2px solid var(--ink);outline-offset:1px}
+  .cz-row.now::after{content:"◀ score now";position:absolute;right:-2px;top:-9px;font:600 10px var(--font-data);background:var(--ink);color:var(--bg);border-radius:5px;padding:1px 6px}
+  .cz-flag{border-radius:12px;padding:12px 14px;margin-top:10px;font-size:13px;line-height:1.55;border:1px solid var(--line)}
+  .cz-flag.ok{background:var(--green-soft)} .cz-flag.hi{background:var(--amber-soft)} .cz-flag.lo{background:var(--red-soft)}
+  .cz-meter{position:relative;height:10px;border-radius:5px;background:var(--panel-2);margin:8px 0 2px}
+  .cz-meter .band{position:absolute;top:0;bottom:0;background:var(--green);opacity:.45;border-radius:5px}
+  .cz-meter .you{position:absolute;top:-4px;width:3px;height:18px;background:var(--ink);border-radius:2px}
+  .cz-meter .tg{position:absolute;top:-2px;width:2px;height:14px;background:var(--green)}
+  #fgTbl td:first-child,#fgTbl th:first-child,#fgParts td:first-child,#fgParts th:first-child{text-align:left}
+  #fgParts td:first-child{white-space:normal;min-width:180px}
 </style>
 </head>
 <body>
@@ -256,8 +289,35 @@
       <div class="seg" id="cap"><button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button></div></div>
     <div class="ctl"><span class="lbl">If no short-term rule passes</span>
       <div class="seg" id="nr"><button type="button" data-v="combo">★ Combo (5-yr tested)</button><button type="button" data-v="prov">Provisional leader</button><button type="button" data-v="cash">Hold cash</button></div></div>
-    <nav class="jump" aria-label="Jump to section"><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a><a href="#sdw">5 Dip watch</a><a href="#s5">6 Actual P&amp;L</a></nav>
+    <nav class="jump" aria-label="Jump to section"><a href="#smk">0 Market &amp; rotation</a><a href="#s1">1 Scoreboard</a><a href="#s2">2 Portfolio</a><a href="#s3">3 Buy list</a><a href="#s4">4 Month plan</a><a href="#sdw">5 Dip watch</a><a href="#s5">6 Actual P&amp;L</a></nav>
   </div>
+
+  <section class="desk" id="smk">
+    <div class="desk-head"><span class="idx">0</span><h2>Market turn alert &amp; monthly rotation</h2></div>
+    <p class="lede">How to split your money between <b>high-beta growth</b> stocks (move more than the KLCI) and <b>low-beta dividend-growth</b> stocks (move less, pay a rising dividend), reviewed <b>once a month</b>. Bursa has no fear index of its own, so this page builds one, the <b>KLSE Fear Score</b>, and sets a <b>cash level</b> from it; the global gauge, the US <b>VIX</b>, is also judged against the <b>FBM KLCI</b> to show what happened after past fear spikes. Every stock on the two lists has a <b>3- and 6-month projection</b> from its own history.</p>
+    <div id="mkVerdict"></div>
+    <div id="mkView"></div>
+    <div class="tiles" id="mkTiles"></div>
+    <div class="mk-grid">
+      <div class="panel"><h3>KLSE Fear Score · cash allocation levels</h3>
+        <p class="note" style="margin-top:0">Bursa has no VIX of its own, so this score (0–100) is built from <b>KLCI 20-day volatility</b>, <b>how far the KLCI is below its 1-year high</b> and the <b>US VIX</b>, each ranked against its own last 10 years. Deploy cash as fear rises; within a zone, slide toward the low end of the cash range as the score rises.</p>
+        <div class="cz" id="czTbl"></div></div>
+      <div class="panel"><h3>Your cash vs the KLSE Fear Score</h3><div id="czFlag"></div>
+        <div class="scroll" style="margin-top:12px"><table id="fgParts"></table></div></div>
+    </div>
+    <div class="panel" style="margin-bottom:12px"><h3>What the KLCI did after days in each zone</h3><div class="scroll"><table id="fgTbl"></table></div><p class="note" id="fgNote"></p></div>
+    <div class="mk-grid">
+      <div class="panel"><h3>High-beta growth · re-picked monthly</h3><p class="note" id="mkRotH" style="margin-top:0"></p><div class="scroll"><table class="mk-list" id="mkHigh"></table></div><div class="note" id="mkNextH"></div></div>
+      <div class="panel"><h3>Low-beta dividend growth · re-picked monthly</h3><p class="note" id="mkRotL" style="margin-top:0"></p><div class="scroll"><table class="mk-list" id="mkLow"></table></div><div class="note" id="mkNextL"></div></div>
+    </div>
+    <div class="mk-grid study">
+      <div class="panel"><h3>The lists as a whole: what the same monthly rule did next</h3><div class="scroll"><table id="mkBt"></table></div><p class="note" id="mkBtNote"></p></div>
+      <div class="panel"><h3>Monthly mix rule</h3><div class="scroll"><table class="rg-tbl" id="mkRules"></table></div><div id="mkPf"></div></div>
+    </div>
+    <div class="panel"><h3>After a VIX fear spike: what the KLCI did next</h3><div class="scroll"><table id="mkStudy"></table></div>
+      <p class="note" id="mkStudyNote"></p><div id="mkEvents"></div></div>
+    <p class="note" id="mkFoot"></p>
+  </section>
 
   <section class="desk" id="s1">
     <div class="desk-head"><span class="idx">1</span><h2>Which rule is working: the scoreboard</h2></div>
@@ -336,7 +396,7 @@
       <p class="note">Every SELL and DIVIDEND row in <b>KLSE_Trade_Journal.xlsx</b> from the start month, grouped by month (sale date / payment date), newest month first. Tap a month to expand or collapse it; tap a column heading to sort within each month. <b>Realized P&amp;L</b> = sale value − fees − average cost × shares sold, the same average-cost method as the journal. <b>Opened</b> = the day the position last went from zero to held; "carried over" means it came in as an OPENING balance on 14 Oct 2026, so its true buy date isn't in the journal. <b>Partial</b> = some shares are still held. <b>DIVIDEND</b> rows: Price = dividend per share, Amount = shares × DPS − fees, % = yield on your average cost; they don't count as wins.</p></div>
   </section>
 
-  <footer>Built from dashboard-data.json (section 6: your trade journal), dip_watch_data.json (section 5), pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
+  <footer>Built from vol_regime.json (section 0: VIX, KLCI, the monthly high-beta / dividend lists), dashboard-data.json (section 6: your trade journal), dip_watch_data.json (section 5), pick_tracker_data.json and valuation_data.json, so it refreshes with the daily 7 PM pipeline run. Rules come from the Pick Tracker, your Bursa backtest (backtest_box_momentum.py, 2026-10-12) and the replay in section 1. Results dates marked "due by" are Bursa listing-rule deadlines (2 months after quarter end), not announced dates. Past patterns over a few months of data do not guarantee future results. Not financial advice.</footer>
 </div>
 
 <script src="valuation.js"></script>
@@ -990,6 +1050,158 @@ function renderDipWatch(held){
   $("gapNote").innerHTML=`A <b>gap-up</b> = opened ${pct(DW.params.gap_min,0)}+ above the prior close on ${DW.params.gap_vol}× the 50-day volume and closed up, usually a results or news reaction. In the US backtest this was the only momentum entry with a 3-month edge in most years. On Bursa, re-computed each run, the 3-month edge vs the market was: ${yrs.map(([y,v])=>`${y} <span class="${cls(v)}">${spct(v)}</span>`).join(", ")||"not enough data"}. You cannot see a gap coming from price alone; this list catches the move <b>after</b> the first day, while the drift tends to continue. Thin Bursa stocks are left out (RM${Math.round((DW.params.min_value||0)/1000)}k-a-day floor) because a 2× volume day means little there.`;
 }
 
+/* ---- 0. market turn alert + monthly rotation (2026-11-13, port of the US page of 2026-11-12) ----
+   Data: vol_regime.json from generate_vol_regime.py. VIX (global fear gauge) crossing
+   above 25 / 30 / 35, judged against the FBM KLCI. Real-time split: 20 sessions after
+   the crossing, is VIX still 25+ ("persisting", the crisis pattern) or back down
+   ("fading", the ordinary pattern)? Two lists, re-picked at the first refresh of each
+   month: high-beta growth and low-beta dividend growth, each stock with a 3- and
+   6-month projection from its own past. */
+let VR=null;
+const RG={
+  risk_on:{name:"Spike fading → risk-on",when:"A VIX spike above 25 in the last 90 sessions that faded below 25 by day 20",why:"The ordinary-spike pattern: lean into high beta, buying on dips."},
+  fresh:{name:"Fresh spike → wait for day 20",when:"VIX crossed above 25 / 30 / 35 less than 20 sessions ago",why:"Crisis and ordinary spikes look the same at the start. Stay balanced, buy in stages, and let day 20 decide."},
+  neutral:{name:"Neutral",when:"No recent spike, KLCI not stretched",why:"Keep a balanced mix and follow the scoreboard."},
+  late_rally:{name:"Calm & near highs → rotate to low beta",when:"No spike, VIX under 18, KLCI within 3% of its 1-year high",why:"Fear is low and prices are stretched: bank some high-beta gains into steady dividend payers before the next dip."},
+  defensive:{name:"Fear persisting → defensive",when:"VIX still at 25+ twenty sessions after a spike",why:"The crisis pattern: hold mostly low-beta dividend stocks."}};
+const RG_ORDER=["risk_on","fresh","neutral","late_rally","defensive"];
+const RG_MIX={risk_on:70,fresh:50,neutral:50,late_rally:35,defensive:25};
+const statCell=st=>st&&st.n?`<span class="${st.median>=0?"pos":"neg"}">${spct(st.median)}</span> <span class="muted">${st.pos}/${st.n}</span>`:'<span class="muted">–</span>';
+function spark(pts,lines){if(!pts||pts.length<2)return"";const v=pts.map(p=>p[1]).filter(x=>x!=null);if(v.length<2)return"";const lo=Math.min(...v,...lines)*0.98,hi=Math.max(...v,...lines)*1.02,W=300,H=40;
+  const x=i=>i/(v.length-1)*W,y=a=>H-(a-lo)/(hi-lo)*H;
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${lines.map(l=>`<line x1="0" x2="${W}" y1="${y(l).toFixed(1)}" y2="${y(l).toFixed(1)}" stroke="var(--red)" stroke-dasharray="3 3" stroke-width="1" opacity=".6"/>`).join("")}<polyline fill="none" stroke="var(--amber)" stroke-width="1.6" points="${v.map((a,i)=>x(i).toFixed(1)+","+y(a).toFixed(1)).join(" ")}"/></svg>`}
+function firstWeekday(y,m){const n=new Date(y,m,1);while(n.getDay()===0||n.getDay()===6)n.setDate(n.getDate()+1);return n}
+function projCell(p,price){
+  if(!p) return '<td class="muted">–</td>';
+  const tgt=price?` · base price ${px(price*(1+p.base))}, range ${px(price*(1+p.bear))}–${px(price*(1+p.bull))}`:"";
+  return `<td class="pr" title="Base = median of ${p.n_days} past ${p.basis==="same state"?"days in the same state (above its 200-day, 6-month return positive)":"days (the same-state sample was too small)"}; range = 25th to 75th percentile; up ${pct(p.pos,0)} of the time${tgt}"><b class="${cls(p.base)}">${spct(p.base,0)}</b>${p.basis==="same state"?"":'<span class="muted">*</span>'}${price?` <span class="muted" style="font-weight:400">${px(price*(1+p.base))}</span>`:""}<small>${spct(p.bear,0)} to ${spct(p.bull,0)}</small></td>`}
+function listTbl(list,kind){
+  if(!list||!list.length) return `<tbody><tr><td class="muted" style="text-align:left">No stock passes the ${kind==="high"?"high-beta":"low-beta dividend"} rule today.</td></tr></tbody>`;
+  const divCols=kind==="low";
+  const head=`<thead><tr><th>#</th><th>Stock</th><th>Beta</th><th>6 mo</th>${divCols?"<th>Yield</th><th>Div 3y/yr</th>":"<th>From high</th>"}<th>3 mo proj.</th><th>6 mo proj.</th><th>KLCI −10%</th><th>Entry</th></tr></thead>`;
+  return head+`<tbody>${list.map((x,n)=>{
+    if(x.missing) return `<tr><td class="muted">${n+1}</td><td><span class="tk">${esc(tkd(x.t))}</span><span class="co">no price data</span></td><td colspan="8"></td></tr>`;
+    const a=ALL.get(x.t)||{}, flag=x.eligible===false?' <span class="tag" title="No longer passes the rule today; stays on the list until the next monthly re-pick">out of rule</span>':"";
+    const price=a.price??x.price;
+    return `<tr><td class="muted">${n+1}</td><td><a class="slink tk" href="${deskHref(x.t)}">${esc(tkd(x.t))}</a>${flag}${cbTag(x.t)}<span class="co">${esc(x.name||a.name||"")}</span></td>
+      <td>${x.beta!=null?x.beta.toFixed(2):"–"}</td><td class="${cls(x.r6)}">${spct(x.r6,0)}</td>
+      ${divCols?`<td>${x.yield!=null?pct(x.yield,1):"–"}</td><td class="${cls(x.div_cagr3)}">${x.div_cagr3!=null?spct(x.div_cagr3,0):"–"}</td>`:`<td>${spct(x.from_high,0)}</td>`}
+      ${projCell(x.proj&&x.proj.m3,price)}${projCell(x.proj&&x.proj.m6,price)}
+      <td class="${cls(x.dip)}" title="Beta × −10%: roughly how far it would fall if the KLCI fell 10%">${spct(x.dip,1)}</td>
+      <td>${a.entryBbZone?px(a.entryBbZone):x.entry?px(x.entry):"–"}${a.kdjAction?`<small class="muted" style="display:block">${esc(a.kdjAction)}</small>`:""}</td></tr>`}).join("")}</tbody>`}
+/* ---- KLSE Fear Score cash levels (2026-11-13): Bursa's stand-in for the US VXN cash levels.
+   Score 0-100 = average 10-year percentile of KLCI 20-day volatility, KLCI distance below
+   its 1-year high, and the US VIX (from generate_vol_regime.py fear_gauge()). */
+const CZ_COL=["#6E1520","#9B1F22","#C4471F","#C48422","#7E8B2A","#2E7A3C"];
+function renderCashZones(){
+  const F=VR&&VR.fear;
+  if(!F){$("czTbl").innerHTML='<p class="note">Needs vol_regime.json with the fear score (next daily run).</p>';$("czFlag").innerHTML="";return}
+  const Z=F.zones, cz=Z[F.zone];
+  $("czTbl").innerHTML=Z.map((z,n)=>`<div class="cz-row${n===F.zone?" now":""}" style="background:${CZ_COL[n]}"><div><b>${z.name.toUpperCase()}</b><i>${esc(z.tip)}</i></div><div class="lv">${z.lo==null?`score &lt; ${z.hi}`:z.hi==null?`score ${z.lo}+`:`score ${z.lo}–${z.hi}`}</div><div class="cs">${z.cash[0]}–${z.cash[1]}% cash</div></div>`).join("");
+  const invested=(T.portfolio||[]).reduce((s,h)=>s+(h.marketValue||0),0), cash=+P.cash||0, total=invested+cash;
+  const share=total?cash/total:null, lo=cz.cash[0]/100, hi=cz.cash[1]/100, tg=F.target_cash;
+  let cls_="ok", msg;
+  if(!total) msg=`Enter <b>Cash you can deploy (RM)</b> at the top to compare your cash with the fear zone.`;
+  else if(share>hi){cls_="hi";msg=`<b>Too much cash for this level of fear.</b> You hold <b>${pct(share,0)}</b> in cash; the ${cz.name} zone calls for ${cz.cash[0]}–${cz.cash[1]}% (about ${pct(tg,0)} at a score of ${F.score}). Deploy about <b>${money(cash-tg*total)}</b>, in stages at each stock's Entry price, starting with the dividend list.`;}
+  else if(share<lo){cls_="lo";msg=`<b>Not enough cash for this level of fear.</b> You hold <b>${pct(share,0)}</b> in cash; the ${cz.name} zone calls for ${cz.cash[0]}–${cz.cash[1]}% (about ${pct(tg,0)} at a score of ${F.score}). Build about <b>${money(tg*total-cash)}</b> of cash by trimming on strength (the Sell – Resistance level) rather than selling into a dip.`;}
+  else msg=`<b>Your cash is in range.</b> You hold <b>${pct(share,0)}</b> in cash; the ${cz.name} zone calls for ${cz.cash[0]}–${cz.cash[1]}% (about ${pct(tg,0)} at a score of ${F.score}). No change needed.`;
+  const X=v=>Math.min(100,Math.max(0,v*200))+"%";
+  const trend=F.week_ago!=null?`${F.score>=F.week_ago?"up":"down"} from ${F.week_ago} a week ago${F.month_ago!=null?`, ${F.month_ago} a month ago`:""}`:"";
+  $("czFlag").innerHTML=`<div class="tiles" style="margin-bottom:6px">${tile("Fear score",F.score,`${cz.name} · ${dshort(F.date)}${spark(F.spark,[cz.lo??0])}`)}${tile("Your cash",share!=null?pct(share,0):"–",total?`${money(cash)} of ${money(total)}`:"not entered")}${tile("Zone target",`${cz.cash[0]}–${cz.cash[1]}%`,`about ${pct(tg,0)} at this score`)}</div>
+    <div class="cz-meter" title="0% to 50% cash"><span class="band" style="left:${X(lo)};width:calc(${X(hi)} - ${X(lo)})"></span><span class="tg" style="left:${X(tg)}"></span>${share!=null&&total?`<span class="you" style="left:${X(share)}"></span>`:""}</div>
+    <div class="note" style="margin-top:0;display:flex;justify-content:space-between"><span>0% cash</span><span>green band = zone · tall line = you</span><span>50%</span></div>
+    <div class="cz-flag ${cls_}">${msg}</div>
+    <p class="note">Cash = the "Cash you can deploy" box at the top; account = your holdings ${money(invested)} + that cash. Score ${trend}.</p>`;
+  const pp=F.parts, row=(n,v,p,why)=>`<tr><td>${n}<br><span class="muted" style="font-family:var(--font-body)">${why}</span></td><td>${v}</td><td><b>${p!=null?Math.round(p*100):"–"}</b></td></tr>`;
+  $("fgParts").innerHTML=`<thead><tr><th>Part of the score</th><th>Now</th><th>Rank (0–100)</th></tr></thead><tbody>
+    ${row("KLCI 20-day volatility",pp.vol20!=null?pct(pp.vol20,1)+" a yr":"–",pp.vol20_pct,"how hard the index is swinging")}
+    ${row("KLCI below its 1-year high",pp.dd!=null?spct(-pp.dd):"–",pp.dd_pct,"how deep the fall is")}
+    ${F.uses_vix?row("US VIX",pp.vix??"–",pp.vix_pct,"global risk appetite; foreign funds move Bursa"):""}
+    ${F.breadth?`<tr><td>Liquid stocks above their 200-day<br><span class="muted" style="font-family:var(--font-body)">context only: ~5 years of data, so not in the score</span></td><td>${pct(F.breadth.now,0)}</td><td class="muted" title="Rank vs every day since ${F.breadth.since.slice(0,4)}">${Math.round(F.breadth.pct*100)}</td></tr>`:""}</tbody>`;
+  const c=s=>s&&s.n_days?`<td class="${cls(s.median)}">${spct(s.median)}</td><td>${pct(s.pos,0)}</td><td class="${cls(s.worst)}">${spct(s.worst,0)}</td>`:'<td class="muted">–</td><td class="muted">–</td><td class="muted">–</td>';
+  $("fgTbl").innerHTML=`<thead><tr><th>Zone</th><th>Share of days</th><th>60 sessions: median</th><th>up</th><th>worst</th><th>120 sessions: median</th><th>up</th><th>worst</th></tr></thead><tbody>${Z.map((z,n)=>`<tr${n===F.zone?' style="background:var(--amber-soft)"':""}><td><b>${z.name}</b> <span class="muted">${z.cash[0]}–${z.cash[1]}% cash</span></td><td>${pct(z.share,0)}</td>${c(z.r60)}${c(z.r120)}</tr>`).join("")}</tbody>`;
+  $("fgNote").innerHTML=`Every session from <b>${F.first}</b> (${F.years} years) is scored using only the 10 years before it, then the KLCI is measured 60 and 120 sessions (about 3 and 6 months) later. If deploying cash in fear pays off on Bursa, the top rows should show better medians and fewer losses than the bottom rows; if they don't, trust the zone less. Overlapping days, so the real sample is far smaller than the day count. KLCI price index (dividends not included). Not a forecast; not financial advice.`;
+}
+function chipList(list,lab){return list&&list.length?`<b>${lab}</b><div class="mk-chips">${list.map(x=>`<a class="chip" href="${deskHref(x.t)}" title="${esc(x.name||"")}">${esc(tkd(x.t))} ${esc(x.name||"")} · β${x.beta!=null?x.beta.toFixed(2):"–"} · 6m ${spct(x.r6,0)}${x.yield!=null&&lab.includes("dividend")?` · ${pct(x.yield,1)}`:""}</a>`).join("")}</div>`:""}
+function renderMarket(){
+  try{renderCashZones()}catch(e){console.error("Cash zones:",e)}
+  if(!VR){$("mkVerdict").innerHTML=`<div class="verdict warn">vol_regime.json is not available yet. It is made by <b>generate_vol_regime.py</b>, the last step of run_daily.bat; it appears after the next daily run.</div>`;return}
+  const vi=(VR.vol&&VR.vol.VIX)||{}, rg=VR.regime, R=VR.rotation;
+  // ---- verdict
+  let v="";
+  if(rg){const e=rg.episode, th=e&&vi.thresholds&&vi.thresholds[String(e.threshold)];
+    const f60=th&&th.fading["60"], p60=th&&th.persisting["60"];
+    const hist=th&&f60&&f60.n?`After past VIX-${e.threshold} spikes that <b>faded</b> by day 20, the KLCI 60 sessions later had a median of <b>${spct(f60.median)}</b> (${f60.pos} of ${f60.n} up)${p60&&p60.n?`; after spikes that <b>persisted</b>, <b>${spct(p60.median)}</b> (${p60.pos} of ${p60.n} up)`:""}.`:"";
+    if(rg.key==="fresh") v=`<b>Fear spike in progress.</b> VIX crossed above <b>${e.threshold}</b> on <b>${dshort(e.date)}</b> at ${e.level} (KLCI then ${pct(-e.dd_at_cross,1)} off its 1-year high) and is now <b>${e.now}</b>, session ${e.days_since} of 20. ${hist} <b>Decision day ≈ ${dshort(e.decide_date)}</b>: if VIX is below 25 then, the ordinary pattern applies (tilt to high beta); if it is still 25+, the crisis pattern (go defensive). Until then stay balanced and buy in stages.`;
+    else if(rg.key==="risk_on") v=`<b>Spike faded: risk-on.</b> VIX crossed above ${e.threshold} on ${dshort(e.date)} and was back under 25 by day 20; now ${e.now}. ${hist} KLCI since the crossing: ${spct(e.ret_since)}.`;
+    else if(rg.key==="defensive") v=`<b>Fear is persisting: defensive.</b> VIX crossed above ${e.threshold} on ${dshort(e.date)} and is still ${e.now}; ${pct(e.share_above_persist,0)} of sessions since were at 25+. ${hist}`;
+    else if(rg.key==="late_rally") v=`<b>Calm and near the highs: rotate toward low beta.</b> VIX is ${rg.vix_now} and the KLCI is ${pct(-rg.klci_from_high,1)} off its 1-year high (3 months: ${spct(rg.klci_3m)}). Move part of your high-beta gains into the dividend list, before the next dip rather than during it.`;
+    else v=`<b>No fear spike in play.</b> VIX ${rg.vix_now ?? "–"}, KLCI ${pct(-rg.klci_from_high,1)} off its 1-year high (3 months: ${spct(rg.klci_3m)}). Keep a balanced mix and follow the scoreboard.`;
+  }
+  $("mkVerdict").innerHTML=`<div class="verdict ${rg&&(rg.key==="defensive"||rg.key==="fresh")?"warn":"ok"}">${v||"No VIX data."}</div>`;
+  // ---- your view
+  if(rg&&rg.view){const w=rg.view, from=new Date(w.shift_from+"T00:00:00");
+    $("mkView").innerHTML=`<div class="mk-view"><b>Your view: ${esc(w.text)}.</b> ${w.active?`It is in force now: this month's mix is capped at <b>${w.max_high_beta_pct}% high beta</b> (the fear gauge alone says ${rg.auto_high_beta_pct}%).`:w.applies_now?`It is in force now, and the fear gauge already calls for ${rg.auto_high_beta_pct}% high beta or less, so it changes nothing.`:`Until then the fear gauge sets the mix. From the <b>${from.toLocaleDateString("en-GB",{month:"long",year:"numeric"})} review</b> (before the dip you expect), high beta is capped at <b>${w.max_high_beta_pct}%</b> until ${dshort(w.until)}, unless the gauge already calls for less.`} Ride the rally with the high-beta list now; sell into strength at each stock's Sell – Resistance level rather than in the dip. Change the dates in VIEW_* at the top of generate_vol_regime.py.</div>`;}
+  // ---- tiles
+  const mo=R&&R.monthly||{}, nr=mo.next_rotation?new Date(mo.next_rotation+"T00:00:00"):null;
+  $("mkTiles").innerHTML=(vi.latest?tile("VIX (global fear)",vi.latest.value,`${dshort(vi.latest.date)} · lines at 25 / 30${spark(vi.spark,[25,30])}`):tile("VIX (global fear)","–",esc(vi.error||"no data")))+
+    (rg?tile("FBM KLCI vs 1-yr high",spct(rg.klci_from_high),`${rg.klci_now!=null?rg.klci_now.toLocaleString("en-US",{maximumFractionDigits:0}):"–"} on ${dshort(rg.klci_date)} · 3 mo ${spct(rg.klci_3m)}${spark(VR.klci_spark,[])}`):"")+
+    (rg?tile("This month's mix",`${rg.high_beta_pct} / ${rg.low_beta_pct}`,`high beta / low beta · ${RG[rg.key].name}${rg.view&&rg.view.active?" · capped by your view":""}<div class="rbar"><i class="hb" style="width:${rg.high_beta_pct}%"></i><i class="lb" style="width:${rg.low_beta_pct}%"></i></div>`):"")+
+    (R?tile("Lists picked",mo.rotated_on?dshort(mo.rotated_on):"–",`next re-pick ${nr?nr.toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"–"} (first refresh of the month)`):"");
+  // ---- lists
+  if(R){
+    const ch=(a,d)=>(a&&a.length?` · <span class="pos">in: ${a.map(tkd).join(", ")}</span>`:"")+(d&&d.length?` · <span class="neg">out: ${d.map(tkd).join(", ")}</span>`:"");
+    const P_=VR.params||{};
+    $("mkRotH").innerHTML=`Picked <b>${mo.rotated_on?dshort(mo.rotated_on):"–"}</b>${ch(mo.added_high,mo.dropped_high)}. Beta ${P_.high_beta}+ vs the KLCI (weekly, 2 years), 6-month return positive, above the 200-day average; the 8 with the best 6-month return out of ${R.pool_high} that qualify today.`;
+    $("mkRotL").innerHTML=`Picked <b>${mo.rotated_on?dshort(mo.rotated_on):"–"}</b>${ch(mo.added_low,mo.dropped_low)}. Beta ${P_.low_beta?P_.low_beta.join("–"):"0.1–0.7"}, dividend yield ${pct(P_.min_yield,0)}+, dividends over the last 12 months at least as high as 3 years ago (no cut over ${pct(P_.div_cut_max,0)} vs the year before), above the 200-day; the 8 with the best 6-month return out of ${R.pool_low} that qualify today.`;
+    $("mkHigh").innerHTML=listTbl(R.high,"high"); $("mkLow").innerHTML=listTbl(R.low,"low");
+    $("mkNextH").innerHTML=chipList(R.next_high,"Next in line (could enter at the next re-pick)");
+    $("mkNextL").innerHTML=chipList(R.next_low,"Next in line, dividend list")+(R.near_low&&R.near_low.length?`<div style="margin-top:8px"><b>Pay 3%+ but miss the rule</b> (dividend not growing, or below the 200-day): <div class="mk-chips">${R.near_low.map(x=>`<a class="chip" href="${deskHref(x.t)}">${esc(tkd(x.t))} ${esc(x.name||"")} · ${pct(x.yield,1)}${x.growing===false?" · div cut":""}${x.vs200!=null&&x.vs200<0?" · under 200-day":""}</a>`).join("")}</div></div>`:"");
+  } else $("mkHigh").innerHTML=`<tbody><tr><td class="muted">The lists need klse_dip_price_cache.pkl on the PC (made by generate_dip_watch.py).</td></tr></tbody>`;
+  // ---- backtest of the rule = projection for the lists
+  const bt=R&&R.backtest;
+  if(bt&&bt.months){
+    const c=(s)=>s?`<td class="${cls(s.avg)}">${spct(s.avg)}</td><td class="${cls(s.median)}">${spct(s.median)}</td><td>${pct(s.pos,0)}</td>`:'<td class="muted">–</td><td class="muted">–</td><td class="muted">–</td>';
+    const ah=(a)=>a!=null?pct(a,0):"–";
+    const mix=rg?rg.high_beta_pct/100:0.5;
+    const mixed=lab=>bt.high[lab]&&bt.low[lab]?mix*bt.high[lab].avg+(1-mix)*bt.low[lab].avg:null;
+    const rowH=(name,k,ahead)=>`<tr><td>${name}</td>${c(bt[k].m3)}<td>${ahead?ah(ahead.m3):"–"}</td>${c(bt[k].m6)}<td>${ahead?ah(ahead.m6):"–"}</td></tr>`;
+    $("mkBt").innerHTML=`<thead><tr><th>Basket (equal weight)</th><th>3 mo avg</th><th>median</th><th>up</th><th>beat KLCI</th><th>6 mo avg</th><th>median</th><th>up</th><th>beat KLCI</th></tr></thead><tbody>
+      ${rowH("<b>High-beta list</b> (top 8)","high",bt.ahead_high)}${rowH("All high-beta stocks that qualified","high_pool")}
+      ${rowH("<b>Low-beta dividend list</b> (top 8)","low",bt.ahead_low)}${rowH("All dividend stocks that qualified","low_pool")}
+      ${rowH("50 / 50 of the two lists","blend",bt.ahead_blend)}${rowH("FBM KLCI (price index)","klci")}
+      <tr class="sub"><td colspan="9">This month's mix (${rg?rg.high_beta_pct:50} / ${rg?rg.low_beta_pct:50}), past average</td></tr>
+      <tr><td>Projection for money split this way</td><td class="${cls(mixed("m3"))}"><b>${spct(mixed("m3"))}</b></td><td colspan="3" class="muted" style="text-align:left">3 months</td><td class="${cls(mixed("m6"))}"><b>${spct(mixed("m6"))}</b></td><td colspan="3" class="muted" style="text-align:left">6 months</td></tr></tbody>`;
+    const dn=bt.klci_down_m3;
+    $("mkBtNote").innerHTML=`Each month from <b>${bt.first}</b> to <b>${bt.last}</b> (${bt.months} months), the same rule picked both lists using only what was known that day (betas, 6-month returns, 200-day averages and dividends up to that date), and the stocks were held 3 and 6 months. "Up" = share of months the basket rose; "beat KLCI" = share of months it beat the index. Stock returns include dividends (Yahoo adjusted closes); the KLCI is a price index, so it is understated by roughly 1% a quarter.${dn&&dn.n?` <b>In the ${dn.n} months when the KLCI fell over the next 3 months</b> (${spct(dn.klci)} on average), the dividend list did <b>${spct(dn.low)}</b> and the high-beta list <b>${spct(dn.high)}</b>.`:""} ${bt.months<36?"Under 3 years of months, so treat these as tendencies.":"About 3 years of months: a tendency, not odds."}`;
+  } else $("mkBt").innerHTML=`<tbody><tr><td class="muted">Backtest not available yet.</td></tr></tbody>`;
+  // ---- mix rule + your holdings
+  $("mkRules").innerHTML=`<thead><tr><th>Market state</th><th>High / low beta</th></tr></thead><tbody>${RG_ORDER.map(k=>`<tr class="${rg&&rg.key===k?"now":""}"><td>${RG[k].name}<br><span class="muted" style="font-family:var(--font-body)">${RG[k].when}. ${RG[k].why}</span></td><td>${RG_MIX[k]} / ${100-RG_MIX[k]}</td></tr>`).join("")}</tbody>`;
+  const B=R&&R.betas||{}, pf=(T.portfolio||[]).filter(h=>(h.marketValue||0)>0);
+  let pfHtml="";
+  if(pf.length&&R){
+    const hs=pf.map(h=>({...h,beta:B[h.ticker]})), known=hs.filter(h=>h.beta!=null), tot=known.reduce((s,h)=>s+h.marketValue,0);
+    const pb=tot?known.reduce((s,h)=>s+h.beta*h.marketValue,0)/tot:null;
+    const hi=known.filter(h=>h.beta>=1.2), hiShare=tot?hi.reduce((s,h)=>s+h.marketValue,0)/tot:0;
+    const lo=known.filter(h=>h.beta<0.7), loShare=tot?lo.reduce((s,h)=>s+h.marketValue,0)/tot:0;
+    const tgt=rg?rg.high_beta_pct/100:0.5, move=(hiShare-tgt)*tot;
+    pfHtml=`<p class="note" style="margin-top:12px"><b>Your holdings:</b> portfolio beta <b>${pb!=null?pb.toFixed(2):"–"}</b>; <b>${pct(hiShare,0)}</b> in high-beta names (1.2+), <b>${pct(loShare,0)}</b> in low-beta names (under 0.7), the rest in between${hs.length>known.length?` · ${hs.length-known.length} holdings have no beta (not enough price history)`:""}. `+
+      (move>tot*0.05?`This month's mix calls for about ${pct(tgt,0)} high beta: move roughly <b>${money(move)}</b> from high beta (${hi.sort((a,b)=>b.marketValue-a.marketValue).slice(0,5).map(h=>`${esc(tkd(h.ticker))} β${h.beta.toFixed(1)}`).join(", ")}) into the dividend list, in stages.`
+       :move<-tot*0.05?`This month's mix allows about ${pct(tgt,0)} in high beta, so there is room for about <b>${money(-move)}</b> more high-beta growth, bought on dips at each stock's Entry price.`
+       :`That is close to this month's ${pct(tgt,0)} target, so no rotation is needed.`)+`</p>`;
+  }
+  const s0=new Date(D.as_of_session+"T00:00:00"), nrv=firstWeekday(s0.getFullYear(),s0.getMonth()+1);
+  $("mkPf").innerHTML=pfHtml+`<p class="note">Review once a month: next review <b>${nrv.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</b>, when the lists are re-picked. Move in stages (about a third a week) at each stock's Entry price rather than all at once. Between reviews, act early only if the alert above changes state (for example a fresh spike reaching its decision day).</p>`;
+  // ---- study
+  const rows=[];
+  for(const t of Object.keys(vi.thresholds||{})){const s=vi.thresholds[t],cu=s.current;
+    rows.push(`<tr><td style="text-align:left"><b>VIX &gt; ${t}</b><br><span class="muted">${s.events.length} spikes since ${(vi.first||"").slice(0,4)}</span></td><td>${statCell(s.from_cross["30"])}</td><td>${statCell(s.from_cross["60"])}</td><td>${statCell(s.from_cross["90"])}</td><td>${statCell(s.fading["60"])}</td><td>${statCell(s.persisting["60"])}</td><td>${cu?`<span class="chip ${cu.phase==="persisting"?"r":cu.phase==="fading"?"g":"a"}">${cu.phase} · ${dshort(cu.date)}</span>`:'<span class="muted">–</span>'}</td></tr>`);}
+  $("mkStudy").innerHTML=rows.length?`<thead><tr><th style="text-align:left">Trigger</th><th>30 sessions</th><th>60</th><th>90</th><th>Fading → 60</th><th>Persisting → 60</th><th>Now</th></tr></thead><tbody>${rows.join("")}</tbody>`:`<tbody><tr><td class="muted">No VIX data (${esc(vi.error||"")}).</td></tr></tbody>`;
+  $("mkStudyNote").innerHTML=`KLCI move after the day VIX first closed above the line: <b>median</b> and <b>how many were up</b>. VIX is a US index, so each Bursa session uses the last VIX close known by then. <b>Fading / Persisting</b> uses only what you would know at the time: ${VR.decide_day} sessions after the crossing, was VIX back under 25 or still above? Those returns start on that day. A new spike counts only if the last one was ${VR.cooldown}+ sessions earlier. Few events per row: tendencies, not odds.`;
+  const ev=(vi.thresholds||{})["30"];
+  if(ev&&ev.events.length) $("mkEvents").innerHTML=`<details class="ev"><summary>All ${ev.events.length} VIX &gt; 30 spikes</summary><div class="scroll"><table><thead><tr><th style="text-align:left">Crossed</th><th>VIX</th><th>KLCI off high</th><th>30</th><th>60</th><th>90</th><th>Day 20</th></tr></thead><tbody>${ev.events.slice().reverse().map(e=>`<tr><td style="text-align:left">${e.date}</td><td>${e.level}</td><td>${spct(e.dd)}</td><td class="${cls(e.r30)}">${spct(e.r30)}</td><td class="${cls(e.r60)}">${spct(e.r60)}</td><td class="${cls(e.r90)}">${spct(e.r90)}</td><td>${e.persisting==null?'<span class="muted">pending</span>':e.persisting?'<span class="neg">persisting</span>':'<span class="pos">fading</span>'}</td></tr>`).join("")}</tbody></table></div></details>`;
+  $("mkFoot").innerHTML=`<b>Projections:</b> base = the median of what the stock did 3 / 6 months later on every past day it was in the same state as now (above its 200-day average, 6-month return positive), with the 25th–75th percentile range below it and the price the base implies next to it (hover or long-press for the price range); <span class="muted">*</span> = too few such days, so every day in the ~5-year record is used. A stock that already ran a long way can show a weak base: big runs have often paused. <b>KLCI −10%</b> = beta × −10%, a rough guide for the dip you expect, not a floor. Beta = weekly moves vs the KLCI over 2 years (daily betas are distorted on Bursa by stocks that don't trade every day). Yield and dividend growth come from Yahoo's dividend history (refreshed monthly; ${R?`${R.div_coverage} of ${R.liquid} liquid stocks covered`:""}). Sources: ${Object.entries(VR.sources||{}).map(([k,s])=>`${esc(k)}: ${esc(s)}`).join(" · ")}. Built ${esc(VR.generated_at)}. Historical tendencies, not a forecast; not financial advice.`;
+}
 function render(){
   const top=topRowsAt(D.watch_dates.length-1), pf=T.portfolio||[], held=new Set(pf.map(h=>h.ticker));
   const total=pf.reduce((s,h)=>s+(h.marketValue||0),0);
@@ -998,6 +1210,7 @@ function render(){
   renderHoldings(plan,total);
   const bp=buyPlan(top,held,trimCash,SB,total); renderBuys(bp,trimCash,SB); renderPlan(plan,bp,SB);
   try{renderDipWatch(held)}catch(e){console.error("Dip watch:",e)}
+  try{renderMarket()}catch(e){console.error("Market & rotation:",e)}
   renderPnl();
   document.querySelectorAll("#useTrim button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.useTrim)));
   document.querySelectorAll("#nr button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===P.nr)));
@@ -1036,8 +1249,8 @@ function syncSticky(){const phone=matchMedia("(max-width:600px)").matches;root.s
 syncSticky(); addEventListener("resize",syncSticky); if(window.ResizeObserver) new ResizeObserver(syncSticky).observe(ctl);
 const get=f=>fetch(f+"?v="+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(f+" "+r.status);return r.json()});
 const valP=window.Valuation?Valuation.load():Promise.resolve();  // for the Valuation buttons
-Promise.all([get("pick_tracker_data.json"),get("dashboard-data.json"),get("valuation_data.json").catch(()=>({tickers:{}})),valP,get("dip_watch_data.json").catch(()=>null)])
-  .then(([pick,dash,val,,dw])=>{V=val.tickers||{};DW=dw;boot(pick,dash)})
+Promise.all([get("pick_tracker_data.json"),get("dashboard-data.json"),get("valuation_data.json").catch(()=>({tickers:{}})),valP,get("dip_watch_data.json").catch(()=>null),get("vol_regime.json").catch(()=>null)])
+  .then(([pick,dash,val,,dw,vr])=>{V=val.tickers||{};DW=dw;VR=vr;boot(pick,dash)})
   .catch(err=>{$("meta").textContent="Could not load data: "+err.message+". Run the daily pipeline and push again.";console.error(err)});
 })();
 </script>
